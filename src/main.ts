@@ -11,6 +11,83 @@ import { bookOriginalQuiz } from './book-original-quiz';
 import { readingDrills } from './reading-drills';
 
 const STORAGE_KEY = 'trung-y-van-hiu-v4';
+
+const PWA_DISMISS_KEY = 'trung-y-van-hiu-pwa-dismissed-at';
+const PWA_REMIND_AFTER = 3 * 24 * 60 * 60 * 1000;
+let deferredInstallPrompt = null;
+let pwaPromptMode = null;
+
+function isStandalonePwa() {
+  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+}
+
+function isIosDevice() {
+  return /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+}
+
+function canShowPwaReminder() {
+  if (isStandalonePwa()) return false;
+  const dismissedAt = Number(localStorage.getItem(PWA_DISMISS_KEY) || 0);
+  return !dismissedAt || Date.now() - dismissedAt >= PWA_REMIND_AFTER;
+}
+
+function dismissPwaReminder() {
+  localStorage.setItem(PWA_DISMISS_KEY, String(Date.now()));
+  pwaPromptMode = null;
+  render();
+}
+
+async function requestPwaInstall() {
+  if (!deferredInstallPrompt) return;
+  const promptEvent = deferredInstallPrompt;
+  deferredInstallPrompt = null;
+  const result = await promptEvent.prompt();
+  if (result?.outcome === 'dismissed') {
+    localStorage.setItem(PWA_DISMISS_KEY, String(Date.now()));
+  }
+  pwaPromptMode = null;
+  render();
+}
+
+function pwaInstallMarkup() {
+  if (!pwaPromptMode || isStandalonePwa()) return '';
+  const ios = pwaPromptMode === 'ios';
+  return '<section class="pwa-install" role="dialog" aria-live="polite" aria-label="Cài ứng dụng Trung Y Văn HIU"><div class="pwa-install-icon">中</div><div class="pwa-install-copy"><b>Cài Trung Y Văn HIU</b><span>' +
+    (ios
+      ? 'Để học như một ứng dụng: bấm Chia sẻ trong Safari → Thêm vào Màn hình chính.'
+      : 'Cài ứng dụng lên máy để mở nhanh từ màn hình chính và tiếp tục học thuận tiện hơn.') +
+    '</span></div><div class="pwa-install-actions">' +
+    (ios ? '<button id="pwaDismiss" class="pwa-primary">Đã hiểu</button>' : '<button id="pwaInstall" class="pwa-primary">Cài ứng dụng</button><button id="pwaDismiss">Để sau</button>') +
+    '</div></section>';
+}
+
+function setupPwa() {
+  window.addEventListener('beforeinstallprompt', event => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    if (canShowPwaReminder()) {
+      pwaPromptMode = 'install';
+      render();
+    }
+  });
+
+  window.addEventListener('appinstalled', () => {
+    deferredInstallPrompt = null;
+    pwaPromptMode = null;
+    localStorage.removeItem(PWA_DISMISS_KEY);
+    render();
+  });
+
+  if (isIosDevice() && canShowPwaReminder()) {
+    pwaPromptMode = 'ios';
+  }
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    });
+  }
+}
 const textbookSource = baseSources.find(s => s.id === 'textbook');
 const sources = [
   ...baseSources
@@ -231,7 +308,7 @@ function shell(content) {
     '</nav><div class="side-note"><span>HIU · YHCT</span><p>Mục tiêu từ vựng: nhìn → nhận biết → hiểu → nhớ.</p></div></aside><main><div class="top"><button class="mini" data-nav="home">中</button><div><b>CLB YHCT HIU</b><small>Chinese for Traditional Medicine</small></div><span class="streak">🔥 ' +
     state.progress.xp + ' XP</span></div><div class="content">' + content + '</div></main><div class="bottom">' +
     navs.slice(0, 5).map(n => '<button data-nav="' + n[0] + '" class="' + (state.view === n[0] ? 'active' : '') + '"><i>' + n[1] + '</i><small>' + n[2] + '</small></button>').join('') +
-    '</div></div>';
+    '</div></div>' + pwaInstallMarkup();
 }
 
 function home() {
@@ -442,6 +519,10 @@ function render() {
 }
 
 function bind() {
+  const pwaInstall = document.querySelector('#pwaInstall');
+  if (pwaInstall) pwaInstall.addEventListener('click', requestPwaInstall);
+  const pwaDismiss = document.querySelector('#pwaDismiss');
+  if (pwaDismiss) pwaDismiss.addEventListener('click', dismissPwaReminder);
   document.querySelectorAll('[data-nav]').forEach(e => e.addEventListener('click', () => nav(e.dataset.nav)));
   document.querySelectorAll('[data-speak]').forEach(e => e.addEventListener('click', () => speak(e.dataset.speak)));
   document.querySelectorAll('[data-source-open]').forEach(e => e.addEventListener('click', () => { state.source = e.dataset.sourceOpen; state.sourceQuery = ''; nav('library'); }));
@@ -596,4 +677,5 @@ function bindWordClicks() {
   }));
 }
 
+setupPwa();
 render();

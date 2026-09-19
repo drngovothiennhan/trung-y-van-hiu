@@ -1,0 +1,19 @@
+{
+  "name": "Trung Y Văn HIU — CLB YHCT HIU",
+  "short_name": "Trung Y Văn",
+  "description": "Ứng dụng học Trung văn chuyên ngành Y học cổ truyền của CLB YHCT HIU.",
+  "lang": "vi",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f7f8f5",
+  "theme_color": "#173f36",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
