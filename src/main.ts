@@ -1,6 +1,7 @@
 // @ts-nocheck
 import './styles.css';
 import './extra.css';
+import { authApi, authMessage } from './auth-client';
 import { sources as baseSources, radicals214, learningTerms as baseLearningTerms, readings, quizBank as baseQuizBank } from './content';
 import { lesson2TextbookPages, lesson2Terms, lesson2Quiz } from './lesson2';
 import { lesson3TextbookPages, lesson3Terms, lesson3Quiz } from './lesson3';
@@ -11,6 +12,183 @@ import { bookOriginalQuiz } from './book-original-quiz';
 import { readingDrills } from './reading-drills';
 
 const STORAGE_KEY = 'trung-y-van-hiu-v4';
+
+const access = {
+  ready: false,
+  member: null,
+  error: '',
+  loginMssv: '',
+  adminLoading: false,
+  adminMembers: [],
+  adminCandidates: [],
+  adminError: '',
+};
+
+function authLoadingView() {
+  return '<div class="auth-gate"><section class="auth-card auth-loading"><div class="auth-mark">中</div><h1>Trung Y Văn HIU</h1><p>Đang xác minh quyền truy cập...</p></section></div>';
+}
+
+function loginView() {
+  const retry = authApi.hasToken();
+  return '<div class="auth-gate"><section class="auth-card"><div class="auth-mark">中</div><span class="auth-kicker">CLB YHCT HIU · ACCESS CONTROL</span><h1>Đăng nhập Trung Y Văn</h1><p class="auth-desc">Chỉ MSSV đã được admin duyệt mới được truy cập. Mật khẩu mặc định bằng chính MSSV.</p>' +
+    (access.error ? '<div class="auth-error">' + safe(access.error) + '</div>' : '') +
+    '<form id="authLoginForm" autocomplete="on"><label>MSSV<input id="authMssv" inputmode="numeric" autocomplete="username" maxlength="14" value="' + safe(access.loginMssv) + '" placeholder="Nhập MSSV"></label><label>Mật khẩu<input id="authPassword" type="password" autocomplete="current-password" placeholder="Mật khẩu"></label><button class="auth-submit" type="submit">Đăng nhập</button></form>' +
+    (retry ? '<button id="authRetry" class="auth-retry">Xác minh lại phiên hiện có</button>' : '') +
+    '<small>Mỗi tài khoản chỉ có một phiên/IP hoạt động. Hệ thống ghi nhận đăng nhập để bảo vệ tài khoản.</small></section></div>';
+}
+
+async function bootstrapAccess() {
+  access.error = '';
+  if (!authApi.hasToken()) {
+    access.ready = true;
+    access.member = null;
+    render();
+    return;
+  }
+  try {
+    const data = await authApi.session();
+    access.member = data.member;
+    access.ready = true;
+    render();
+  } catch (error) {
+    access.member = null;
+    access.ready = true;
+    access.error = authMessage(error?.code);
+    if (error?.code !== 'NETWORK_ERROR') authApi.clearToken();
+    render();
+  }
+}
+
+async function handleLogin(mssv, password) {
+  access.loginMssv = mssv;
+  access.error = '';
+  try {
+    const data = await authApi.login(mssv, password);
+    access.member = data.member;
+    access.ready = true;
+    access.loginMssv = '';
+    state.view = 'home';
+    render();
+  } catch (error) {
+    access.member = null;
+    access.error = authMessage(error?.code);
+    render();
+  }
+}
+
+async function handleLogout() {
+  await authApi.logout();
+  access.member = null;
+  access.adminMembers = [];
+  access.adminCandidates = [];
+  access.error = '';
+  state.view = 'home';
+  render();
+}
+
+async function verifyAccessHeartbeat() {
+  if (!access.member || !authApi.hasToken()) return;
+  try {
+    const data = await authApi.session();
+    access.member = data.member;
+  } catch (error) {
+    access.member = null;
+    access.error = authMessage(error?.code);
+    if (error?.code !== 'NETWORK_ERROR') authApi.clearToken();
+    state.view = 'home';
+    render();
+  }
+}
+
+async function loadAdminData() {
+  if (access.member?.role !== 'admin' || access.adminLoading) return;
+  access.adminLoading = true;
+  access.adminError = '';
+  render();
+  try {
+    const [members, candidates] = await Promise.all([authApi.adminList(), authApi.adminCandidates()]);
+    access.adminMembers = members.members || [];
+    access.adminCandidates = candidates.candidates || [];
+  } catch (error) {
+    access.adminError = authMessage(error?.code);
+  } finally {
+    access.adminLoading = false;
+    render();
+  }
+}
+
+function adminView() {
+  if (access.member?.role !== 'admin') return '<div class="note">Bạn không có quyền quản trị.</div>';
+  const candidateRows = access.adminCandidates.filter(x => x.mssv !== access.member.mssv);
+  const pending = candidateRows.filter(x => x.access_status !== 'approved');
+  const approved = access.adminMembers.filter(x => x.status === 'approved');
+  return h('SECURITY ADMIN', 'Duyệt quyền truy cập sinh viên', 'Tài khoản chỉ được tạo/mở khi bạn duyệt. Mật khẩu mặc định = MSSV; mỗi tài khoản chỉ giữ một phiên/IP hoạt động.') +
+    (access.adminError ? '<div class="auth-error admin-error">' + safe(access.adminError) + '</div>' : '') +
+    '<section class="panel admin-summary"><div><b>' + approved.length + '</b><span>tài khoản đang được duyệt</span></div><div><b>' + pending.length + '</b><span>thành viên CLB chưa có quyền / đang khóa</span></div><button id="adminRefresh" ' + (access.adminLoading ? 'disabled' : '') + '>↻ Tải lại danh sách</button></section>' +
+    '<section class="panel admin-manual"><h3>Duyệt MSSV thủ công</h3><form id="adminAddForm"><input id="adminAddMssv" inputmode="numeric" maxlength="14" placeholder="MSSV"><input id="adminAddName" placeholder="Họ tên (không bắt buộc)"><button type="submit">Duyệt & tạo tài khoản</button></form></section>' +
+    '<section class="panel admin-section"><div class="admin-title"><div><span>DANH SÁCH CLB</span><h3>Chờ bạn duyệt</h3></div><small>' + pending.length + ' hồ sơ</small></div><div class="admin-list">' +
+      (access.adminLoading ? '<div class="empty">Đang tải dữ liệu...</div>' : pending.length ? pending.map(x => '<div class="admin-row"><div><b>' + safe(x.display_name || 'Chưa có tên') + '</b><span>' + safe(x.mssv) + (x.class_name ? ' · ' + safe(x.class_name) : '') + '</span><small>' + (x.access_status === 'suspended' ? 'Đang bị khóa' : 'Chưa được cấp quyền') + '</small></div><button data-admin-approve="' + safe(x.mssv) + '" data-admin-name="' + safe(x.display_name || '') + '">' + (x.access_status === 'suspended' ? 'Mở lại' : 'Duyệt') + '</button></div>').join('') : '<div class="empty">Không còn hồ sơ chờ duyệt.</div>') +
+    '</div></section>' +
+    '<section class="panel admin-section"><div class="admin-title"><div><span>QUYỀN TRUY CẬP</span><h3>Tài khoản đã tạo</h3></div><small>' + access.adminMembers.length + ' tài khoản</small></div><div class="admin-list">' +
+      (access.adminLoading ? '<div class="empty">Đang tải dữ liệu...</div>' : access.adminMembers.map(x => '<div class="admin-row account-row"><div><b>' + safe(x.display_name || x.student_code) + (x.role === 'admin' ? ' · ADMIN' : '') + '</b><span>' + safe(x.student_code) + '</span><small>' + (x.status === 'approved' ? (x.session_active ? 'Đang hoạt động · phiên đã khóa IP' : 'Đã duyệt · chưa hoạt động') : 'Đang tạm khóa') + '</small></div><div class="admin-actions">' +
+        (x.role === 'admin' ? '' : '<button data-admin-status="' + safe(x.student_code) + '" data-next-status="' + (x.status === 'approved' ? 'suspended' : 'approved') + '">' + (x.status === 'approved' ? 'Tạm khóa' : 'Mở lại') + '</button>') +
+        '<button data-admin-kick="' + safe(x.student_code) + '">Đăng xuất phiên</button><button data-admin-reset="' + safe(x.student_code) + '">Reset MK=MSSV</button></div></div>').join('')) +
+    '</div></section>';
+}
+
+async function adminAction(task) {
+  try {
+    await task();
+    await loadAdminData();
+  } catch (error) {
+    access.adminError = authMessage(error?.code);
+    render();
+  }
+}
+
+function bindAccessGate() {
+  const form = document.querySelector('#authLoginForm');
+  if (form) form.addEventListener('submit', event => {
+    event.preventDefault();
+    const mssv = String(document.querySelector('#authMssv')?.value || '').trim();
+    const password = String(document.querySelector('#authPassword')?.value || '');
+    handleLogin(mssv, password);
+  });
+  const retry = document.querySelector('#authRetry');
+  if (retry) retry.addEventListener('click', bootstrapAccess);
+}
+
+function bindAdmin() {
+  const refresh = document.querySelector('#adminRefresh');
+  if (refresh) refresh.addEventListener('click', loadAdminData);
+
+  const addForm = document.querySelector('#adminAddForm');
+  if (addForm) addForm.addEventListener('submit', event => {
+    event.preventDefault();
+    const mssv = String(document.querySelector('#adminAddMssv')?.value || '').trim();
+    const name = String(document.querySelector('#adminAddName')?.value || '').trim();
+    adminAction(() => authApi.adminAdd(mssv, name));
+  });
+
+  document.querySelectorAll('[data-admin-approve]').forEach(button => button.addEventListener('click', () => {
+    const mssv = button.dataset.adminApprove;
+    const name = button.dataset.adminName || '';
+    adminAction(() => authApi.adminAdd(mssv, name));
+  }));
+
+  document.querySelectorAll('[data-admin-status]').forEach(button => button.addEventListener('click', () => {
+    adminAction(() => authApi.adminSetStatus(button.dataset.adminStatus, button.dataset.nextStatus));
+  }));
+
+  document.querySelectorAll('[data-admin-kick]').forEach(button => button.addEventListener('click', () => {
+    adminAction(() => authApi.adminForceLogout(button.dataset.adminKick));
+  }));
+
+  document.querySelectorAll('[data-admin-reset]').forEach(button => button.addEventListener('click', () => {
+    adminAction(() => authApi.adminResetPassword(button.dataset.adminReset));
+  }));
+}
+
 
 const PWA_DISMISS_KEY = 'trung-y-van-hiu-pwa-dismissed-at';
 const PWA_REMIND_AFTER = 3 * 24 * 60 * 60 * 1000;
@@ -186,6 +364,7 @@ function nav(view) {
   state.view = view;
   state.readingAnswer = null;
   render();
+  if (view === 'admin' && access.member?.role === 'admin') loadAdminData();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -303,10 +482,11 @@ function shell(content) {
     ['library', '库', 'Kho tài liệu'],
     ['progress', '图', 'Tiến độ']
   ];
+  if (access.member?.role === 'admin') navs.push(['admin', '盾', 'Quản trị']);
   return '<div class="shell"><aside><div class="brand"><b>中医中文</b><strong>TRUNG Y VĂN</strong><small>CLB YHCT HIU</small></div><nav>' +
     navs.map(n => '<button data-nav="' + n[0] + '" class="' + (state.view === n[0] ? 'active' : '') + '"><i>' + n[1] + '</i><span>' + n[2] + '</span></button>').join('') +
     '</nav><div class="side-note"><span>HIU · YHCT</span><p>Mục tiêu từ vựng: nhìn → nhận biết → hiểu → nhớ.</p></div></aside><main><div class="top"><button class="mini" data-nav="home">中</button><div><b>CLB YHCT HIU</b><small>Chinese for Traditional Medicine</small></div><span class="streak">🔥 ' +
-    state.progress.xp + ' XP</span></div><div class="content">' + content + '</div></main><div class="bottom">' +
+    state.progress.xp + ' XP</span><div class="auth-user"><span>' + safe(access.member?.display_name || access.member?.mssv || '') + '</span><small>' + safe(access.member?.mssv || '') + '</small><button id="authLogout">Đăng xuất</button></div></div><div class="content">' + content + '</div></main><div class="bottom">' +
     navs.slice(0, 5).map(n => '<button data-nav="' + n[0] + '" class="' + (state.view === n[0] ? 'active' : '') + '"><i>' + n[1] + '</i><small>' + n[2] + '</small></button>').join('') +
     '</div></div>' + pwaInstallMarkup();
 }
@@ -505,6 +685,17 @@ function progressView() {
 }
 
 function render() {
+  const app = document.querySelector('#app');
+  if (!access.ready) {
+    app.innerHTML = authLoadingView();
+    return;
+  }
+  if (!access.member) {
+    app.innerHTML = loginView();
+    bindAccessGate();
+    return;
+  }
+
   let body = home();
   if (state.view === 'lessons') body = lessonsView();
   if (state.view === 'vocab') body = vocabView();
@@ -514,11 +705,16 @@ function render() {
   if (state.view === 'answers') body = answersView();
   if (state.view === 'library') body = libraryView();
   if (state.view === 'progress') body = progressView();
-  document.querySelector('#app').innerHTML = shell(body);
+  if (state.view === 'admin') body = adminView();
+  app.innerHTML = shell(body);
   bind();
 }
 
 function bind() {
+  const logout = document.querySelector('#authLogout');
+  if (logout) logout.addEventListener('click', handleLogout);
+  bindAdmin();
+
   const pwaInstall = document.querySelector('#pwaInstall');
   if (pwaInstall) pwaInstall.addEventListener('click', requestPwaInstall);
   const pwaDismiss = document.querySelector('#pwaDismiss');
@@ -679,3 +875,8 @@ function bindWordClicks() {
 
 setupPwa();
 render();
+bootstrapAccess();
+setInterval(verifyAccessHeartbeat, 5 * 60 * 1000);
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') verifyAccessHeartbeat();
+});
