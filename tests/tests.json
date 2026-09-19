@@ -1,0 +1,72 @@
+[
+  {
+    "name": "Quiz answer positions are balanced and remapped correctly",
+    "sanity": true,
+    "viewport": "mobile",
+    "covers": [
+      "answer option shuffling",
+      "correct-answer index remapping",
+      "quiz scoring",
+      "all quiz modes"
+    ],
+    "description": "Verifies correct choices are not systematically placed at A and scoring still follows the shuffled correct option.",
+    "steps": [
+      "Open Trắc nghiệm",
+      "Select Tổng hợp",
+      "Move through several questions in the round",
+      "Observe that correct choices are distributed across A/B/C/D",
+      "Submit the round"
+    ],
+    "expected": "Answer positions vary across the round instead of staying at A, and the final score/review uses the remapped correct answers."
+  },
+  {
+    "name": "Original textbook true-false answers also change position",
+    "viewport": "mobile",
+    "covers": [
+      "Gốc sách mode",
+      "true-false option shuffling",
+      "appendix answer key"
+    ],
+    "description": "Verifies the two choices in the source-native 判断正误 mode are also reordered without changing the source answer.",
+    "steps": [
+      "Open Trắc nghiệm",
+      "Select Gốc sách",
+      "Review several questions",
+      "Answer and submit"
+    ],
+    "expected": "√ Đúng and × Sai do not stay in one fixed position; appendix-based correctness and explanations remain accurate."
+  },
+  {
+    "name": "Pathology mode keeps source labels after answer shuffle",
+    "viewport": "desktop",
+    "covers": [
+      "pathology MCQ mode",
+      "answer option shuffling",
+      "source labels",
+      "explanations"
+    ],
+    "description": "Verifies pathology questions retain provenance while choices are reordered.",
+    "steps": [
+      "Open Trắc nghiệm",
+      "Select Bệnh lý",
+      "Observe several question choices and source labels",
+      "Submit the round"
+    ],
+    "expected": "Choices are distributed across positions while source labels, correct answers and explanations remain intact."
+  },
+  {
+    "name": "Keep durable vocabulary and reading workflows",
+    "viewport": "desktop",
+    "covers": [
+      "regression",
+      "spaced vocabulary review",
+      "expanded reading comprehension"
+    ],
+    "description": "Verifies the quiz-only fix does not alter completed learning workflows.",
+    "steps": [
+      "Open Từ vựng and confirm spaced-review controls",
+      "Open Đọc hiểu and answer one question"
+    ],
+    "expected": "Vocabulary memory and expanded reading practice continue to work as before."
+  }
+]
