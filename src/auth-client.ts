@@ -87,6 +87,7 @@ export const authApi = {
 export function authMessage(code) {
   const map = {
     INVALID_LOGIN_INPUT: 'MSSV hoặc mật khẩu không hợp lệ.',
+    INVALID_STUDENT_CODE: 'MSSV phải gồm 8–14 chữ số.',
     INVALID_CREDENTIALS: 'Sai MSSV hoặc mật khẩu.',
     WAITING_APPROVAL: 'Tài khoản chưa được quản trị viên duyệt.',
     ACCOUNT_SUSPENDED: 'Tài khoản đang bị tạm khóa.',
@@ -103,6 +104,7 @@ export function authMessage(code) {
     MEMBER_NOT_FOUND: 'Không tìm thấy thành viên.',
     RESET_FAILED: 'Không thể đặt lại mật khẩu.',
     CANDIDATE_LIST_FAILED: 'Không tải được danh sách thành viên CLB.',
+    ACCOUNT_STATE_FAILED: 'Không tải được trạng thái tài khoản hiện tại.',
     LIST_FAILED: 'Không tải được danh sách tài khoản.',
   };
   return map[code] || 'Không thể thực hiện yêu cầu. Vui lòng thử lại.';

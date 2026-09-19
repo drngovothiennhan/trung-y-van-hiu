@@ -132,7 +132,7 @@ function adminView() {
     '<section class="panel admin-section"><div class="admin-title"><div><span>QUYỀN TRUY CẬP</span><h3>Tài khoản đã tạo</h3></div><small>' + access.adminMembers.length + ' tài khoản</small></div><div class="admin-list">' +
       (access.adminLoading ? '<div class="empty">Đang tải dữ liệu...</div>' : access.adminMembers.map(x => '<div class="admin-row account-row"><div><b>' + safe(x.display_name || x.student_code) + (x.role === 'admin' ? ' · ADMIN' : '') + '</b><span>' + safe(x.student_code) + '</span><small>' + (x.status === 'approved' ? (x.session_active ? 'Đang hoạt động · phiên đã khóa IP' : 'Đã duyệt · chưa hoạt động') : 'Đang tạm khóa') + '</small></div><div class="admin-actions">' +
         (x.role === 'admin' ? '' : '<button data-admin-status="' + safe(x.student_code) + '" data-next-status="' + (x.status === 'approved' ? 'suspended' : 'approved') + '">' + (x.status === 'approved' ? 'Tạm khóa' : 'Mở lại') + '</button>') +
-        '<button data-admin-kick="' + safe(x.student_code) + '">Đăng xuất phiên</button><button data-admin-reset="' + safe(x.student_code) + '">Reset MK=MSSV</button></div></div>').join('')) +
+        (x.student_code === access.member?.mssv ? '' : '<button data-admin-kick="' + safe(x.student_code) + '">Đăng xuất phiên</button>') + '<button data-admin-reset="' + safe(x.student_code) + '">Reset MK=MSSV</button></div></div>').join('')) +
     '</div></section>';
 }
 
@@ -177,15 +177,23 @@ function bindAdmin() {
   }));
 
   document.querySelectorAll('[data-admin-status]').forEach(button => button.addEventListener('click', () => {
-    adminAction(() => authApi.adminSetStatus(button.dataset.adminStatus, button.dataset.nextStatus));
+    const mssv = button.dataset.adminStatus;
+    const nextStatus = button.dataset.nextStatus;
+    const verb = nextStatus === 'suspended' ? 'tạm khóa' : 'mở lại';
+    if (!window.confirm('Xác nhận ' + verb + ' tài khoản ' + mssv + '?')) return;
+    adminAction(() => authApi.adminSetStatus(mssv, nextStatus));
   }));
 
   document.querySelectorAll('[data-admin-kick]').forEach(button => button.addEventListener('click', () => {
-    adminAction(() => authApi.adminForceLogout(button.dataset.adminKick));
+    const mssv = button.dataset.adminKick;
+    if (!window.confirm('Đăng xuất phiên đang hoạt động của ' + mssv + '?')) return;
+    adminAction(() => authApi.adminForceLogout(mssv));
   }));
 
   document.querySelectorAll('[data-admin-reset]').forEach(button => button.addEventListener('click', () => {
-    adminAction(() => authApi.adminResetPassword(button.dataset.adminReset));
+    const mssv = button.dataset.adminReset;
+    if (!window.confirm('Đặt lại mật khẩu của ' + mssv + ' về chính MSSV? Phiên hiện tại của tài khoản này sẽ bị đăng xuất.')) return;
+    adminAction(() => authApi.adminResetPassword(mssv));
   }));
 }
 
