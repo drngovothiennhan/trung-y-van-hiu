@@ -13,6 +13,36 @@ import { readingDrills } from './reading-drills';
 
 const STORAGE_KEY = 'trung-y-van-hiu-v4';
 
+const UI_MODE_KEY = 'trung-y-van-hiu-ui-mode-v1';
+
+function loadUiMode() {
+  const saved = localStorage.getItem(UI_MODE_KEY);
+  if (saved === 'desktop' || saved === 'mobile') return saved;
+  return window.matchMedia('(max-width: 780px)').matches ? 'mobile' : 'desktop';
+}
+
+let uiMode = loadUiMode();
+
+function applyUiMode() {
+  document.documentElement.dataset.uiMode = uiMode;
+}
+
+function setUiMode(mode) {
+  if (mode !== 'desktop' && mode !== 'mobile') return;
+  uiMode = mode;
+  localStorage.setItem(UI_MODE_KEY, mode);
+  applyUiMode();
+  render();
+}
+
+function uiModeMarkup() {
+  return '<div class="ui-mode-switch" role="group" aria-label="Chế độ hiển thị">' +
+    '<button type="button" data-ui-mode="desktop" class="' + (uiMode === 'desktop' ? 'active' : '') + '" title="Giao diện PC / Desktop">PC</button>' +
+    '<button type="button" data-ui-mode="mobile" class="' + (uiMode === 'mobile' ? 'active' : '') + '" title="Giao diện Mobile">Mobile</button>' +
+    '</div>';
+}
+
+
 const access = {
   ready: false,
   member: null,
@@ -494,7 +524,7 @@ function shell(content) {
   return '<div class="shell"><aside><div class="brand"><b>中医中文</b><strong>TRUNG Y VĂN</strong><small>CLB YHCT HIU</small></div><nav>' +
     navs.map(n => '<button data-nav="' + n[0] + '" class="' + (state.view === n[0] ? 'active' : '') + '"><i>' + n[1] + '</i><span>' + n[2] + '</span></button>').join('') +
     '</nav><div class="side-note"><span>HIU · YHCT</span><p>Mục tiêu từ vựng: nhìn → nhận biết → hiểu → nhớ.</p></div></aside><main><div class="top"><button class="mini" data-nav="home">中</button><div><b>CLB YHCT HIU</b><small>Chinese for Traditional Medicine</small></div><span class="streak">🔥 ' +
-    state.progress.xp + ' XP</span><div class="auth-user"><span>' + safe(access.member?.display_name || access.member?.mssv || '') + '</span><small>' + safe(access.member?.mssv || '') + '</small><button id="authLogout">Đăng xuất</button></div></div><div class="content">' + content + '</div></main><div class="bottom">' +
+    state.progress.xp + ' XP</span>' + uiModeMarkup() + '<div class="auth-user"><span>' + safe(access.member?.display_name || access.member?.mssv || '') + '</span><small>' + safe(access.member?.mssv || '') + '</small><button id="authLogout">Đăng xuất</button></div></div><div class="content">' + content + '</div></main><div class="bottom">' +
     navs.slice(0, 5).map(n => '<button data-nav="' + n[0] + '" class="' + (state.view === n[0] ? 'active' : '') + '"><i>' + n[1] + '</i><small>' + n[2] + '</small></button>').join('') +
     '</div></div>' + pwaInstallMarkup();
 }
@@ -719,6 +749,8 @@ function render() {
 }
 
 function bind() {
+  document.querySelectorAll('[data-ui-mode]').forEach(button => button.addEventListener('click', () => setUiMode(button.dataset.uiMode)));
+
   const logout = document.querySelector('#authLogout');
   if (logout) logout.addEventListener('click', handleLogout);
   bindAdmin();
@@ -881,6 +913,7 @@ function bindWordClicks() {
   }));
 }
 
+applyUiMode();
 setupPwa();
 render();
 bootstrapAccess();

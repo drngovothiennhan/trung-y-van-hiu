@@ -199,3 +199,66 @@ details,details p{font-size:12px;line-height:1.6}
 .admin-summary{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;margin-bottom:12px}.admin-summary>div{background:#f5f8f5;border-radius:12px;padding:12px}.admin-summary b,.admin-summary span{display:block}.admin-summary b{font-size:24px;color:#1b5b4b}.admin-summary span{font-size:10px;color:#6f7e79}.admin-summary button,.admin-manual button,.admin-row button{border:1px solid #d7dfd9;background:#fff;color:#2f5d50;border-radius:10px;padding:9px 11px;font-size:10px;font-weight:800;cursor:pointer}.admin-summary button:disabled{opacity:.5}.admin-manual{margin-bottom:12px}.admin-manual h3{font-size:14px;margin-top:0}.admin-manual form{display:grid;grid-template-columns:180px 1fr auto;gap:8px}.admin-manual input{border:1px solid #d8dfda;border-radius:10px;padding:10px 11px;font-size:12px}.admin-manual button{background:#173f36;color:#fff;border-color:#173f36}.admin-section{margin-bottom:12px}.admin-title{display:flex;justify-content:space-between;align-items:end;margin-bottom:10px}.admin-title span{font-size:9px;color:#9a7938;font-weight:900;letter-spacing:.09em}.admin-title h3{font-size:16px;margin:3px 0}.admin-title small{font-size:10px;color:#78857f}.admin-list{display:grid;gap:7px;max-height:520px;overflow:auto}.admin-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;border:1px solid #e0e5e1;border-radius:12px;padding:10px 11px;background:#fff}.admin-row b,.admin-row span,.admin-row small{display:block}.admin-row b{font-size:12px;color:#294f45}.admin-row span{font-size:10px;margin-top:2px}.admin-row small{font-size:9px;color:#7a8983;margin-top:3px}.admin-row>button{background:#edf5f1}.admin-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.admin-actions button{padding:7px 8px;font-size:9px}.admin-error{margin-bottom:12px}
 
 @media(max-width:780px){.auth-card{padding:22px}.auth-card h1{font-size:27px}.auth-user>span{display:none}.auth-user>small{font-size:10px}.auth-user button{padding:6px 8px}.top .streak{display:none}.admin-summary{grid-template-columns:1fr 1fr}.admin-summary button{grid-column:1/-1}.admin-manual form{grid-template-columns:1fr}.admin-row,.account-row{grid-template-columns:1fr}.admin-actions{justify-content:flex-start}.admin-list{max-height:none}}
+
+
+/* Manual PC/Desktop <-> Mobile layout switch */
+.ui-mode-switch{display:flex;align-items:center;gap:3px;margin-left:8px;padding:3px;border:1px solid #d8dfda;background:#fff;border-radius:11px}
+.ui-mode-switch button{border:0;background:transparent;color:#6d7d77;border-radius:8px;padding:6px 8px;font-size:9px;font-weight:900;cursor:pointer}
+.ui-mode-switch button.active{background:#173f36;color:#fff}
+.ui-mode-switch button:focus-visible{outline:2px solid #b9964d;outline-offset:1px}
+
+/* Forced desktop mode: keep full sidebar/layout even on a narrow phone. */
+html[data-ui-mode="desktop"] body{min-width:980px;overflow-x:auto}
+html[data-ui-mode="desktop"] .shell{display:grid!important;grid-template-columns:238px minmax(742px,1fr)!important}
+html[data-ui-mode="desktop"] .shell aside{display:flex!important}
+html[data-ui-mode="desktop"] main{display:block!important;grid-column:2!important}
+html[data-ui-mode="desktop"] .top{height:64px!important;padding:0 30px!important}
+html[data-ui-mode="desktop"] .top .mini{display:none!important}
+html[data-ui-mode="desktop"] .content{padding:34px 34px 90px!important;max-width:1240px!important}
+html[data-ui-mode="desktop"] .bottom{display:none!important}
+html[data-ui-mode="desktop"] .hero{grid-template-columns:1fr 210px!important;padding:40px 44px!important;min-height:285px!important}
+html[data-ui-mode="desktop"] .hero h1{font-size:52px!important}
+html[data-ui-mode="desktop"] .seal{display:grid!important}
+html[data-ui-mode="desktop"] .two{grid-template-columns:minmax(320px,.9fr) minmax(380px,1.1fr)!important}
+html[data-ui-mode="desktop"] .lesson{grid-template-columns:42px 72px 1fr 40px!important}
+html[data-ui-mode="desktop"] .lesson .speak{grid-column:auto!important;justify-self:auto!important}
+html[data-ui-mode="desktop"] .admin-summary{grid-template-columns:1fr 1fr auto!important}
+html[data-ui-mode="desktop"] .admin-manual form{grid-template-columns:180px 1fr auto!important}
+html[data-ui-mode="desktop"] .admin-row,html[data-ui-mode="desktop"] .account-row{grid-template-columns:1fr auto!important}
+
+/* Forced mobile mode: simulate the mobile app shell even on desktop. */
+html[data-ui-mode="mobile"] body{min-width:0;overflow-x:hidden}
+html[data-ui-mode="mobile"] .shell{display:block!important;max-width:520px;margin:0 auto;min-height:100vh;background:#f7f5ee;box-shadow:0 0 45px rgba(24,63,54,.12)}
+html[data-ui-mode="mobile"] .shell aside{display:none!important}
+html[data-ui-mode="mobile"] main{display:block!important}
+html[data-ui-mode="mobile"] .top{height:58px!important;padding:0 13px!important}
+html[data-ui-mode="mobile"] .top .mini{display:grid!important;width:34px;height:34px;border:0;border-radius:10px;background:#173f36;color:#dfbf77;place-items:center;margin-right:9px;font:700 18px Georgia,serif}
+html[data-ui-mode="mobile"] .top .streak{font-size:9px;padding:7px 9px}
+html[data-ui-mode="mobile"] .content{padding:20px 13px 82px!important}
+html[data-ui-mode="mobile"] .hero{grid-template-columns:1fr!important;padding:28px 22px!important;min-height:0!important}
+html[data-ui-mode="mobile"] .hero h1{font-size:40px!important}
+html[data-ui-mode="mobile"] .seal{display:none!important}
+html[data-ui-mode="mobile"] .two{grid-template-columns:1fr!important}
+html[data-ui-mode="mobile"] .features{grid-template-columns:1fr 1fr!important}
+html[data-ui-mode="mobile"] .radicals{grid-template-columns:repeat(3,1fr)!important}
+html[data-ui-mode="mobile"] .lesson{grid-template-columns:35px 60px 1fr!important}
+html[data-ui-mode="mobile"] .lesson .speak{grid-column:1/-1!important;justify-self:end!important}
+html[data-ui-mode="mobile"] .bottom{display:grid!important;position:fixed;z-index:30;bottom:0;left:50%;right:auto;transform:translateX(-50%);width:min(520px,100vw);height:65px;background:#ffffffef;border-top:1px solid #dfe2dc;backdrop-filter:blur(14px);grid-template-columns:repeat(5,1fr)}
+html[data-ui-mode="mobile"] .course-grid,
+html[data-ui-mode="mobile"] .grammar-grid,
+html[data-ui-mode="mobile"] .phrase-grid,
+html[data-ui-mode="mobile"] .clinical-list,
+html[data-ui-mode="mobile"] .source-grid{grid-template-columns:1fr!important}
+html[data-ui-mode="mobile"] .source-shortcut{display:none!important}
+html[data-ui-mode="mobile"] .admin-summary{grid-template-columns:1fr 1fr!important}
+html[data-ui-mode="mobile"] .admin-summary button{grid-column:1/-1!important}
+html[data-ui-mode="mobile"] .admin-manual form{grid-template-columns:1fr!important}
+html[data-ui-mode="mobile"] .admin-row,html[data-ui-mode="mobile"] .account-row{grid-template-columns:1fr!important}
+html[data-ui-mode="mobile"] .admin-actions{justify-content:flex-start!important}
+
+@media(max-width:520px){
+  .ui-mode-switch{margin-left:5px}
+  .ui-mode-switch button{padding:5px 6px;font-size:8px}
+  html[data-ui-mode="mobile"] .top>div:not(.ui-mode-switch):not(.auth-user){display:none}
+  html[data-ui-mode="mobile"] .top .streak{display:none}
+}
