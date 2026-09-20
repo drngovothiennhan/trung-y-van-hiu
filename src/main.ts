@@ -34,7 +34,7 @@ function loginView() {
     (access.error ? '<div class="auth-error">' + safe(access.error) + '</div>' : '') +
     '<form id="authLoginForm" autocomplete="on"><label>MSSV<input id="authMssv" inputmode="numeric" autocomplete="username" maxlength="14" value="' + safe(access.loginMssv) + '" placeholder="Nhập MSSV"></label><label>Mật khẩu<input id="authPassword" type="password" autocomplete="current-password" placeholder="Mật khẩu"></label><button class="auth-submit" type="submit">Đăng nhập</button></form>' +
     (retry ? '<button id="authRetry" class="auth-retry">Xác minh lại phiên hiện có</button>' : '') +
-    '<small>Mỗi tài khoản chỉ có một phiên/IP hoạt động. Hệ thống ghi nhận đăng nhập để bảo vệ tài khoản.</small></section></div>';
+    '<small>Tài khoản sinh viên chỉ có một phiên/IP hoạt động. Tài khoản admin được phép đăng nhập nhiều thiết bị/IP đồng thời.</small></section></div>';
 }
 
 async function bootstrapAccess() {
@@ -122,7 +122,7 @@ function adminView() {
   const candidateRows = access.adminCandidates.filter(x => x.mssv !== access.member.mssv);
   const pending = candidateRows.filter(x => x.access_status !== 'approved');
   const approved = access.adminMembers.filter(x => x.status === 'approved');
-  return h('SECURITY ADMIN', 'Duyệt quyền truy cập sinh viên', 'Tài khoản chỉ được tạo/mở khi bạn duyệt. Mật khẩu mặc định = MSSV; mỗi tài khoản chỉ giữ một phiên/IP hoạt động.') +
+  return h('SECURITY ADMIN', 'Duyệt quyền truy cập sinh viên', 'Tài khoản chỉ được tạo/mở khi bạn duyệt. Mật khẩu mặc định = MSSV; sinh viên chỉ giữ một phiên/IP, riêng admin được nhiều phiên/IP đồng thời.') +
     (access.adminError ? '<div class="auth-error admin-error">' + safe(access.adminError) + '</div>' : '') +
     '<section class="panel admin-summary"><div><b>' + approved.length + '</b><span>tài khoản đang được duyệt</span></div><div><b>' + pending.length + '</b><span>thành viên CLB chưa có quyền / đang khóa</span></div><button id="adminRefresh" ' + (access.adminLoading ? 'disabled' : '') + '>↻ Tải lại danh sách</button></section>' +
     '<section class="panel admin-manual"><h3>Duyệt MSSV thủ công</h3><form id="adminAddForm"><input id="adminAddMssv" inputmode="numeric" maxlength="14" placeholder="MSSV"><input id="adminAddName" placeholder="Họ tên (không bắt buộc)"><button type="submit">Duyệt & tạo tài khoản</button></form></section>' +
