@@ -410,3 +410,26 @@ html[data-ui-mode="mobile"] .auth-user button{
 @media(max-width:780px){.admin-pager{gap:6px}.admin-pager button{padding:8px 9px}.admin-pager span{font-size:9px}}
 
 .admin-rule{display:block;margin-top:9px;font-size:10px;line-height:1.5;color:#6f7e79}
+
+
+/* Desktop-only access analytics */
+.desktop-leaderboard{margin:10px 12px 12px;padding:11px;border:1px solid #dce3de;border-radius:13px;background:#ffffffcc}
+.leaderboard-head{display:flex;justify-content:space-between;gap:8px;align-items:baseline;padding-bottom:7px;border-bottom:1px solid #e7ebe8}
+.leaderboard-head span{font-size:9px;font-weight:900;letter-spacing:.08em;color:#9a7938}
+.leaderboard-head small{font-size:8px;color:#7c8984}
+.leaderboard-row{display:grid;grid-template-columns:22px 1fr auto;gap:6px;align-items:center;padding:7px 0;border-bottom:1px solid #eef1ef}
+.leaderboard-row:last-child{border-bottom:0}
+.leaderboard-row>b{width:20px;height:20px;border-radius:7px;background:#edf4f0;color:#205749;display:grid;place-items:center;font-size:9px}
+.leaderboard-row>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:9px;font-weight:800;color:#38554d}
+.leaderboard-row>strong{font-size:10px;color:#1f5b4b}
+.leaderboard-empty{padding:10px 2px 2px;font-size:9px;color:#7b8984;line-height:1.4}
+.admin-access-stats{margin-bottom:12px}
+.access-chart{display:grid;gap:7px}
+.access-day{display:grid;grid-template-columns:42px minmax(120px,1fr) 32px;gap:8px;align-items:center}
+.access-day>span{font-size:9px;color:#66776f;font-variant-numeric:tabular-nums}
+.access-day>i{height:8px;border-radius:999px;background:#edf1ee;overflow:hidden}
+.access-day>i>b{display:block;height:100%;min-width:0;border-radius:999px;background:#2e6a59}
+.access-day>strong{font-size:10px;color:#244f44;text-align:right;font-variant-numeric:tabular-nums}
+.access-note{display:block;margin-top:10px;color:#82908b;font-size:8px;line-height:1.5}
+html[data-ui-mode="mobile"] .desktop-leaderboard,
+html[data-ui-mode="mobile"] .admin-access-stats{display:none!important}

@@ -33,6 +33,7 @@ function setUiMode(mode) {
   localStorage.setItem(UI_MODE_KEY, mode);
   applyUiMode();
   render();
+  if (access.member && mode === 'desktop') loadDesktopUsageInsights();
 }
 
 function uiModeMarkup() {
@@ -54,6 +55,13 @@ const access = {
   adminCandidatePage: 0,
   adminApprovedPage: 0,
   adminError: '',
+  leaderboard: [],
+  leaderboardDate: '',
+  leaderboardLoading: false,
+  accessStats: [],
+  accessStatsTotal: 0,
+  accessStatsLoading: false,
+  insightsError: '',
 };
 
 function authLoadingView() {
@@ -82,6 +90,8 @@ async function bootstrapAccess() {
     access.member = data.member;
     access.ready = true;
     render();
+    trackVisitOnce();
+    if (uiMode === 'desktop') loadDesktopUsageInsights();
   } catch (error) {
     access.member = null;
     access.ready = true;
@@ -101,6 +111,8 @@ async function handleLogin(mssv, password) {
     access.loginMssv = '';
     state.view = 'home';
     render();
+    trackVisitOnce();
+    if (uiMode === 'desktop') loadDesktopUsageInsights();
   } catch (error) {
     access.member = null;
     access.error = authMessage(error?.code);
@@ -113,6 +125,11 @@ async function handleLogout() {
   access.member = null;
   access.adminMembers = [];
   access.adminCandidates = [];
+  access.leaderboard = [];
+  access.leaderboardDate = '';
+  access.accessStats = [];
+  access.accessStatsTotal = 0;
+  access.insightsError = '';
   access.error = '';
   state.view = 'home';
   render();
@@ -130,6 +147,93 @@ async function verifyAccessHeartbeat() {
     state.view = 'home';
     render();
   }
+}
+
+function vietnamToday() {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Ho_Chi_Minh',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date());
+}
+
+async function trackVisitOnce() {
+  if (!access.member || !authApi.hasToken()) return;
+  const date = vietnamToday();
+  const owner = String(access.member.mssv || 'member');
+  const storageKey = 'trung-y-van-hiu-visit-v1:' + owner + ':' + date;
+  const sentKey = storageKey + ':sent';
+  if (sessionStorage.getItem(sentKey) === '1') return;
+
+  let visitKey = sessionStorage.getItem(storageKey);
+  if (!visitKey) {
+    const random = globalThis.crypto?.randomUUID ? globalThis.crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now().toString(36);
+    visitKey = date.replaceAll('-', '') + ':' + owner + ':' + random;
+    sessionStorage.setItem(storageKey, visitKey);
+  }
+
+  try {
+    await authApi.recordVisit(visitKey);
+    sessionStorage.setItem(sentKey, '1');
+  } catch {
+    // Không chặn học tập nếu thống kê tạm thời mất kết nối.
+  }
+}
+
+async function loadDesktopUsageInsights() {
+  if (!access.member || uiMode !== 'desktop' || access.leaderboardLoading) return;
+  access.leaderboardLoading = true;
+  if (access.member.role === 'admin') access.accessStatsLoading = true;
+  access.insightsError = '';
+  try {
+    const [leaderboard, adminStats] = await Promise.all([
+      authApi.leaderboard(),
+      access.member.role === 'admin' ? authApi.adminAccessStats() : Promise.resolve(null),
+    ]);
+    access.leaderboard = leaderboard.leaderboard || [];
+    access.leaderboardDate = leaderboard.date || '';
+    if (adminStats) {
+      access.accessStats = adminStats.days || [];
+      access.accessStatsTotal = Number(adminStats.total_visits || 0);
+    }
+  } catch (error) {
+    access.insightsError = authMessage(error?.code);
+  } finally {
+    access.leaderboardLoading = false;
+    access.accessStatsLoading = false;
+    render();
+  }
+}
+
+function leaderboardMarkup() {
+  if (uiMode !== 'desktop') return '';
+  const rows = access.leaderboard || [];
+  const content = access.leaderboardLoading && !rows.length
+    ? '<div class="leaderboard-empty">Đang cập nhật...</div>'
+    : rows.length
+      ? rows.map(row => '<div class="leaderboard-row"><b>' + row.rank + '</b><span>' + safe(row.display_name || row.mssv) + '</span><strong>' + Number(row.visits || 0) + '</strong></div>').join('')
+      : '<div class="leaderboard-empty">Chưa có lượt truy cập hôm nay.</div>';
+  return '<section class="desktop-leaderboard"><div class="leaderboard-head"><span>TOP 5 HÔM NAY</span><small>Theo lượt truy cập</small></div>' + content + '</section>';
+}
+
+function adminAccessStatsMarkup() {
+  if (uiMode !== 'desktop' || access.member?.role !== 'admin') return '';
+  const days = access.accessStats || [];
+  if (access.accessStatsLoading && !days.length) {
+    return '<section class="panel admin-access-stats"><div class="admin-title"><div><span>THỐNG KÊ RIÊNG ADMIN</span><h3>Lượt truy cập mỗi ngày</h3></div></div><div class="empty">Đang tải thống kê...</div></section>';
+  }
+  const max = Math.max(1, ...days.map(row => Number(row.visits || 0)));
+  const rows = days.map(row => {
+    const date = String(row.date || '');
+    const label = date.length >= 10 ? date.slice(8, 10) + '/' + date.slice(5, 7) : date;
+    const visits = Number(row.visits || 0);
+    const width = Math.round((visits / max) * 100);
+    return '<div class="access-day"><span>' + safe(label) + '</span><i><b style="width:' + width + '%"></b></i><strong>' + visits + '</strong></div>';
+  }).join('');
+  return '<section class="panel admin-access-stats"><div class="admin-title"><div><span>THỐNG KÊ RIÊNG ADMIN</span><h3>Lượt truy cập mỗi ngày</h3></div><small>14 ngày · ' + access.accessStatsTotal + ' lượt</small></div>' +
+    (access.insightsError ? '<div class="auth-error admin-error">' + safe(access.insightsError) + '</div>' : '') +
+    '<div class="access-chart">' + (rows || '<div class="empty">Chưa có dữ liệu truy cập.</div>') + '</div><small class="access-note">Bắt đầu ghi nhận từ khi tính năng thống kê được bật.</small></section>';
 }
 
 async function loadAdminData() {
@@ -167,6 +271,7 @@ function adminView() {
   return h('SECURITY ADMIN', 'Duyệt quyền truy cập sinh viên', 'Tài khoản chỉ được tạo/mở khi bạn duyệt. Mật khẩu mặc định = MSSV; sinh viên chỉ giữ một phiên/IP, riêng admin được nhiều phiên/IP đồng thời.') +
     (access.adminError ? '<div class="auth-error admin-error">' + safe(access.adminError) + '</div>' : '') +
     '<section class="panel admin-summary"><div><b>' + approved.length + '</b><span>tài khoản đang được duyệt</span></div><div><b>' + pending.length + '</b><span>thành viên CLB chưa có quyền / đang khóa</span></div><button id="adminRefresh" ' + (access.adminLoading ? 'disabled' : '') + '>↻ Tải lại danh sách</button></section>' +
+    adminAccessStatsMarkup() +
     '<section class="panel admin-manual"><h3>Tạo tài khoản học tập</h3><form id="adminAddForm"><input id="adminAddMssv" inputmode="numeric" maxlength="14" placeholder="MSSV" required><input id="adminAddName" placeholder="Họ tên" required><button type="submit">Tạo tài khoản</button></form><small class="admin-rule">Bắt buộc có đủ MSSV và Họ tên. Mật khẩu mặc định = MSSV.</small></section>' +
     '<section class="panel admin-section"><div class="admin-title"><div><span>DANH SÁCH CLB</span><h3>Chờ bạn duyệt</h3></div><small>' + pending.length + ' hồ sơ</small></div><div class="admin-list">' +
       (access.adminLoading ? '<div class="empty">Đang tải dữ liệu...</div>' : pending.length ? pendingPage.map(x => '<div class="admin-row"><div><b>' + safe(x.display_name || 'Chưa có tên') + '</b><span>' + safe(x.mssv) + (x.class_name ? ' · ' + safe(x.class_name) : '') + '</span><small>' + (x.access_status === 'suspended' ? 'Đang bị khóa' : 'Chưa được cấp quyền') + '</small></div><button data-admin-approve="' + safe(x.mssv) + '" data-admin-name="' + safe(x.display_name || '') + '">' + (x.access_status === 'suspended' ? 'Mở lại' : 'Duyệt') + '</button></div>').join('') : '<div class="empty">Không còn hồ sơ chờ duyệt.</div>') +
@@ -568,7 +673,7 @@ function shell(content) {
   if (access.member?.role === 'admin') navs.push(['admin', '盾', 'Quản trị']);
   return '<div class="shell"><aside><div class="brand"><b>中医中文</b><strong>TRUNG Y VĂN</strong><small>HIU CLB YHCT</small></div><nav>' +
     navs.map(n => '<button data-nav="' + n[0] + '" class="' + (state.view === n[0] ? 'active' : '') + '"><i>' + n[1] + '</i><span>' + n[2] + '</span></button>').join('') +
-    '</nav><div class="side-note"><span>HIU · YHCT</span><p>Mục tiêu từ vựng: nhìn → nhận biết → hiểu → nhớ.</p></div></aside><main><div class="top"><button class="mini" data-nav="home">中</button><div><b>HIU CLB YHCT</b><small>Chinese for Traditional Medicine</small></div><span class="streak">🔥 ' +
+    '</nav>' + leaderboardMarkup() + '<div class="side-note"><span>HIU · YHCT</span><p>Mục tiêu từ vựng: nhìn → nhận biết → hiểu → nhớ.</p></div></aside><main><div class="top"><button class="mini" data-nav="home">中</button><div><b>HIU CLB YHCT</b><small>Chinese for Traditional Medicine</small></div><span class="streak">🔥 ' +
     state.progress.xp + ' XP</span>' + uiModeMarkup() + '<div class="auth-user"><span>' + safe(access.member?.display_name || access.member?.mssv || '') + '</span><small>' + safe(access.member?.mssv || '') + '</small><button id="authLogout">Đăng xuất</button></div></div><div class="content">' + content + '</div></main><div class="bottom">' +
     navs.slice(0, 5).map(n => '<button data-nav="' + n[0] + '" class="' + (state.view === n[0] ? 'active' : '') + '"><i>' + n[1] + '</i><small>' + n[2] + '</small></button>').join('') +
     '</div></div>' + pwaInstallMarkup();
@@ -964,5 +1069,9 @@ render();
 bootstrapAccess();
 setInterval(verifyAccessHeartbeat, 5 * 60 * 1000);
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') verifyAccessHeartbeat();
+  if (document.visibilityState === 'visible') {
+    verifyAccessHeartbeat();
+    trackVisitOnce();
+    if (uiMode === 'desktop') loadDesktopUsageInsights();
+  }
 });
