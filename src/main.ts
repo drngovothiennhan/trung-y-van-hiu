@@ -90,7 +90,7 @@ async function bootstrapAccess() {
     access.member = data.member;
     access.ready = true;
     render();
-    trackVisitOnce();
+    await trackVisitOnce();
     if (uiMode === 'desktop') loadDesktopUsageInsights();
   } catch (error) {
     access.member = null;
@@ -111,7 +111,7 @@ async function handleLogin(mssv, password) {
     access.loginMssv = '';
     state.view = 'home';
     render();
-    trackVisitOnce();
+    await trackVisitOnce();
     if (uiMode === 'desktop') loadDesktopUsageInsights();
   } catch (error) {
     access.member = null;
@@ -1071,7 +1071,8 @@ setInterval(verifyAccessHeartbeat, 5 * 60 * 1000);
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') {
     verifyAccessHeartbeat();
-    trackVisitOnce();
-    if (uiMode === 'desktop') loadDesktopUsageInsights();
+    trackVisitOnce().then(() => {
+      if (uiMode === 'desktop') loadDesktopUsageInsights();
+    });
   }
 });
