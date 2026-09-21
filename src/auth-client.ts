@@ -88,6 +88,7 @@ export function authMessage(code) {
   const map = {
     INVALID_LOGIN_INPUT: 'MSSV hoặc mật khẩu không hợp lệ.',
     INVALID_STUDENT_CODE: 'MSSV phải gồm 8–14 chữ số.',
+    DISPLAY_NAME_REQUIRED: 'Bắt buộc có Họ tên trước khi tạo tài khoản học tập.',
     INVALID_CREDENTIALS: 'Sai MSSV hoặc mật khẩu.',
     WAITING_APPROVAL: 'Tài khoản chưa được quản trị viên duyệt.',
     ACCOUNT_SUSPENDED: 'Tài khoản đang bị tạm khóa.',

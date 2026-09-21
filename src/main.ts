@@ -52,6 +52,7 @@ const access = {
   adminMembers: [],
   adminCandidates: [],
   adminCandidatePage: 0,
+  adminApprovedPage: 0,
   adminError: '',
 };
 
@@ -153,25 +154,32 @@ function adminView() {
   const candidateRows = access.adminCandidates.filter(x => x.mssv !== access.member.mssv);
   const pending = candidateRows.filter(x => x.access_status !== 'approved');
   const approved = access.adminMembers.filter(x => x.status === 'approved');
-  const pageSize = 20;
+  const pageSize = 5;
   const totalPendingPages = Math.max(1, Math.ceil(pending.length / pageSize));
   access.adminCandidatePage = Math.min(access.adminCandidatePage, totalPendingPages - 1);
   const pageStart = access.adminCandidatePage * pageSize;
   const pendingPage = pending.slice(pageStart, pageStart + pageSize);
+
+  const totalApprovedPages = Math.max(1, Math.ceil(access.adminMembers.length / pageSize));
+  access.adminApprovedPage = Math.min(access.adminApprovedPage, totalApprovedPages - 1);
+  const approvedStart = access.adminApprovedPage * pageSize;
+  const approvedPage = access.adminMembers.slice(approvedStart, approvedStart + pageSize);
   return h('SECURITY ADMIN', 'Duyệt quyền truy cập sinh viên', 'Tài khoản chỉ được tạo/mở khi bạn duyệt. Mật khẩu mặc định = MSSV; sinh viên chỉ giữ một phiên/IP, riêng admin được nhiều phiên/IP đồng thời.') +
     (access.adminError ? '<div class="auth-error admin-error">' + safe(access.adminError) + '</div>' : '') +
     '<section class="panel admin-summary"><div><b>' + approved.length + '</b><span>tài khoản đang được duyệt</span></div><div><b>' + pending.length + '</b><span>thành viên CLB chưa có quyền / đang khóa</span></div><button id="adminRefresh" ' + (access.adminLoading ? 'disabled' : '') + '>↻ Tải lại danh sách</button></section>' +
-    '<section class="panel admin-manual"><h3>Duyệt MSSV thủ công</h3><form id="adminAddForm"><input id="adminAddMssv" inputmode="numeric" maxlength="14" placeholder="MSSV"><input id="adminAddName" placeholder="Họ tên (không bắt buộc)"><button type="submit">Duyệt & tạo tài khoản</button></form></section>' +
+    '<section class="panel admin-manual"><h3>Tạo tài khoản học tập</h3><form id="adminAddForm"><input id="adminAddMssv" inputmode="numeric" maxlength="14" placeholder="MSSV" required><input id="adminAddName" placeholder="Họ tên" required><button type="submit">Tạo tài khoản</button></form><small class="admin-rule">Bắt buộc có đủ MSSV và Họ tên. Mật khẩu mặc định = MSSV.</small></section>' +
     '<section class="panel admin-section"><div class="admin-title"><div><span>DANH SÁCH CLB</span><h3>Chờ bạn duyệt</h3></div><small>' + pending.length + ' hồ sơ</small></div><div class="admin-list">' +
       (access.adminLoading ? '<div class="empty">Đang tải dữ liệu...</div>' : pending.length ? pendingPage.map(x => '<div class="admin-row"><div><b>' + safe(x.display_name || 'Chưa có tên') + '</b><span>' + safe(x.mssv) + (x.class_name ? ' · ' + safe(x.class_name) : '') + '</span><small>' + (x.access_status === 'suspended' ? 'Đang bị khóa' : 'Chưa được cấp quyền') + '</small></div><button data-admin-approve="' + safe(x.mssv) + '" data-admin-name="' + safe(x.display_name || '') + '">' + (x.access_status === 'suspended' ? 'Mở lại' : 'Duyệt') + '</button></div>').join('') : '<div class="empty">Không còn hồ sơ chờ duyệt.</div>') +
     '</div>' +
     (pending.length > pageSize ? '<div class="admin-pager"><button data-admin-page="-1" ' + (access.adminCandidatePage === 0 ? 'disabled' : '') + '>← Trước</button><span>Trang ' + (access.adminCandidatePage + 1) + ' / ' + totalPendingPages + ' · ' + pending.length + ' hồ sơ</span><button data-admin-page="1" ' + (access.adminCandidatePage >= totalPendingPages - 1 ? 'disabled' : '') + '>Sau →</button></div>' : '') +
     '</section>' +
     '<section class="panel admin-section"><div class="admin-title"><div><span>QUYỀN TRUY CẬP</span><h3>Tài khoản đã tạo</h3></div><small>' + access.adminMembers.length + ' tài khoản</small></div><div class="admin-list">' +
-      (access.adminLoading ? '<div class="empty">Đang tải dữ liệu...</div>' : access.adminMembers.map(x => '<div class="admin-row account-row"><div><b>' + safe(x.display_name || x.student_code) + (x.role === 'admin' ? ' · ADMIN' : '') + '</b><span>' + safe(x.student_code) + '</span><small>' + (x.status === 'approved' ? (x.session_active ? 'Đang hoạt động · phiên đã khóa IP' : 'Đã duyệt · chưa hoạt động') : 'Đang tạm khóa') + '</small></div><div class="admin-actions">' +
+      (access.adminLoading ? '<div class="empty">Đang tải dữ liệu...</div>' : approvedPage.map(x => '<div class="admin-row account-row"><div><b>' + safe(x.display_name || x.student_code) + (x.role === 'admin' ? ' · ADMIN' : '') + '</b><span>' + safe(x.student_code) + '</span><small>' + (x.status === 'approved' ? (x.session_active ? 'Đang hoạt động · phiên đã khóa IP' : 'Đã duyệt · chưa hoạt động') : 'Đang tạm khóa') + '</small></div><div class="admin-actions">' +
         (x.role === 'admin' ? '' : '<button data-admin-status="' + safe(x.student_code) + '" data-next-status="' + (x.status === 'approved' ? 'suspended' : 'approved') + '">' + (x.status === 'approved' ? 'Tạm khóa' : 'Mở lại') + '</button>') +
         (x.student_code === access.member?.mssv ? '' : '<button data-admin-kick="' + safe(x.student_code) + '">Đăng xuất phiên</button>') + '<button data-admin-reset="' + safe(x.student_code) + '">Reset MK=MSSV</button></div></div>').join('')) +
-    '</div></section>';
+    '</div>' +
+    (access.adminMembers.length > pageSize ? '<div class="admin-pager"><button data-approved-page="-1" ' + (access.adminApprovedPage === 0 ? 'disabled' : '') + '>← Trước</button><span>Trang ' + (access.adminApprovedPage + 1) + ' / ' + totalApprovedPages + ' · ' + access.adminMembers.length + ' tài khoản</span><button data-approved-page="1" ' + (access.adminApprovedPage >= totalApprovedPages - 1 ? 'disabled' : '') + '>Sau →</button></div>' : '') +
+    '</section>';
 }
 
 async function adminAction(task) {
@@ -200,6 +208,7 @@ function bindAdmin() {
   const refresh = document.querySelector('#adminRefresh');
   if (refresh) refresh.addEventListener('click', () => {
     access.adminCandidatePage = 0;
+    access.adminApprovedPage = 0;
     loadAdminData();
   });
 
@@ -208,17 +217,37 @@ function bindAdmin() {
     render();
   }));
 
+  document.querySelectorAll('[data-approved-page]').forEach(button => button.addEventListener('click', () => {
+    access.adminApprovedPage = Math.max(0, access.adminApprovedPage + Number(button.dataset.approvedPage || 0));
+    render();
+  }));
+
   const addForm = document.querySelector('#adminAddForm');
   if (addForm) addForm.addEventListener('submit', event => {
     event.preventDefault();
     const mssv = String(document.querySelector('#adminAddMssv')?.value || '').trim();
     const name = String(document.querySelector('#adminAddName')?.value || '').trim();
+    if (!/^[0-9]{8,14}$/.test(mssv)) {
+      access.adminError = 'MSSV phải gồm 8–14 chữ số.';
+      render();
+      return;
+    }
+    if (!name) {
+      access.adminError = 'Bắt buộc nhập Họ tên trước khi tạo tài khoản học tập.';
+      render();
+      return;
+    }
     adminAction(() => authApi.adminAdd(mssv, name));
   });
 
   document.querySelectorAll('[data-admin-approve]').forEach(button => button.addEventListener('click', () => {
     const mssv = button.dataset.adminApprove;
-    const name = button.dataset.adminName || '';
+    const name = String(button.dataset.adminName || '').trim();
+    if (!name) {
+      access.adminError = 'Không thể duyệt hồ sơ chưa có Họ tên. Hãy nhập MSSV và Họ tên ở mục Tạo tài khoản học tập.';
+      render();
+      return;
+    }
     adminAction(() => authApi.adminAdd(mssv, name));
   }));
 

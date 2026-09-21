@@ -408,3 +408,5 @@ html[data-ui-mode="mobile"] .auth-user button{
 .admin-pager button:disabled{opacity:.4;cursor:not-allowed}
 .admin-pager span{font-size:10px;color:#6f7e79;text-align:center}
 @media(max-width:780px){.admin-pager{gap:6px}.admin-pager button{padding:8px 9px}.admin-pager span{font-size:9px}}
+
+.admin-rule{display:block;margin-top:9px;font-size:10px;line-height:1.5;color:#6f7e79}
