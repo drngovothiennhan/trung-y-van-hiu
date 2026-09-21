@@ -62,7 +62,7 @@ function authLoadingView() {
 
 function loginView() {
   const retry = authApi.hasToken();
-  return '<div class="auth-gate"><section class="auth-card"><div class="auth-mark">中</div><span class="auth-kicker">CLB YHCT HIU · ACCESS CONTROL</span><h1>Đăng nhập Trung Y Văn</h1><p class="auth-desc">Chỉ MSSV đã được admin duyệt mới được truy cập. Mật khẩu mặc định bằng chính MSSV.</p>' +
+  return '<div class="auth-gate"><section class="auth-card"><div class="auth-mark">中</div><span class="auth-kicker">HIU CLB YHCT · ACCESS CONTROL</span><h1>Đăng nhập Trung Y Văn</h1><p class="auth-desc">Chỉ MSSV đã được admin duyệt mới được truy cập. Mật khẩu mặc định bằng chính MSSV.</p>' +
     (access.error ? '<div class="auth-error">' + safe(access.error) + '</div>' : '') +
     '<form id="authLoginForm" autocomplete="on"><label>MSSV<input id="authMssv" inputmode="numeric" autocomplete="username" maxlength="14" value="' + safe(access.loginMssv) + '" placeholder="Nhập MSSV"></label><label>Mật khẩu<input id="authPassword" type="password" autocomplete="current-password" placeholder="Mật khẩu"></label><button class="auth-submit" type="submit">Đăng nhập</button></form>' +
     (retry ? '<button id="authRetry" class="auth-retry">Xác minh lại phiên hiện có</button>' : '') +
@@ -566,9 +566,9 @@ function shell(content) {
     ['progress', '图', 'Tiến độ']
   ];
   if (access.member?.role === 'admin') navs.push(['admin', '盾', 'Quản trị']);
-  return '<div class="shell"><aside><div class="brand"><b>中医中文</b><strong>TRUNG Y VĂN</strong><small>CLB YHCT HIU</small></div><nav>' +
+  return '<div class="shell"><aside><div class="brand"><b>中医中文</b><strong>TRUNG Y VĂN</strong><small>HIU CLB YHCT</small></div><nav>' +
     navs.map(n => '<button data-nav="' + n[0] + '" class="' + (state.view === n[0] ? 'active' : '') + '"><i>' + n[1] + '</i><span>' + n[2] + '</span></button>').join('') +
-    '</nav><div class="side-note"><span>HIU · YHCT</span><p>Mục tiêu từ vựng: nhìn → nhận biết → hiểu → nhớ.</p></div></aside><main><div class="top"><button class="mini" data-nav="home">中</button><div><b>CLB YHCT HIU</b><small>Chinese for Traditional Medicine</small></div><span class="streak">🔥 ' +
+    '</nav><div class="side-note"><span>HIU · YHCT</span><p>Mục tiêu từ vựng: nhìn → nhận biết → hiểu → nhớ.</p></div></aside><main><div class="top"><button class="mini" data-nav="home">中</button><div><b>HIU CLB YHCT</b><small>Chinese for Traditional Medicine</small></div><span class="streak">🔥 ' +
     state.progress.xp + ' XP</span>' + uiModeMarkup() + '<div class="auth-user"><span>' + safe(access.member?.display_name || access.member?.mssv || '') + '</span><small>' + safe(access.member?.mssv || '') + '</small><button id="authLogout">Đăng xuất</button></div></div><div class="content">' + content + '</div></main><div class="bottom">' +
     navs.slice(0, 5).map(n => '<button data-nav="' + n[0] + '" class="' + (state.view === n[0] ? 'active' : '') + '"><i>' + n[1] + '</i><small>' + n[2] + '</small></button>').join('') +
     '</div></div>' + pwaInstallMarkup();
@@ -579,7 +579,7 @@ function home() {
   const stage4 = learningTerms.filter(v => stage(v.hanzi) >= 4).length;
   const due = dueTerms().length;
   const durable = durableTerms().length;
-  return '<section class="hero"><div><span class="eyebrow">CLB YHCT HIU · 中医中文</span><h1>Trung Y Văn HIU</h1><p>Học Trung văn chuyên ngành theo vòng nhớ trọng tâm: <b>nhìn chữ → nhận biết → hiểu nghĩa → nhớ lại</b>, sau đó kiểm tra bằng đọc hiểu và trắc nghiệm.</p><div class="actions"><button class="primary" data-nav="vocab">Học từ vựng 4 bước</button><button id="homeDueReview">Ôn đến hạn · ' + due + '</button><button data-nav="quiz">Thi nhanh 10 câu</button></div></div><div class="seal">医<small>中医中文</small></div></section>' +
+  return '<section class="hero"><div><span class="eyebrow">HIU CLB YHCT · 中医中文</span><h1>Trung Y Văn HIU</h1><p>Học Trung văn chuyên ngành theo vòng nhớ trọng tâm: <b>nhìn chữ → nhận biết → hiểu nghĩa → nhớ lại</b>, sau đó kiểm tra bằng đọc hiểu và trắc nghiệm.</p><div class="actions"><button class="primary" data-nav="vocab">Học từ vựng 4 bước</button><button id="homeDueReview">Ôn đến hạn · ' + due + '</button><button data-nav="quiz">Thi nhanh 10 câu</button></div></div><div class="seal">医<small>中医中文</small></div></section>' +
     '<section class="stats">' + stat('字', learningTerms.length, 'Thuật ngữ nguồn') + stat('⏱', due, 'Từ đến hạn ôn') + stat('稳', durable, 'Từ bền ≥14 ngày') + stat('记', stage4, 'Từ đang ở mức Nhớ') + '</section>' +
     h('HỌC TỪ VỰNG', 'Nhìn · Nhận biết · Hiểu · Nhớ', 'Không đánh dấu “đã học” chỉ vì đã lật thẻ. Một từ chỉ được xem là nhớ khi hoàn thành đủ 4 mức.') +
     '<div class="memory-road">' +
