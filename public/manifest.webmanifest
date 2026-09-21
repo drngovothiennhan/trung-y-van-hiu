@@ -1,7 +1,7 @@
 {
-  "name": "Trung Y Văn HIU — CLB YHCT HIU",
+  "name": "Trung Y Văn HIU — HIU CLB YHCT",
   "short_name": "Trung Y Văn",
-  "description": "Ứng dụng học Trung văn chuyên ngành Y học cổ truyền của CLB YHCT HIU.",
+  "description": "Ứng dụng học Trung văn chuyên ngành Y học cổ truyền của HIU CLB YHCT.",
   "lang": "vi",
   "start_url": "./",
   "scope": "./",
