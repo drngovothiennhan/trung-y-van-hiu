@@ -64,6 +64,15 @@ export const authApi = {
     try { return await request('logout', { token: current }); }
     catch { return { ok: true }; }
   },
+  async recordVisit(visit_key) {
+    return withToken('record_visit', { visit_key });
+  },
+  async leaderboard() {
+    return withToken('leaderboard');
+  },
+  async adminAccessStats() {
+    return withToken('admin_access_stats');
+  },
   async adminList() {
     return withToken('admin_list');
   },
@@ -107,6 +116,9 @@ export function authMessage(code) {
     CANDIDATE_LIST_FAILED: 'Không tải được danh sách thành viên CLB.',
     ACCOUNT_STATE_FAILED: 'Không tải được trạng thái tài khoản hiện tại.',
     LIST_FAILED: 'Không tải được danh sách tài khoản.',
+    VISIT_RECORD_FAILED: 'Không thể ghi nhận lượt truy cập.',
+    LEADERBOARD_FAILED: 'Không tải được bảng xếp hạng.',
+    ACCESS_STATS_FAILED: 'Không tải được thống kê lượt truy cập.',
   };
   return map[code] || 'Không thể thực hiện yêu cầu. Vui lòng thử lại.';
 }
