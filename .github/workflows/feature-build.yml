@@ -1,0 +1,24 @@
+name: Feature build check
+
+on:
+  push:
+    branches:
+      - fix/pc-menu-render-lag-20260922
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install dependencies
+        run: npm install
+      - name: Build
+        run: npm run build
