@@ -400,7 +400,7 @@ function canShowPwaReminder() {
 function dismissPwaReminder() {
   localStorage.setItem(PWA_DISMISS_KEY, String(Date.now()));
   pwaPromptMode = null;
-  render();
+  render(true);
 }
 
 async function requestPwaInstall() {
@@ -412,7 +412,7 @@ async function requestPwaInstall() {
     localStorage.setItem(PWA_DISMISS_KEY, String(Date.now()));
   }
   pwaPromptMode = null;
-  render();
+  render(true);
 }
 
 function pwaInstallMarkup() {
@@ -433,7 +433,7 @@ function setupPwa() {
     deferredInstallPrompt = event;
     if (canShowPwaReminder()) {
       pwaPromptMode = 'install';
-      render();
+      render(true);
     }
   });
 
@@ -441,7 +441,7 @@ function setupPwa() {
     deferredInstallPrompt = null;
     pwaPromptMode = null;
     localStorage.removeItem(PWA_DISMISS_KEY);
-    render();
+    render(true);
   });
 
   if (isIosDevice() && canShowPwaReminder()) {
@@ -553,7 +553,7 @@ function nav(view) {
   state.readingAnswer = null;
   render();
   if (view === 'admin' && access.member?.role === 'admin') loadAdminData();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({ top: 0, behavior: 'auto' });
 }
 
 function h(kicker, title, sub) {
@@ -671,7 +671,7 @@ function shell(content) {
     ['progress', '图', 'Tiến độ']
   ];
   if (access.member?.role === 'admin') navs.push(['admin', '盾', 'Quản trị']);
-  return '<div class="shell"><aside><div class="brand"><b>中医中文</b><strong>TRUNG Y VĂN</strong><small>HIU CLB YHCT</small></div><nav>' +
+  return '<div class="shell" data-member="' + safe(access.member?.mssv || '') + '" data-role="' + safe(access.member?.role || '') + '"><aside><div class="brand"><b>中医中文</b><strong>TRUNG Y VĂN</strong><small>HIU CLB YHCT</small></div><nav>' +
     navs.map(n => '<button data-nav="' + n[0] + '" class="' + (state.view === n[0] ? 'active' : '') + '"><i>' + n[1] + '</i><span>' + n[2] + '</span></button>').join('') +
     '</nav>' + leaderboardMarkup() + '<div class="side-note"><span>HIU · YHCT</span><p>Mục tiêu từ vựng: nhìn → nhận biết → hiểu → nhớ.</p></div></aside><main><div class="top"><button class="mini" data-nav="home">中</button><div><b>HIU CLB YHCT</b><small>Chinese for Traditional Medicine</small></div><span class="streak">🔥 ' +
     state.progress.xp + ' XP</span>' + uiModeMarkup() + '<div class="auth-user"><span>' + safe(access.member?.display_name || access.member?.mssv || '') + '</span><small>' + safe(access.member?.mssv || '') + '</small><button id="authLogout">Đăng xuất</button></div></div><div class="content">' + content + '</div></main><div class="bottom">' +
@@ -872,7 +872,42 @@ function progressView() {
     '<section>' + h('LỊCH SỬ', 'Lượt trắc nghiệm gần đây', '') + '<div class="history">' + (state.progress.quizHistory.length ? state.progress.quizHistory.map((x, i) => '<div><span>Lượt ' + (i + 1) + '</span><b>' + x.score + '/10</b><small>' + new Date(x.at).toLocaleString('vi-VN') + '</small></div>').join('') : '<div class="empty">Chưa có lượt thi.</div>') + '</div></section>';
 }
 
-function render() {
+function currentViewBody() {
+  switch (state.view) {
+    case 'lessons': return lessonsView();
+    case 'vocab': return vocabView();
+    case 'reading': return readingView();
+    case 'radicals': return radicalsView();
+    case 'quiz': return quizView();
+    case 'answers': return answersView();
+    case 'library': return libraryView();
+    case 'progress': return progressView();
+    case 'admin': return adminView();
+    default: return home();
+  }
+}
+
+function syncShellChrome() {
+  document.querySelectorAll('.shell aside nav [data-nav], .shell .bottom [data-nav], .shell .top [data-nav]').forEach(button => {
+    button.classList.toggle('active', button.dataset.nav === state.view);
+  });
+
+  const streak = document.querySelector('.top .streak');
+  if (streak) streak.textContent = '🔥 ' + state.progress.xp + ' XP';
+
+  document.querySelectorAll('.ui-mode-switch [data-ui-mode]').forEach(button => {
+    button.classList.toggle('active', button.dataset.uiMode === uiMode);
+  });
+
+  const aside = document.querySelector('.shell aside');
+  if (aside) {
+    aside.querySelector('.desktop-leaderboard')?.remove();
+    const leaderboard = leaderboardMarkup();
+    if (leaderboard) aside.querySelector('.side-note')?.insertAdjacentHTML('beforebegin', leaderboard);
+  }
+}
+
+function render(forceShell = false) {
   const app = document.querySelector('#app');
   if (!access.ready) {
     app.innerHTML = authLoadingView();
@@ -884,41 +919,55 @@ function render() {
     return;
   }
 
-  let body = home();
-  if (state.view === 'lessons') body = lessonsView();
-  if (state.view === 'vocab') body = vocabView();
-  if (state.view === 'reading') body = readingView();
-  if (state.view === 'radicals') body = radicalsView();
-  if (state.view === 'quiz') body = quizView();
-  if (state.view === 'answers') body = answersView();
-  if (state.view === 'library') body = libraryView();
-  if (state.view === 'progress') body = progressView();
-  if (state.view === 'admin') body = adminView();
+  const body = currentViewBody();
+  const shellRoot = app.querySelector('.shell');
+  const sameMemberShell = shellRoot
+    && shellRoot.dataset.member === String(access.member.mssv || '')
+    && shellRoot.dataset.role === String(access.member.role || '');
+
+  if (!forceShell && sameMemberShell) {
+    const content = app.querySelector('.content');
+    if (content) {
+      content.innerHTML = body;
+      syncShellChrome();
+      bind(false);
+      return;
+    }
+  }
+
   app.innerHTML = shell(body);
-  bind();
+  bind(true);
 }
 
-function bind() {
-  document.querySelectorAll('[data-ui-mode]').forEach(button => button.addEventListener('click', () => setUiMode(button.dataset.uiMode)));
+function bind(fullShell = true) {
+  if (fullShell) {
+    document.querySelectorAll('[data-ui-mode]').forEach(button => button.addEventListener('click', () => setUiMode(button.dataset.uiMode)));
 
-  const logout = document.querySelector('#authLogout');
-  if (logout) logout.addEventListener('click', handleLogout);
+    const logout = document.querySelector('#authLogout');
+    if (logout) logout.addEventListener('click', handleLogout);
+
+    const pwaInstall = document.querySelector('#pwaInstall');
+    if (pwaInstall) pwaInstall.addEventListener('click', requestPwaInstall);
+    const pwaDismiss = document.querySelector('#pwaDismiss');
+    if (pwaDismiss) pwaDismiss.addEventListener('click', dismissPwaReminder);
+
+    document.querySelectorAll('.shell aside [data-nav], .shell .top [data-nav], .shell .bottom [data-nav]').forEach(e => {
+      e.addEventListener('click', () => nav(e.dataset.nav));
+    });
+  }
+
   bindAdmin();
-
-  const pwaInstall = document.querySelector('#pwaInstall');
-  if (pwaInstall) pwaInstall.addEventListener('click', requestPwaInstall);
-  const pwaDismiss = document.querySelector('#pwaDismiss');
-  if (pwaDismiss) pwaDismiss.addEventListener('click', dismissPwaReminder);
-  document.querySelectorAll('[data-nav]').forEach(e => e.addEventListener('click', () => nav(e.dataset.nav)));
-  document.querySelectorAll('[data-speak]').forEach(e => e.addEventListener('click', () => speak(e.dataset.speak)));
-  document.querySelectorAll('[data-source-open]').forEach(e => e.addEventListener('click', () => { state.source = e.dataset.sourceOpen; state.sourceQuery = ''; nav('library'); }));
-  document.querySelectorAll('[data-answer-lesson]').forEach(e => e.addEventListener('click', () => { state.answerLesson = Number(e.dataset.answerLesson); render(); }));
-  document.querySelectorAll('[data-phase]').forEach(e => e.addEventListener('click', () => { state.vocabPhase = Number(e.dataset.phase); state.vocabFeedback = null; state.recallRevealed = false; render(); }));
+  const scope = document.querySelector('.content') || document;
+  scope.querySelectorAll('[data-nav]').forEach(e => e.addEventListener('click', () => nav(e.dataset.nav)));
+  scope.querySelectorAll('[data-speak]').forEach(e => e.addEventListener('click', () => speak(e.dataset.speak)));
+  scope.querySelectorAll('[data-source-open]').forEach(e => e.addEventListener('click', () => { state.source = e.dataset.sourceOpen; state.sourceQuery = ''; nav('library'); }));
+  scope.querySelectorAll('[data-answer-lesson]').forEach(e => e.addEventListener('click', () => { state.answerLesson = Number(e.dataset.answerLesson); render(); }));
+  scope.querySelectorAll('[data-phase]').forEach(e => e.addEventListener('click', () => { state.vocabPhase = Number(e.dataset.phase); state.vocabFeedback = null; state.recallRevealed = false; render(); }));
 
   const phaseNext = document.querySelector('#phaseNext');
   if (phaseNext) phaseNext.addEventListener('click', () => { setStage(learningTerms[state.card].hanzi, 1); state.vocabPhase = 1; render(); });
 
-  document.querySelectorAll('[data-vchoice]').forEach(e => e.addEventListener('click', () => {
+  scope.querySelectorAll('[data-vchoice]').forEach(e => e.addEventListener('click', () => {
     const v = learningTerms[state.card];
     const correct = v.hv + ' · ' + v.meaning;
     if (e.dataset.value === correct) {
@@ -935,7 +984,7 @@ function bind() {
     }
   }));
 
-  document.querySelectorAll('[data-gchoice]').forEach(e => e.addEventListener('click', () => {
+  scope.querySelectorAll('[data-gchoice]').forEach(e => e.addEventListener('click', () => {
     const v = learningTerms[state.card];
     if (e.dataset.value === v.group) {
       setStage(v.hanzi, 3);
@@ -983,7 +1032,7 @@ function bind() {
   if (exitReview) exitReview.addEventListener('click', () => { state.reviewMode = false; state.reviewFeedback = null; render(); });
   const continueReview = document.querySelector('#continueReview');
   if (continueReview) continueReview.addEventListener('click', () => { state.reviewFeedback = null; render(); });
-  document.querySelectorAll('[data-review-value]').forEach(e => e.addEventListener('click', () => {
+  scope.querySelectorAll('[data-review-value]').forEach(e => e.addEventListener('click', () => {
     const v = dueTerms()[0];
     if (!v) return;
     const ok = e.dataset.value === e.dataset.correct;
@@ -1006,7 +1055,7 @@ function bind() {
   });
   bindWordClicks();
 
-  document.querySelectorAll('[data-read]').forEach(e => e.addEventListener('click', () => {
+  scope.querySelectorAll('[data-read]').forEach(e => e.addEventListener('click', () => {
     const i = Number(e.dataset.read), list = activeReadings(), r = list[state.reading % list.length];
     state.readingAnswer = i;
     if (i === r.answer && !state.progress.readingDone.includes(r.title)) {
@@ -1020,15 +1069,15 @@ function bind() {
   if (pr) pr.addEventListener('click', () => { const list = activeReadings(); state.reading = (state.reading - 1 + list.length) % list.length; state.readingAnswer = null; render(); });
   const nr = document.querySelector('#nextRead');
   if (nr) nr.addEventListener('click', () => { const list = activeReadings(); state.reading = (state.reading + 1) % list.length; state.readingAnswer = null; render(); });
-  document.querySelectorAll('[data-reading-topic]').forEach(e => e.addEventListener('click', () => { state.readingTopic = e.dataset.readingTopic; state.reading = 0; state.readingAnswer = null; render(); }));
+  scope.querySelectorAll('[data-reading-topic]').forEach(e => e.addEventListener('click', () => { state.readingTopic = e.dataset.readingTopic; state.reading = 0; state.readingAnswer = null; render(); }));
   const randomRead = document.querySelector('#randomRead');
   if (randomRead) randomRead.addEventListener('click', () => { const list = activeReadings(); state.reading = Math.floor(Math.random() * list.length); state.readingAnswer = null; render(); });
 
   const rs = document.querySelector('#radicalSearch');
   if (rs) rs.addEventListener('input', e => { state.radicalQuery = e.target.value; render(); });
 
-  document.querySelectorAll('[data-quizmode]').forEach(e => e.addEventListener('click', () => { state.quizMode = e.dataset.quizmode; newQuiz(); render(); }));
-  document.querySelectorAll('[data-quiz]').forEach(e => e.addEventListener('click', () => { state.quizAnswers[state.quizIndex] = Number(e.dataset.quiz); render(); }));
+  scope.querySelectorAll('[data-quizmode]').forEach(e => e.addEventListener('click', () => { state.quizMode = e.dataset.quizmode; newQuiz(); render(); }));
+  scope.querySelectorAll('[data-quiz]').forEach(e => e.addEventListener('click', () => { state.quizAnswers[state.quizIndex] = Number(e.dataset.quiz); render(); }));
   const pq = document.querySelector('#prevQuiz');
   if (pq) pq.addEventListener('click', () => { if (state.quizIndex > 0) { state.quizIndex--; render(); } });
   const nq = document.querySelector('#nextQuiz');
