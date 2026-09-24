@@ -10,6 +10,7 @@ import { appendixSource, answerKeys, appendixReferences } from './appendix';
 import { pathologyQuiz } from './pathology';
 import { bookOriginalQuiz } from './book-original-quiz';
 import { readingDrills } from './reading-drills';
+import { herbsFormulasSource, herbsFormulasTerms, herbsFormulasReadings, herbsFormulasQuiz } from './herbs-formulas';
 
 const STORAGE_KEY = 'trung-y-van-hiu-v4';
 
@@ -463,13 +464,14 @@ const sources = [
       pages: [...textbookSource.pages, ...lesson2TextbookPages, ...lesson3TextbookPages, ...remainingTextbookPages],
       status: 'Đã chuyển đủ Bài 1–8 (PDF trang 14–82).'
     }),
-  appendixSource
+  appendixSource,
+  herbsFormulasSource
 ];
-const learningTerms = [...baseLearningTerms, ...lesson2Terms, ...lesson3Terms, ...remainingTerms]
+const learningTerms = [...baseLearningTerms, ...lesson2Terms, ...lesson3Terms, ...remainingTerms, ...herbsFormulasTerms]
   .filter((t, i, a) => a.findIndex(x => x.hanzi === t.hanzi) === i);
-const coreQuizBank = [...baseQuizBank, ...lesson2Quiz, ...lesson3Quiz, ...remainingQuiz];
+const coreQuizBank = [...baseQuizBank, ...lesson2Quiz, ...lesson3Quiz, ...remainingQuiz, ...herbsFormulasQuiz];
 const quizBank = [...coreQuizBank, ...pathologyQuiz, ...bookOriginalQuiz];
-const readingBank = [...readings.map(r => ({...r, topic:'Lâm sàng', source:'Cách diễn đạt YHCT', words:[]})), ...readingDrills];
+const readingBank = [...readings.map(r => ({...r, topic:'Lâm sàng', source:'Cách diễn đạt YHCT', words:[]})), ...readingDrills, ...herbsFormulasReadings];
 
 function shuffleArray(items) {
   const out = [...items];
@@ -699,8 +701,9 @@ function lessonsView() {
     ['01', '汉语基础', 'Cơ sở tiếng Hán', 'Pinyin, thanh mẫu, vận mẫu, thanh điệu, chữ Hán, ngữ pháp.', 'basic'],
     ['02', '临床表达', 'Diễn đạt YHCT', 'Triệu chứng, hỏi bệnh, chẩn đoán, điều trị và hội thoại.', 'dialogue'],
     ['03', '中医词汇', 'Từ vựng YHCT Bài 6–9', 'Cấu trúc cơ thể, lý luận, chẩn đoán, điều trị.', 'compact'],
-    ['04', '专业教材', 'Giáo trình chuyên ngành', 'Đủ 8 bài học từ Âm Dương đến Sơ lược giải phẫu cơ thể.', 'textbook'],
-    ['05', '答案', 'Đáp án & phụ lục', 'Đáp án Bài 1–7, tài liệu tham khảo và thông tin xuất bản.', 'appendix']
+    ['04', '药材方剂', 'Dược liệu & Phương tễ', '14 dược liệu · phân loại · 4 cách bào chế · 8 phương tễ · cách dùng và lưu ý.', 'herbs-formulas'],
+    ['05', '专业教材', 'Giáo trình chuyên ngành', 'Đủ 8 bài học từ Âm Dương đến Sơ lược giải phẫu cơ thể.', 'textbook'],
+    ['06', '答案', 'Đáp án & phụ lục', 'Đáp án Bài 1–7, tài liệu tham khảo và thông tin xuất bản.', 'appendix']
   ];
   return h('LỘ TRÌNH', 'Bài học theo tài liệu', 'Mỗi cụm mở trực tiếp đúng nguồn đã cung cấp.') +
     '<div class="lesson-list">' + modules.map(x => '<article class="lesson"><b>' + x[0] + '</b><span>' + x[1] + '</span><div><small>NGUỒN HỌC</small><h3>' + x[2] + '</h3><p>' + x[3] + '</p></div><button class="speak source-go" data-source-open="' + x[4] + '">→</button></article>').join('') + '</div>' +
@@ -808,25 +811,77 @@ function radicalsView() {
 }
 
 function newQuiz() {
-  const pool = state.quizMode === 'pathology' ? pathologyQuiz : state.quizMode === 'book' ? bookOriginalQuiz : quizBank;
+  const pool = state.quizMode === 'pathology'
+    ? pathologyQuiz
+    : state.quizMode === 'book'
+      ? bookOriginalQuiz
+      : state.quizMode === 'herbs'
+        ? herbsFormulasQuiz
+        : quizBank;
   state.quiz = prepareQuizRound(pool);
   state.quizIndex = 0;
   state.quizAnswers = {};
 }
 
 function quizView() {
-  const modeSwitch = '<div class="quiz-modes"><button data-quizmode="mixed" class="' + (state.quizMode === 'mixed' ? 'active' : '') + '">Tổng hợp · ' + quizBank.length + '</button><button data-quizmode="pathology" class="' + (state.quizMode === 'pathology' ? 'active' : '') + '">Bệnh lý · ' + pathologyQuiz.length + '</button><button data-quizmode="book" class="' + (state.quizMode === 'book' ? 'active' : '') + '">Gốc sách · ' + bookOriginalQuiz.length + '</button></div>' + (state.quizMode === 'pathology' ? '<div class="clinical-note">Câu hỏi bệnh lý chỉ bám tài liệu đã cung cấp; dùng cho học thuật/ngôn ngữ chuyên ngành, không thay thế chẩn đoán lâm sàng.</div>' : state.quizMode === 'book' ? '<div class="clinical-note">Đây là các câu 5.1 判断正误 có thật trong giáo trình. Sách không trình bày chúng dưới dạng A–D; app giữ nguyên nội dung và dùng lựa chọn √ Đúng / × Sai, đối chiếu đáp án phụ lục.</div>' : '');
+  const modeSwitch =
+    '<div class="quiz-modes">' +
+    '<button data-quizmode="mixed" class="' + (state.quizMode === 'mixed' ? 'active' : '') + '">Tổng hợp · ' + quizBank.length + '</button>' +
+    '<button data-quizmode="herbs" class="' + (state.quizMode === 'herbs' ? 'active' : '') + '">Dược liệu · ' + herbsFormulasQuiz.length + '</button>' +
+    '<button data-quizmode="pathology" class="' + (state.quizMode === 'pathology' ? 'active' : '') + '">Bệnh lý · ' + pathologyQuiz.length + '</button>' +
+    '<button data-quizmode="book" class="' + (state.quizMode === 'book' ? 'active' : '') + '">Gốc sách · ' + bookOriginalQuiz.length + '</button></div>' +
+    (state.quizMode === 'herbs'
+      ? '<div class="clinical-note">20 câu bám trực tiếp PPT “Dược liệu và phương tễ trong YHCT”: dược liệu, bào chế, phương tễ, cách dùng và lưu ý an toàn.</div>'
+      : state.quizMode === 'pathology'
+        ? '<div class="clinical-note">Câu hỏi bệnh lý chỉ bám tài liệu đã cung cấp; dùng cho học thuật/ngôn ngữ chuyên ngành, không thay thế chẩn đoán lâm sàng.</div>'
+        : state.quizMode === 'book'
+          ? '<div class="clinical-note">Đây là các câu 5.1 判断正误 có thật trong giáo trình. Sách không trình bày chúng dưới dạng A–D; app giữ nguyên nội dung và dùng lựa chọn √ Đúng / × Sai, đối chiếu đáp án phụ lục.</div>'
+          : '');
+
+  const modeCount = state.quizMode === 'herbs'
+    ? herbsFormulasQuiz.length
+    : state.quizMode === 'book'
+      ? bookOriginalQuiz.length
+      : state.quizMode === 'pathology'
+        ? pathologyQuiz.length
+        : quizBank.length;
+
+  const modeTitle = state.quizMode === 'herbs'
+    ? 'Dược liệu & Phương tễ'
+    : state.quizMode === 'pathology'
+      ? 'Trắc nghiệm bệnh lý theo tài liệu'
+      : state.quizMode === 'book'
+        ? 'Câu hỏi trắc nghiệm gốc trong sách'
+        : 'Phòng trắc nghiệm';
+
+  const modeDescription = state.quizMode === 'herbs'
+    ? 'Mỗi lượt lấy 10 câu từ ngân hàng 20 câu của bài Dược liệu & Phương tễ.'
+    : state.quizMode === 'pathology'
+      ? 'Mỗi lượt lấy 10 câu bệnh lý/chẩn đoán chỉ từ tài liệu nguồn.'
+      : state.quizMode === 'book'
+        ? 'Mỗi lượt lấy 10 câu từ 23 câu 判断正误 có sẵn trong giáo trình và đối chiếu đáp án phụ lục.'
+        : 'Mỗi lượt lấy 10 câu từ ngân hàng ' + quizBank.length + ' câu.';
+
   if (state.quizIndex >= state.quiz.length) {
     const score = state.quiz.reduce((n, q, i) => n + (state.quizAnswers[i] === q.a ? 1 : 0), 0);
-    return h('KẾT QUẢ', state.quizMode === 'pathology' ? 'Kết quả trắc nghiệm bệnh lý' : state.quizMode === 'book' ? 'Kết quả câu hỏi gốc trong sách' : 'Hoàn thành lượt trắc nghiệm', 'Đối chiếu lại từ sai với vòng học từ vựng và đúng nguồn tài liệu.') + modeSwitch +
-      '<section class="panel result"><div class="score"><b>' + score + '</b><span>/10</span></div><h2>' + (score >= 8 ? 'Rất tốt' : score >= 6 ? 'Đạt nền tảng' : 'Cần ôn lại từ') + '</h2><p>Ngân hàng chế độ này có ' + (state.quizMode === 'book' ? bookOriginalQuiz.length : state.quizMode === 'pathology' ? pathologyQuiz.length : quizBank.length) + ' câu bám nguồn.</p><button id="restart" class="primary">Làm lượt mới</button><div class="review">' +
+    const resultTitle = state.quizMode === 'herbs'
+      ? 'Kết quả Dược liệu & Phương tễ'
+      : state.quizMode === 'pathology'
+        ? 'Kết quả trắc nghiệm bệnh lý'
+        : state.quizMode === 'book'
+          ? 'Kết quả câu hỏi gốc trong sách'
+          : 'Hoàn thành lượt trắc nghiệm';
+    return h('KẾT QUẢ', resultTitle, 'Đối chiếu lại từ sai với vòng học từ vựng và đúng nguồn tài liệu.') + modeSwitch +
+      '<section class="panel result"><div class="score"><b>' + score + '</b><span>/10</span></div><h2>' + (score >= 8 ? 'Rất tốt' : score >= 6 ? 'Đạt nền tảng' : 'Cần ôn lại từ') + '</h2><p>Ngân hàng chế độ này có ' + modeCount + ' câu bám nguồn.</p><button id="restart" class="primary">Làm lượt mới</button><div class="review">' +
       state.quiz.map((q, i) => '<div class="' + (state.quizAnswers[i] === q.a ? 'ok' : 'no') + '"><b>' + (i + 1) + '</b><span>' + q.q + '<small>Đúng: ' + q.o[q.a] + (q.explain ? ' · ' + q.explain : '') + (q.source ? ' · Nguồn: ' + q.source : '') + '</small></span><i>' + (state.quizAnswers[i] === q.a ? '✓' : '✕') + '</i></div>').join('') +
       '</div></section>';
   }
+
   const q = state.quiz[state.quizIndex];
   const selected = state.quizAnswers[state.quizIndex];
-  return h('MOCK QUIZ', state.quizMode === 'pathology' ? 'Trắc nghiệm bệnh lý theo tài liệu' : state.quizMode === 'book' ? 'Câu hỏi trắc nghiệm gốc trong sách' : 'Phòng trắc nghiệm', state.quizMode === 'pathology' ? 'Mỗi lượt lấy 10 câu bệnh lý/chẩn đoán chỉ từ tài liệu nguồn.' : state.quizMode === 'book' ? 'Mỗi lượt lấy 10 câu từ 23 câu 判断正误 có sẵn trong giáo trình và đối chiếu đáp án phụ lục.' : 'Mỗi lượt lấy 10 câu từ ngân hàng ' + quizBank.length + ' câu.') + modeSwitch +
-    '<section class="panel quiz"><div class="quiz-meta"><span>Câu ' + (state.quizIndex + 1) + '/10</span><span>' + ((state.quizMode === 'pathology' || state.quizMode === 'book') ? (q.category || 'Nguồn sách') : 'Ngân hàng nguồn: ' + quizBank.length) + '</span></div>' + (q.source ? '<div class="case-source">Nguồn: ' + q.source + '</div>' : '') + '<div class="track"><i style="width:' + ((state.quizIndex + 1) * 10) + '%"></i></div><h2>' + q.q + '</h2><div class="options">' +
+  const categoryLabel = state.quizMode === 'mixed' ? 'Ngân hàng nguồn: ' + quizBank.length : (q.category || 'Nguồn tài liệu');
+  return h('MOCK QUIZ', modeTitle, modeDescription) + modeSwitch +
+    '<section class="panel quiz"><div class="quiz-meta"><span>Câu ' + (state.quizIndex + 1) + '/10</span><span>' + categoryLabel + '</span></div>' + (q.source ? '<div class="case-source">Nguồn: ' + q.source + '</div>' : '') + '<div class="track"><i style="width:' + ((state.quizIndex + 1) * 10) + '%"></i></div><h2>' + q.q + '</h2><div class="options">' +
     q.o.map((o, i) => '<button data-quiz="' + i + '" class="' + (selected === i ? 'selected' : '') + '"><span>' + String.fromCharCode(65 + i) + '</span>' + o + '</button>').join('') +
     '</div><div class="pager"><button id="prevQuiz" ' + (state.quizIndex === 0 ? 'disabled' : '') + '>← Trước</button><button id="nextQuiz" class="primary" ' + (selected === undefined ? 'disabled' : '') + '>' + (state.quizIndex === 9 ? 'Nộp bài' : 'Câu tiếp →') + '</button></div></section>';
 }
