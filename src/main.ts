@@ -11,6 +11,7 @@ import { pathologyQuiz } from './pathology';
 import { bookOriginalQuiz } from './book-original-quiz';
 import { readingDrills } from './reading-drills';
 import { herbsFormulasSource, herbsFormulasTerms, herbsFormulasReadings, herbsFormulasQuiz } from './herbs-formulas';
+import { lessonAmDuongTextbookPages, lessonAmDuongTerms, lessonAmDuongQuiz, lessonAmDuongReadings } from './lesson-am-duong';
 
 const STORAGE_KEY = 'trung-y-van-hiu-v4';
 
@@ -474,17 +475,17 @@ const sources = [
     .filter(s => s.id !== 'textbook')
     .concat({
       ...textbookSource,
-      pages: [...textbookSource.pages, ...lesson2TextbookPages, ...lesson3TextbookPages, ...remainingTextbookPages],
-      status: 'Đã chuyển đủ Bài 1–8 (PDF trang 14–82).'
+      pages: [...textbookSource.pages, ...lesson2TextbookPages, ...lesson3TextbookPages, ...remainingTextbookPages, ...lessonAmDuongTextbookPages],
+      status: 'Đã chuyển đủ Bài 1–8 và bổ sung chuyên đề Âm Dương theo bài giảng.'
     }),
   appendixSource,
   herbsFormulasSource
 ];
-const learningTerms = [...baseLearningTerms, ...lesson2Terms, ...lesson3Terms, ...remainingTerms, ...herbsFormulasTerms]
+const learningTerms = [...baseLearningTerms, ...lesson2Terms, ...lesson3Terms, ...remainingTerms, ...herbsFormulasTerms, ...lessonAmDuongTerms]
   .filter((t, i, a) => a.findIndex(x => x.hanzi === t.hanzi) === i);
-const coreQuizBank = [...baseQuizBank, ...lesson2Quiz, ...lesson3Quiz, ...remainingQuiz, ...herbsFormulasQuiz];
+const coreQuizBank = [...baseQuizBank, ...lesson2Quiz, ...lesson3Quiz, ...remainingQuiz, ...herbsFormulasQuiz, ...lessonAmDuongQuiz];
 const quizBank = [...coreQuizBank, ...pathologyQuiz, ...bookOriginalQuiz];
-const readingBank = [...readings.map(r => ({...r, topic:'Lâm sàng', source:'Cách diễn đạt YHCT', words:[]})), ...readingDrills, ...herbsFormulasReadings];
+const readingBank = [...readings.map(r => ({...r, topic:'Lâm sàng', source:'Cách diễn đạt YHCT', words:[]})), ...readingDrills, ...herbsFormulasReadings, ...lessonAmDuongReadings];
 
 function shuffleArray(items) {
   const out = [...items];
