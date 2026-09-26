@@ -9,7 +9,7 @@ function authError(code, status = 0) {
   return error;
 }
 
-async function request(action, payload = {}) {
+async function request(action, payload = {}, options = {}) {
   let response;
   try {
     response = await fetch(AUTH_URL, {
@@ -20,6 +20,7 @@ async function request(action, payload = {}) {
         'apikey': PUBLISHABLE_KEY,
       },
       body: JSON.stringify({ action, ...payload }),
+      keepalive: options.keepalive === true,
     });
   } catch {
     throw authError('NETWORK_ERROR');
@@ -40,10 +41,10 @@ function setToken(value) {
   else localStorage.removeItem(TOKEN_KEY);
 }
 
-async function withToken(action, payload = {}) {
+async function withToken(action, payload = {}, options = {}) {
   const current = token();
   if (!current) throw authError('NO_SESSION', 401);
-  return request(action, { token: current, ...payload });
+  return request(action, { token: current, ...payload }, options);
 }
 
 export const authApi = {
@@ -66,6 +67,12 @@ export const authApi = {
   },
   async recordVisit(visit_key) {
     return withToken('record_visit', { visit_key });
+  },
+  async loadLearningState() {
+    return withToken('user_state_get');
+  },
+  async saveLearningState(state, keepalive = false) {
+    return withToken('user_state_save', { state }, { keepalive });
   },
   async leaderboard() {
     return withToken('leaderboard');
@@ -119,6 +126,9 @@ export function authMessage(code) {
     VISIT_RECORD_FAILED: 'Không thể ghi nhận lượt truy cập.',
     LEADERBOARD_FAILED: 'Không tải được bảng xếp hạng.',
     ACCESS_STATS_FAILED: 'Không tải được thống kê lượt truy cập.',
+    USER_STATE_LOAD_FAILED: 'Không tải được tiến độ học từ máy chủ.',
+    USER_STATE_SAVE_FAILED: 'Không lưu được tiến độ học lên máy chủ.',
+    INVALID_USER_STATE: 'Dữ liệu tiến độ học không hợp lệ.',
   };
   return map[code] || 'Không thể thực hiện yêu cầu. Vui lòng thử lại.';
 }

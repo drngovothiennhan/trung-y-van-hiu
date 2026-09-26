@@ -82,9 +82,9 @@ export function writingPracticeView(terms, memberId) {
       '<article class="stat"><span>✍</span><div><strong>' + totalWrites + '</strong><small>Lượt tự ghi nhận</small></div></article>' +
       '<article class="stat"><span>词</span><div><strong>' + terms.length + '</strong><small>Từ trong kho học</small></div></article>' +
     '</section>' +
-    '<section class="writing-layout"><aside class="panel writing-picker"><div class="writing-panel-head"><div><span class="writing-kicker">KHO TỪ VỰNG</span><h2>Chọn từ để viết</h2></div><span class="writing-count">' + terms.length + ' từ</span></div>' +
+    '<section class="writing-layout"><div class="panel writing-picker"><div class="writing-panel-head"><div><span class="writing-kicker">KHO TỪ VỰNG</span><h2>Chọn từ để viết</h2></div><span class="writing-count">' + terms.length + ' từ</span></div>' +
       '<label class="writing-search-label" for="writingSearch">Tìm theo chữ, pinyin hoặc nghĩa</label><input id="writingSearch" class="writing-search" type="search" value="' + escapeHtml(searchQuery) + '" placeholder="Ví dụ: âm dương, yīnyáng, 阴阳" autocomplete="off">' +
-      '<div id="writingTermList" class="writing-term-list">' + termListMarkup(terms, progress, term.hanzi) + '</div></aside>' +
+      '<div id="writingTermList" class="writing-term-list">' + termListMarkup(terms, progress, term.hanzi) + '</div></div>' +
       '<div class="writing-workspace"><section class="panel writing-lesson-card"><div class="writing-panel-head"><div><span class="writing-kicker">' + escapeHtml(term.group || 'TỪ VỰNG') + '</span><h2>' + escapeHtml(term.hanzi) + '</h2></div><button type="button" class="speak" data-writing-speak="' + escapeHtml(term.hanzi) + '" aria-label="Nghe phát âm">🔊</button></div>' +
       '<p class="writing-pronunciation"><b>' + escapeHtml(term.pinyin) + '</b><span>' + escapeHtml(term.hv) + '</span></p><p class="writing-meaning">' + escapeHtml(term.meaning) + '</p>' +
       '<div class="writing-section-head"><div><span class="writing-step">BƯỚC 1</span><strong>Xem thứ tự nét</strong><small>Mỗi chữ tự động phát lại liên tục</small></div><button type="button" class="writing-animation-toggle" id="writingAnimationToggle" aria-pressed="false">Tạm dừng</button></div>' +
@@ -92,7 +92,25 @@ export function writingPracticeView(terms, memberId) {
       '<section class="panel writing-practice-card"><div class="writing-section-head"><div><span class="writing-step">BƯỚC 2</span><strong>Tự viết lại</strong><small>Viết theo thứ tự nét vừa quan sát</small></div><button type="button" class="writing-guide-toggle" id="writingGuideToggle">' + (showGuide ? 'Ẩn chữ mờ' : 'Hiện chữ mờ') + '</button></div>' +
       '<div class="writing-canvas-wrap"><canvas id="writingCanvas" width="900" height="360" role="img" aria-label="Bảng viết chữ Hán ' + escapeHtml(term.hanzi) + '"></canvas></div>' +
       '<div class="writing-tools"><button type="button" id="writingUndo">↶ Hoàn tác nét</button><button type="button" id="writingClear">Xóa bảng</button><button type="button" class="primary" id="writingComplete">Tôi đã luyện xong từ này</button></div>' +
-      '<p class="writing-hint">Dùng ngón tay, bút cảm ứng hoặc chuột. Lượt luyện được lưu trên thiết bị; ứng dụng chưa tự chấm nét viết.</p></section></div></section>';
+      '<p class="writing-hint">Dùng ngón tay, bút cảm ứng hoặc chuột. Tiến độ và nét đang viết được lưu theo tài khoản; ứng dụng chưa tự chấm nét viết.</p></section></div></section>';
+}
+
+export function getWritingContext(memberId) {
+  return { hanzi: selectedHanzi, search: searchQuery, progress: readProgress(memberId), strokes };
+}
+
+export function restoreWritingContext(memberId, context, terms) {
+  if (!context || typeof context !== 'object') return;
+  if (typeof context.hanzi === 'string' && terms.some(term => term.hanzi === context.hanzi)) selectedHanzi = context.hanzi;
+  if (typeof context.search === 'string') searchQuery = context.search.slice(0, 120);
+  if (context.progress && typeof context.progress === 'object' && !Array.isArray(context.progress)) writeProgress(memberId, context.progress);
+  if (Array.isArray(context.strokes)) {
+    strokes = context.strokes.slice(0, 40).map(stroke => Array.isArray(stroke)
+      ? stroke.slice(0, 1500).filter(point => point && Number.isFinite(point.x) && Number.isFinite(point.y)
+        && point.x >= 0 && point.x <= 900 && point.y >= 0 && point.y <= 360)
+        .map(point => ({ x: point.x, y: point.y }))
+      : []).filter(stroke => stroke.length);
+  }
 }
 
 function drawBoard(canvas, term) {
@@ -222,7 +240,7 @@ function mountAnimations(root, chars) {
   });
 }
 
-export function bindWritingPractice(root, terms, memberId, onChange) {
+export function bindWritingPractice(root, terms, memberId, onChange, onStateChange = () => {}) {
   const term = selectedTerm(terms);
   const canvas = root.querySelector('#writingCanvas');
   const redraw = () => drawBoard(canvas, term);
@@ -236,6 +254,7 @@ export function bindWritingPractice(root, terms, memberId, onChange) {
       searchQuery = event.currentTarget.value;
       list.innerHTML = termListMarkup(terms, readProgress(memberId), term.hanzi);
       bindTermButtons();
+      onStateChange();
     });
   }
   function bindTermButtons() {
@@ -268,11 +287,13 @@ export function bindWritingPractice(root, terms, memberId, onChange) {
     strokes = [];
     activeStroke = null;
     redraw();
+    onStateChange();
   });
   root.querySelector('#writingUndo')?.addEventListener('click', () => {
     if (activeStroke) activeStroke = null;
     else strokes.pop();
     redraw();
+    onStateChange();
   });
 
   if (canvas) {
@@ -286,6 +307,7 @@ export function bindWritingPractice(root, terms, memberId, onChange) {
     canvas.addEventListener('pointerdown', event => {
       event.preventDefault();
       canvas.setPointerCapture?.(event.pointerId);
+      if (strokes.length >= 40) strokes.shift();
       activeStroke = [pointFromEvent(event)];
       strokes.push(activeStroke);
       redraw();
@@ -293,10 +315,11 @@ export function bindWritingPractice(root, terms, memberId, onChange) {
     canvas.addEventListener('pointermove', event => {
       if (!activeStroke) return;
       event.preventDefault();
+      if (activeStroke.length >= 1500) return;
       activeStroke.push(pointFromEvent(event));
       redraw();
     });
-    const stopStroke = () => { activeStroke = null; };
+    const stopStroke = () => { activeStroke = null; onStateChange(); };
     canvas.addEventListener('pointerup', stopStroke);
     canvas.addEventListener('pointercancel', stopStroke);
     canvas.addEventListener('lostpointercapture', stopStroke);

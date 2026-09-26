@@ -12,7 +12,7 @@ import { bookOriginalQuiz } from './book-original-quiz';
 import { readingDrills } from './reading-drills';
 import { herbsFormulasSource, herbsFormulasTerms, herbsFormulasReadings, herbsFormulasQuiz } from './herbs-formulas';
 import { lessonAmDuongTextbookPages, lessonAmDuongTerms, lessonAmDuongQuiz, lessonAmDuongReadings } from './lesson-am-duong';
-import { writingPracticeView, bindWritingPractice } from './writing-practice';
+import { writingPracticeView, bindWritingPractice, getWritingContext, restoreWritingContext } from './writing-practice';
 
 const STORAGE_KEY = 'trung-y-van-hiu-v4';
 
@@ -69,6 +69,10 @@ const access = {
   insightsError: '',
 };
 
+let userStateSyncTimer = null;
+let userStateSyncChain = Promise.resolve();
+let restoringUserState = false;
+
 function authLoadingView() {
   return '<div class="auth-gate"><section class="auth-card auth-loading"><div class="auth-mark">中</div><h1>Trung Y Văn HIU</h1><p>Đang xác minh quyền truy cập...</p></section></div>';
 }
@@ -93,6 +97,7 @@ async function bootstrapAccess() {
   try {
     const data = await authApi.session();
     access.member = data.member;
+    await restoreSignedInUserState(data.member);
     access.ready = true;
     render();
     await trackVisitOnce();
@@ -112,9 +117,9 @@ async function handleLogin(mssv, password) {
   try {
     const data = await authApi.login(mssv, password);
     access.member = data.member;
+    await restoreSignedInUserState(data.member);
     access.ready = true;
     access.loginMssv = '';
-    state.view = 'home';
     render();
     await trackVisitOnce();
     if (uiMode === 'desktop') loadDesktopUsageInsights();
@@ -126,6 +131,7 @@ async function handleLogin(mssv, password) {
 }
 
 async function handleLogout() {
+  await flushUserStateSync();
   await authApi.logout();
   access.member = null;
   access.adminMembers = [];
@@ -553,7 +559,123 @@ function loadProgress() {
 }
 
 function save() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state.progress));
+  const key = access.member?.mssv ? memberProgressKey(access.member.mssv) : STORAGE_KEY;
+  try { localStorage.setItem(key, JSON.stringify(state.progress)); } catch {}
+  scheduleUserStateSync();
+}
+
+function validObject(value) {
+  return value && typeof value === 'object' && !Array.isArray(value);
+}
+
+function memberProgressKey(memberCode) {
+  return STORAGE_KEY + ':' + encodeURIComponent(String(memberCode || 'member'));
+}
+
+function memberContextKey(memberCode) {
+  return 'trung-y-van-hiu-context-v1:' + encodeURIComponent(String(memberCode || 'member'));
+}
+
+function userStateSnapshot() {
+  const memberCode = access.member?.mssv;
+  if (!memberCode || !state) return null;
+  return {
+    version: 1,
+    progress: state.progress,
+    context: {
+      view: state.view,
+      card: state.card,
+      vocabPhase: state.vocabPhase,
+      reading: state.reading,
+      readingTopic: state.readingTopic,
+      quizMode: state.quizMode,
+      quizIndex: state.quizIndex,
+      quizAnswers: state.quizAnswers,
+      quiz: state.quiz,
+      reviewMode: state.reviewMode,
+      writing: getWritingContext(memberCode),
+    },
+  };
+}
+
+function scheduleUserStateSync() {
+  const memberCode = access.member?.mssv;
+  const snapshot = userStateSnapshot();
+  if (!memberCode || !snapshot || restoringUserState) return;
+  try {
+    localStorage.setItem(memberProgressKey(memberCode), JSON.stringify(snapshot.progress));
+    localStorage.setItem(memberContextKey(memberCode), JSON.stringify(snapshot.context));
+  } catch {}
+  clearTimeout(userStateSyncTimer);
+  userStateSyncTimer = setTimeout(() => {
+    userStateSyncChain = userStateSyncChain.catch(() => {}).then(() => authApi.saveLearningState(snapshot)).catch(error => {
+      console.warn('Không đồng bộ được tiến độ học lên máy chủ.', error?.code || error);
+    });
+  }, 220);
+}
+
+function flushUserStateSync() {
+  clearTimeout(userStateSyncTimer);
+  const snapshot = userStateSnapshot();
+  if (!snapshot) return userStateSyncChain;
+  try {
+    localStorage.setItem(memberProgressKey(access.member.mssv), JSON.stringify(snapshot.progress));
+    localStorage.setItem(memberContextKey(access.member.mssv), JSON.stringify(snapshot.context));
+  } catch {}
+  userStateSyncChain = userStateSyncChain.catch(() => {}).then(() => authApi.saveLearningState(snapshot, true)).catch(error => {
+    console.warn('Không đồng bộ được tiến độ học lên máy chủ.', error?.code || error);
+  });
+  return userStateSyncChain;
+}
+
+function restoreContext(context, memberCode) {
+  if (!validObject(context)) return false;
+  const viewNames = ['home','lessons','vocab','writing','reading','quiz','radicals','library','progress','admin'];
+  if (viewNames.includes(context.view)) state.view = context.view;
+  if (Number.isInteger(context.card)) state.card = Math.max(0, Math.min(learningTerms.length - 1, context.card));
+  if (Number.isInteger(context.vocabPhase)) state.vocabPhase = Math.max(0, Math.min(3, context.vocabPhase));
+  if (Number.isInteger(context.reading)) state.reading = Math.max(0, context.reading);
+  if (typeof context.readingTopic === 'string') state.readingTopic = context.readingTopic;
+  if (['mixed','herbs','pathology','book'].includes(context.quizMode)) state.quizMode = context.quizMode;
+  if (Number.isInteger(context.quizIndex)) state.quizIndex = Math.max(0, Math.min(10, context.quizIndex));
+  if (validObject(context.quizAnswers)) state.quizAnswers = context.quizAnswers;
+  if (Array.isArray(context.quiz) && context.quiz.length <= 20) state.quiz = context.quiz;
+  if (typeof context.reviewMode === 'boolean') state.reviewMode = context.reviewMode;
+  restoreWritingContext(memberCode, context.writing, learningTerms);
+  return true;
+}
+
+async function restoreSignedInUserState(member) {
+  if (!member?.mssv) return;
+  restoringUserState = true;
+  const memberCode = String(member.mssv);
+  let serverState = null;
+  try {
+    const response = await authApi.loadLearningState();
+    if (validObject(response?.state)) serverState = response.state;
+  } catch (error) {
+    console.warn('Không tải được tiến độ từ máy chủ; dùng bản lưu trên thiết bị.', error?.code || error);
+  }
+
+  const localMemberProgress = (() => { try { return JSON.parse(localStorage.getItem(memberProgressKey(memberCode)) || 'null'); } catch { return null; } })();
+  const localMemberContext = (() => { try { return JSON.parse(localStorage.getItem(memberContextKey(memberCode)) || 'null'); } catch { return null; } })();
+  const legacyOwner = localStorage.getItem('trung-y-van-hiu-legacy-progress-owner-v1');
+  let progress = validObject(serverState?.progress) ? serverState.progress : localMemberProgress;
+  if (!progress && !legacyOwner) {
+    progress = loadProgress();
+    try { localStorage.setItem('trung-y-van-hiu-legacy-progress-owner-v1', memberCode); } catch {}
+  }
+  state.progress = { ...emptyProgress(), ...(validObject(progress) ? progress : {}) };
+  state.progress.mastered = Array.isArray(state.progress.mastered) ? state.progress.mastered : [];
+  state.progress.difficult = Array.isArray(state.progress.difficult) ? state.progress.difficult : [];
+  state.progress.readingDone = Array.isArray(state.progress.readingDone) ? state.progress.readingDone : [];
+  state.progress.quizHistory = Array.isArray(state.progress.quizHistory) ? state.progress.quizHistory : [];
+  state.progress.wordStage = validObject(state.progress.wordStage) ? state.progress.wordStage : {};
+  state.progress.memorySchedule = validObject(state.progress.memorySchedule) ? state.progress.memorySchedule : {};
+  const context = validObject(serverState?.context) ? serverState.context : localMemberContext;
+  restoreContext(context, memberCode);
+  restoringUserState = false;
+  scheduleUserStateSync();
 }
 
 function speak(text) {
@@ -992,6 +1114,7 @@ function render(forceShell = false) {
   }
 
   const body = currentViewBody();
+  scheduleUserStateSync();
   const shellRoot = app.querySelector('.shell');
   const sameMemberShell = shellRoot
     && shellRoot.dataset.member === String(access.member.mssv || '')
@@ -1044,7 +1167,7 @@ function bind(fullShell = true) {
 
   bindAdmin();
   const scope = document.querySelector('.content') || document;
-  if (scope.querySelector('#writingCanvas')) bindWritingPractice(scope, learningTerms, access.member?.mssv || 'member', () => render());
+  if (scope.querySelector('#writingCanvas')) bindWritingPractice(scope, learningTerms, access.member?.mssv || 'member', () => render(), () => scheduleUserStateSync());
   scope.querySelectorAll('[data-nav]').forEach(e => e.addEventListener('click', () => nav(e.dataset.nav)));
   scope.querySelectorAll('[data-speak]').forEach(e => e.addEventListener('click', () => speak(e.dataset.speak)));
   scope.querySelectorAll('[data-source-open]').forEach(e => e.addEventListener('click', () => { state.source = e.dataset.sourceOpen; state.sourceQuery = ''; nav('library'); }));
@@ -1204,6 +1327,7 @@ setupPwa();
 render();
 bootstrapAccess();
 setInterval(verifyAccessHeartbeat, 5 * 60 * 1000);
+window.addEventListener('pagehide', () => { void flushUserStateSync(); });
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') {
     verifyAccessHeartbeat();
