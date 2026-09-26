@@ -1090,7 +1090,7 @@ function currentViewBody() {
     case 'writing': return writingPracticeView(learningTerms, access.member?.mssv || 'member');
     case 'reading': return readingView();
     case 'radicals': return radicalsView();
-    case 'chiet-tu': return uiMode === 'desktop' ? chietTuView() : home();
+    case 'chiet-tu': return uiMode === 'desktop' ? chietTuView(learningTerms, radicals214) : home();
     case 'quiz': return quizView();
     case 'answers': return answersView();
     case 'library': return libraryView();
@@ -1187,7 +1187,7 @@ function bind(fullShell = true) {
   bindAdmin();
   const scope = document.querySelector('.content') || document;
   if (scope.querySelector('#writingCanvas')) bindWritingPractice(scope, learningTerms, access.member?.mssv || 'member', () => render(), () => scheduleUserStateSync());
-  if (scope.querySelector('#chietGrid')) bindChietTu(scope);
+  if (scope.querySelector('#chietTermList')) bindChietTu(scope, learningTerms, radicals214);
   scope.querySelectorAll('[data-nav]').forEach(e => e.addEventListener('click', () => nav(e.dataset.nav)));
   scope.querySelectorAll('[data-speak]').forEach(e => e.addEventListener('click', () => speak(e.dataset.speak)));
   scope.querySelectorAll('[data-source-open]').forEach(e => e.addEventListener('click', () => { state.source = e.dataset.sourceOpen; state.sourceQuery = ''; nav('library'); }));
