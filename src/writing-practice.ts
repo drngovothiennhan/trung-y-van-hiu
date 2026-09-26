@@ -1,10 +1,15 @@
-// Interactive handwriting practice for the vocabulary already present in the app.
-// Practice completion is self-reported; this module does not claim handwriting or stroke-order recognition.
+import HanziWriter from 'hanzi-writer';
+
+// Stroke outlines are loaded per character from the versioned open Hanzi Writer data set.
+// Actual drawing and practice remain local in the app; no user strokes are uploaded.
 let selectedHanzi = '';
 let searchQuery = '';
 let showGuide = true;
 let strokes = [];
 let activeStroke = null;
+let writers = [];
+let animationPaused = false;
+const characterDataCache = new Map();
 
 function escapeHtml(value) {
   return String(value ?? '').replace(/[&<>"']/g, char => ({
@@ -58,6 +63,10 @@ function termListMarkup(terms, progress, activeHanzi) {
   }).join('');
 }
 
+function animationMarkup(chars) {
+  return chars.map((char, index) => '<article class="writing-animation-card"><div class="writing-animation-grid"><span class="writing-animation-cross writing-animation-cross-v"></span><span class="writing-animation-cross writing-animation-cross-h"></span><div class="writing-animation" data-animation-char="' + escapeHtml(char) + '" role="img" aria-label="Hoạt ảnh thứ tự nét chữ ' + escapeHtml(char) + '"></div></div><div class="writing-animation-caption"><b>' + (index + 1) + '</b><span data-stroke-count="' + escapeHtml(char) + '">Đang tải nét…</span></div></article>').join('');
+}
+
 export function writingPracticeView(terms, memberId) {
   if (!selectedHanzi && terms.length) {
     selectedHanzi = terms.some(term => term.hanzi === '阴阳') ? '阴阳' : terms[0].hanzi;
@@ -67,21 +76,23 @@ export function writingPracticeView(terms, memberId) {
   const doneCount = Object.keys(progress).length;
   const totalWrites = Object.values(progress).reduce((sum, value) => sum + Number(value?.count || 0), 0);
   const chars = Array.from(term.hanzi || '');
-  return '<header class="page-head"><span>LUYỆN TẬP · 手写</span><h1>Luyện viết từ vựng</h1><p>Chọn từ trong kho bài học, tô chữ mẫu rồi tự viết lại. Tiến độ viết được lưu riêng trên thiết bị và không thay đổi mức ghi nhớ từ vựng.</p></header>' +
+  return '<header class="page-head"><span>LUYỆN TẬP · 手写</span><h1>Luyện viết từ vựng</h1><p>Xem hoạt ảnh nét viết Hán theo đúng thứ tự, sau đó luyện viết từng chữ vào ô bên dưới.</p></header>' +
     '<section class="stats writing-stats">' +
       '<article class="stat"><span>字</span><div><strong>' + doneCount + '</strong><small>Từ đã luyện</small></div></article>' +
       '<article class="stat"><span>✍</span><div><strong>' + totalWrites + '</strong><small>Lượt tự ghi nhận</small></div></article>' +
       '<article class="stat"><span>词</span><div><strong>' + terms.length + '</strong><small>Từ trong kho học</small></div></article>' +
     '</section>' +
-    '<section class="writing-layout"><div class="panel writing-picker"><div class="writing-panel-head"><div><span class="writing-kicker">KHO TỪ VỰNG</span><h2>Chọn từ để viết</h2></div><span class="writing-count">' + terms.length + ' từ</span></div>' +
+    '<section class="writing-layout"><aside class="panel writing-picker"><div class="writing-panel-head"><div><span class="writing-kicker">KHO TỪ VỰNG</span><h2>Chọn từ để viết</h2></div><span class="writing-count">' + terms.length + ' từ</span></div>' +
       '<label class="writing-search-label" for="writingSearch">Tìm theo chữ, pinyin hoặc nghĩa</label><input id="writingSearch" class="writing-search" type="search" value="' + escapeHtml(searchQuery) + '" placeholder="Ví dụ: âm dương, yīnyáng, 阴阳" autocomplete="off">' +
-      '<div id="writingTermList" class="writing-term-list">' + termListMarkup(terms, progress, term.hanzi) + '</div></div>' +
-      '<div class="panel writing-workspace"><div class="writing-panel-head"><div><span class="writing-kicker">' + escapeHtml(term.group || 'TỪ VỰNG') + '</span><h2>' + escapeHtml(term.hanzi) + '</h2></div><button type="button" class="speak" data-writing-speak="' + escapeHtml(term.hanzi) + '" aria-label="Nghe phát âm">🔊</button></div>' +
+      '<div id="writingTermList" class="writing-term-list">' + termListMarkup(terms, progress, term.hanzi) + '</div></aside>' +
+      '<div class="writing-workspace"><section class="panel writing-lesson-card"><div class="writing-panel-head"><div><span class="writing-kicker">' + escapeHtml(term.group || 'TỪ VỰNG') + '</span><h2>' + escapeHtml(term.hanzi) + '</h2></div><button type="button" class="speak" data-writing-speak="' + escapeHtml(term.hanzi) + '" aria-label="Nghe phát âm">🔊</button></div>' +
       '<p class="writing-pronunciation"><b>' + escapeHtml(term.pinyin) + '</b><span>' + escapeHtml(term.hv) + '</span></p><p class="writing-meaning">' + escapeHtml(term.meaning) + '</p>' +
-      '<div class="writing-board-head"><strong>Viết từng chữ trong từ</strong><button type="button" class="writing-guide-toggle" id="writingGuideToggle">' + (showGuide ? 'Ẩn chữ mẫu' : 'Hiện chữ mẫu') + '</button></div>' +
+      '<div class="writing-section-head"><div><span class="writing-step">BƯỚC 1</span><strong>Xem thứ tự nét</strong><small>Mỗi chữ tự động phát lại liên tục</small></div><button type="button" class="writing-animation-toggle" id="writingAnimationToggle" aria-pressed="false">Tạm dừng</button></div>' +
+      '<div class="writing-animation-list" id="writingAnimationList">' + animationMarkup(chars) + '</div><p class="writing-animation-status" id="writingAnimationStatus" role="status">Đang tải dữ liệu nét viết…</p></section>' +
+      '<section class="panel writing-practice-card"><div class="writing-section-head"><div><span class="writing-step">BƯỚC 2</span><strong>Tự viết lại</strong><small>Viết theo thứ tự nét vừa quan sát</small></div><button type="button" class="writing-guide-toggle" id="writingGuideToggle">' + (showGuide ? 'Ẩn chữ mờ' : 'Hiện chữ mờ') + '</button></div>' +
       '<div class="writing-canvas-wrap"><canvas id="writingCanvas" width="900" height="360" role="img" aria-label="Bảng viết chữ Hán ' + escapeHtml(term.hanzi) + '"></canvas></div>' +
       '<div class="writing-tools"><button type="button" id="writingUndo">↶ Hoàn tác nét</button><button type="button" id="writingClear">Xóa bảng</button><button type="button" class="primary" id="writingComplete">Tôi đã luyện xong từ này</button></div>' +
-      '<p class="writing-hint">Dùng chuột, bút cảm ứng hoặc ngón tay để viết. App ghi nhận lượt luyện do bạn tự xác nhận; hiện chưa tự chấm nét viết.</p></div></section>';
+      '<p class="writing-hint">Dùng ngón tay, bút cảm ứng hoặc chuột. Lượt luyện được lưu trên thiết bị; ứng dụng chưa tự chấm nét viết.</p></section></div></section>';
 }
 
 function drawBoard(canvas, term) {
@@ -133,12 +144,90 @@ function drawBoard(canvas, term) {
   }
 }
 
+function stopAnimations() {
+  writers.forEach(writer => writer.pauseAnimation().catch(() => {}));
+  writers = [];
+  animationPaused = false;
+}
+
+function charDataLoader(char, onLoad, onError) {
+  if (!characterDataCache.has(char)) {
+    const url = 'https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0.1/' + encodeURIComponent(char) + '.json';
+    characterDataCache.set(char, fetch(url).then(response => {
+      if (!response.ok) throw new Error('Không tải được dữ liệu nét viết');
+      return response.json();
+    }).catch(error => {
+      characterDataCache.delete(char);
+      throw error;
+    }));
+  }
+  const dataPromise = characterDataCache.get(char);
+  return dataPromise.then(data => { onLoad(data); return data; }, error => { onError(error); throw error; });
+}
+
+function mountAnimations(root, chars) {
+  stopAnimations();
+  const status = root.querySelector('#writingAnimationStatus');
+  const nodes = [...root.querySelectorAll('[data-animation-char]')];
+  if (!nodes.length) return;
+  let loaded = 0;
+  let failed = 0;
+  const updateStatus = () => {
+    if (!status) return;
+    if (loaded + failed < nodes.length) status.textContent = 'Đang tải dữ liệu nét viết ' + (loaded + failed) + '/' + nodes.length + '…';
+    else if (loaded) status.textContent = 'Nét tô xanh chạy theo thứ tự viết; hoạt ảnh sẽ lặp lại liên tục.' + (failed ? ' ' + failed + ' chữ chưa có dữ liệu hoạt ảnh.' : '');
+    else status.textContent = 'Không tải được dữ liệu hoạt ảnh. Kiểm tra kết nối mạng rồi chọn lại từ.';
+  };
+  nodes.forEach(node => {
+    const char = node.dataset.animationChar;
+    try {
+      const writer = HanziWriter.create(node, char, {
+        width: 190,
+        height: 190,
+        padding: 14,
+        showOutline: true,
+        showCharacter: false,
+        strokeColor: '#168261',
+        outlineColor: '#d7dfd9',
+        strokeAnimationSpeed: 0.8,
+        delayBetweenStrokes: 420,
+        delayBetweenLoops: 1500,
+        charDataLoader,
+        onLoadCharDataError: () => {
+          failed++;
+          const label = root.querySelector('[data-stroke-count="' + CSS.escape(char) + '"]');
+          if (label) label.textContent = 'Hoạt ảnh chưa khả dụng';
+          updateStatus();
+        },
+      });
+      writers.push(writer);
+      writer.getCharacterData().then(data => {
+        loaded++;
+        const label = root.querySelector('[data-stroke-count="' + CSS.escape(char) + '"]');
+        if (label) label.textContent = (data.strokes?.length || 0) + ' nét';
+        updateStatus();
+        if (!animationPaused) writer.loopCharacterAnimation().catch(() => {});
+      }).catch(() => {});
+    } catch {
+      failed++;
+      updateStatus();
+    }
+  });
+  const toggle = root.querySelector('#writingAnimationToggle');
+  toggle?.addEventListener('click', async () => {
+    animationPaused = !animationPaused;
+    toggle.textContent = animationPaused ? 'Phát hoạt ảnh' : 'Tạm dừng';
+    toggle.setAttribute('aria-pressed', String(animationPaused));
+    await Promise.all(writers.map(writer => (animationPaused ? writer.pauseAnimation() : writer.resumeAnimation()).catch(() => {})));
+  });
+}
+
 export function bindWritingPractice(root, terms, memberId, onChange) {
   const term = selectedTerm(terms);
-  const progress = readProgress(memberId);
   const canvas = root.querySelector('#writingCanvas');
   const redraw = () => drawBoard(canvas, term);
   redraw();
+  mountAnimations(root, Array.from(term.hanzi || ''));
 
   const search = root.querySelector('#writingSearch');
   const list = root.querySelector('#writingTermList');
@@ -172,7 +261,7 @@ export function bindWritingPractice(root, terms, memberId, onChange) {
     showGuide = !showGuide;
     redraw();
     const button = root.querySelector('#writingGuideToggle');
-    if (button) button.textContent = showGuide ? 'Ẩn chữ mẫu' : 'Hiện chữ mẫu';
+    if (button) button.textContent = showGuide ? 'Ẩn chữ mờ' : 'Hiện chữ mờ';
   });
 
   root.querySelector('#writingClear')?.addEventListener('click', () => {

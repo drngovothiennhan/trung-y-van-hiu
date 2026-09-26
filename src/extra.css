@@ -469,3 +469,31 @@ html[data-ui-mode="mobile"] .admin-access-stats{display:none!important}
 @media(max-width:900px){.writing-layout{grid-template-columns:1fr}.writing-term-list{max-height:220px;grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.writing-term-list{grid-template-columns:1fr}.writing-panel-head h2{font-size:21px}.writing-tools button{flex:1}.writing-tools .primary{flex-basis:100%}}
 
+
+/* Stroke order lesson: model animation first, hands-on writing below. */
+.writing-layout{grid-template-columns:minmax(240px,.68fr) minmax(0,1.32fr);gap:14px;align-items:start}
+.writing-picker{position:sticky;top:14px}
+.writing-workspace{display:grid;gap:14px;min-width:0}
+.writing-lesson-card,.writing-practice-card{min-width:0}
+.writing-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0;color:#244f44}
+.writing-section-head>div{display:grid;gap:4px}
+.writing-section-head strong{font-size:14px}
+.writing-section-head small{font-size:10px;font-weight:400;color:#718079}
+.writing-step{font-size:9px;letter-spacing:.12em;font-weight:900;color:#a3823e}
+.writing-animation-toggle{border:1px solid #d7dfd9;background:#f4f7f2;color:#31594d;border-radius:10px;padding:9px 12px;font-size:10px;font-weight:800;cursor:pointer;white-space:nowrap}
+.writing-animation-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:10px}
+.writing-animation-card{min-width:0;border:1px solid #d7e0d9;border-radius:12px;background:#fffef8;overflow:hidden}
+.writing-animation-grid{position:relative;width:100%;aspect-ratio:1;overflow:hidden;background-color:#fffef8;background-image:linear-gradient(to right,transparent calc(50% - .5px),#e5ebe6 50%,transparent calc(50% + .5px)),linear-gradient(to bottom,transparent calc(50% - .5px),#e5ebe6 50%,transparent calc(50% + .5px))}
+.writing-animation-grid:before{content:"";position:absolute;inset:5%;border:1px solid #dce5de;pointer-events:none}
+.writing-animation-cross{display:none}
+.writing-animation{position:absolute;inset:0;z-index:1}
+.writing-animation svg{display:block;width:100%;height:100%}
+.writing-animation-caption{display:flex;justify-content:space-between;align-items:center;gap:5px;padding:7px 9px;border-top:1px solid #e7ece7;color:#64766e;font-size:9px}
+.writing-animation-caption b{display:grid;place-items:center;width:19px;height:19px;border-radius:50%;background:#eaf2ed;color:#285a4c}
+.writing-animation-caption span{font-size:9px;text-align:right}
+.writing-animation-status{min-height:14px;margin:8px 0 0;color:#718079;font-size:9px;line-height:1.5}
+.writing-guide-toggle{border-radius:9px}
+.writing-canvas-wrap{border-radius:11px}
+#writingCanvas{aspect-ratio:5/2}
+@media(max-width:900px){.writing-picker{position:static}.writing-layout{grid-template-columns:1fr}.writing-term-list{max-height:220px;grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.writing-animation-list{grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:7px}.writing-section-head strong{font-size:13px}.writing-section-head small{font-size:9px}.writing-animation-toggle{padding:8px 9px}.writing-animation-caption{padding:6px 7px}.writing-hint{font-size:10px}.writing-tools button{min-height:42px}}
