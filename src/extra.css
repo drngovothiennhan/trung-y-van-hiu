@@ -469,4 +469,3 @@ html[data-ui-mode="mobile"] .admin-access-stats{display:none!important}
 @media(max-width:900px){.writing-layout{grid-template-columns:1fr}.writing-term-list{max-height:220px;grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.writing-term-list{grid-template-columns:1fr}.writing-panel-head h2{font-size:21px}.writing-tools button{flex:1}.writing-tools .primary{flex-basis:100%}}
 
-@media(max-width:780px){.bottom{grid-template-columns:repeat(6,minmax(0,1fr))}.bottom button small{font-size:7px}}
