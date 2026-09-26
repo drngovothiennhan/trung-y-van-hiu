@@ -86,10 +86,19 @@ export function writingPracticeView(terms, memberId) {
       '<label class="writing-search-label" for="writingSearch">Tìm theo chữ, pinyin hoặc nghĩa</label><input id="writingSearch" class="writing-search" type="search" value="' + escapeHtml(searchQuery) + '" placeholder="Ví dụ: âm dương, yīnyáng, 阴阳" autocomplete="off">' +
       '<div id="writingTermList" class="writing-term-list">' + termListMarkup(terms, progress, term.hanzi) + '</div></div>' +
       '<div class="writing-workspace"><section class="panel writing-lesson-card"><div class="writing-panel-head"><div><span class="writing-kicker">' + escapeHtml(term.group || 'TỪ VỰNG') + '</span><h2>' + escapeHtml(term.hanzi) + '</h2></div><button type="button" class="speak" data-writing-speak="' + escapeHtml(term.hanzi) + '" aria-label="Nghe phát âm">🔊</button></div>' +
-      '<p class="writing-pronunciation"><b>' + escapeHtml(term.pinyin) + '</b><span>' + escapeHtml(term.hv) + '</span></p><p class="writing-meaning">' + escapeHtml(term.meaning) + '</p>' +
-      '<div class="writing-section-head"><div><span class="writing-step">BƯỚC 1</span><strong>Xem thứ tự nét</strong><small>Mỗi chữ tự động phát lại liên tục</small></div><button type="button" class="writing-animation-toggle" id="writingAnimationToggle" aria-pressed="false">Tạm dừng</button></div>' +
+      '<section class="writing-study-path" aria-label="Cách học để nhận mặt và ghi nhớ chữ">' +
+        '<div class="writing-study-path-head"><span class="writing-kicker">CÁCH HỌC NHỚ · 4 NHỊP</span><small>Đi lần lượt: nhìn chữ → gắn âm nghĩa → theo nét → tự viết</small></div>' +
+        '<div class="writing-study-steps">' +
+          '<article><b>1</b><strong>Nhìn trọn chữ</strong><p>Đọc chậm cả từ <em>' + escapeHtml(term.hanzi) + '</em>; để ý thứ tự các chữ trong từ.</p></article>' +
+          '<article><b>2</b><strong>Gắn âm và nghĩa</strong><p>Tự nhẩm cách đọc và nghĩa trước khi mở phần kiểm tra bên dưới.</p></article>' +
+          '<article><b>3</b><strong>Nhìn nét chạy</strong><p>Theo từng chữ từ nét đầu đến nét cuối; nhẩm số thứ tự khi hoạt ảnh lặp.</p></article>' +
+          '<article><b>4</b><strong>Tự nhớ rồi viết</strong><p>Ẩn chữ mờ, viết lại cả từ và đọc lại âm cùng nghĩa.</p></article>' +
+        '</div>' +
+        '<details class="writing-recall-answer"><summary>Tự nhắc lại âm đọc và nghĩa, rồi mở để kiểm tra</summary><div class="writing-recall-content"><p><span>Âm đọc</span><b>' + escapeHtml(term.pinyin) + '</b></p><p><span>Hán-Việt</span><b>' + escapeHtml(term.hv) + '</b></p><p><span>Nghĩa</span><b>' + escapeHtml(term.meaning) + '</b></p></div></details>' +
+      '</section>' +
+      '<div class="writing-section-head"><div><span class="writing-step">BƯỚC 3</span><strong>Xem thứ tự nét</strong><small>Mỗi chữ tự động phát lại liên tục</small></div><button type="button" class="writing-animation-toggle" id="writingAnimationToggle" aria-pressed="false">Tạm dừng</button></div>' +
       '<div class="writing-animation-list" id="writingAnimationList">' + animationMarkup(chars) + '</div><p class="writing-animation-status" id="writingAnimationStatus" role="status">Đang tải dữ liệu nét viết…</p></section>' +
-      '<section class="panel writing-practice-card"><div class="writing-section-head"><div><span class="writing-step">BƯỚC 2</span><strong>Tự viết lại</strong><small>Viết theo thứ tự nét vừa quan sát</small></div><button type="button" class="writing-guide-toggle" id="writingGuideToggle">' + (showGuide ? 'Ẩn chữ mờ' : 'Hiện chữ mờ') + '</button></div>' +
+      '<section class="panel writing-practice-card"><div class="writing-section-head"><div><span class="writing-step">BƯỚC 4</span><strong>Tự viết lại</strong><small>Viết theo thứ tự nét vừa quan sát</small></div><button type="button" class="writing-guide-toggle" id="writingGuideToggle">' + (showGuide ? 'Ẩn chữ mờ' : 'Hiện chữ mờ') + '</button></div>' +
       '<div class="writing-canvas-wrap"><canvas id="writingCanvas" width="900" height="360" role="img" aria-label="Bảng viết chữ Hán ' + escapeHtml(term.hanzi) + '"></canvas></div>' +
       '<div class="writing-tools"><button type="button" id="writingUndo">↶ Hoàn tác nét</button><button type="button" id="writingClear">Xóa bảng</button><button type="button" class="primary" id="writingComplete">Tôi đã luyện xong từ này</button></div>' +
       '<p class="writing-hint">Dùng ngón tay, bút cảm ứng hoặc chuột. Tiến độ và nét đang viết được lưu theo tài khoản; ứng dụng chưa tự chấm nét viết.</p></section></div></section>';

@@ -495,5 +495,22 @@ html[data-ui-mode="mobile"] .admin-access-stats{display:none!important}
 .writing-guide-toggle{border-radius:9px}
 .writing-canvas-wrap{border-radius:11px}
 #writingCanvas{aspect-ratio:5/2}
+.writing-study-path{margin:12px 0 18px;padding:15px;border:1px solid #dce5de;border-radius:14px;background:linear-gradient(135deg,#fbfcf8,#f1f5ef)}
+.writing-study-path-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:11px}
+.writing-study-path-head small{font-size:10px;color:#718079;text-align:right}
+.writing-study-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.writing-study-steps article{min-width:0;min-height:106px;padding:11px;border:1px solid #e0e7e0;border-radius:11px;background:#fff}
+.writing-study-steps article>b{display:grid;place-items:center;width:23px;height:23px;margin-bottom:8px;border-radius:50%;background:#173f36;color:#e8d39a;font-size:10px}
+.writing-study-steps strong{display:block;color:#244f44;font-size:11px}
+.writing-study-steps p{margin:5px 0 0;color:#718079;font-size:9px;line-height:1.5}
+.writing-study-steps em{font-style:normal;color:#245b4d;font:700 15px Georgia,serif}
+.writing-recall-answer{margin-top:10px;border:1px solid #e4dfcd;border-radius:10px;background:#fffdf6;color:#566b61;font-size:10px}
+.writing-recall-answer summary{padding:10px 12px;color:#735f2e;font-weight:800;cursor:pointer}
+.writing-recall-content{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:0 11px 10px}
+.writing-recall-content p{display:grid;gap:4px;margin:0;padding:9px;border-radius:8px;background:#f7f5ed}
+.writing-recall-content span{font-size:9px;color:#7b877f}
+.writing-recall-content b{font-size:10px;color:#244f44;overflow-wrap:anywhere}
 @media(max-width:900px){.writing-picker{position:static}.writing-layout{grid-template-columns:1fr}.writing-term-list{max-height:220px;grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.writing-animation-list{grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:7px}.writing-section-head strong{font-size:13px}.writing-section-head small{font-size:9px}.writing-animation-toggle{padding:8px 9px}.writing-animation-caption{padding:6px 7px}.writing-hint{font-size:10px}.writing-tools button{min-height:42px}}
+@media(max-width:900px){.writing-study-steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.writing-study-path{padding:12px}.writing-study-path-head{display:grid;gap:5px}.writing-study-path-head small{text-align:left}.writing-study-steps{grid-template-columns:1fr 1fr}.writing-study-steps article{min-height:0;padding:9px}.writing-study-steps strong{font-size:10px}.writing-study-steps p{font-size:9px}.writing-recall-content{grid-template-columns:1fr}}
