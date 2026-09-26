@@ -433,3 +433,38 @@ html[data-ui-mode="mobile"] .auth-user button{
 .access-note{display:block;margin-top:10px;color:#82908b;font-size:8px;line-height:1.5}
 html[data-ui-mode="mobile"] .desktop-leaderboard,
 html[data-ui-mode="mobile"] .admin-access-stats{display:none!important}
+
+
+/* Vocabulary handwriting practice */
+.writing-stats{margin-top:14px;margin-bottom:20px}
+.writing-layout{display:grid;grid-template-columns:minmax(260px,.72fr) minmax(0,1.28fr);gap:14px;align-items:start}
+.writing-picker,.writing-workspace{min-width:0}
+.writing-panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.writing-panel-head h2{margin:5px 0 0;color:#193c34;font:700 24px Georgia,'Times New Roman',serif}
+.writing-kicker{font-size:9px;font-weight:900;letter-spacing:.14em;color:#a3823e}
+.writing-count{font-size:10px;color:#718079;background:#eef2ed;border-radius:999px;padding:7px 10px}
+.writing-search-label{display:block;margin:0 0 6px;font-size:10px;font-weight:800;color:#53685f}
+.writing-search{width:100%;border:1px solid #d7dfd9;border-radius:11px;padding:11px 12px;background:#fff;color:#17352f;font-size:12px;outline:none}
+.writing-search:focus{border-color:#558777;box-shadow:0 0 0 3px #2c70521b}
+.writing-term-list{display:grid;gap:7px;max-height:520px;overflow:auto;margin-top:12px;padding-right:2px}
+.writing-term{width:100%;display:grid;grid-template-columns:minmax(48px,auto) 1fr auto;gap:10px;align-items:center;text-align:left;border:1px solid #e0e4de;border-radius:12px;background:#fff;padding:9px 10px;color:#23463d;cursor:pointer}
+.writing-term:hover,.writing-term.active{border-color:#9fb6a9;background:#f2f6f1}
+.writing-term-hanzi{font:700 23px Georgia,serif;color:#285a4c}
+.writing-term-copy{min-width:0;display:grid;gap:3px}
+.writing-term-copy b{font-size:10px}
+.writing-term-copy small{font-size:9px;color:#77867f}
+.writing-term>i{font-style:normal;font-size:9px;font-weight:800;color:#7b8c84}
+.writing-empty{padding:14px;text-align:center;color:#718079;font-size:11px}
+.writing-pronunciation{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 6px;font-size:12px;color:#53685f}
+.writing-pronunciation b{color:#2f6454}
+.writing-meaning{margin:0 0 18px;color:#65766e;font-size:11px;line-height:1.55}
+.writing-board-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 8px;color:#466359;font-size:10px}
+.writing-guide-toggle{border:0;background:transparent;color:#28614f;font-size:10px;font-weight:800;cursor:pointer;padding:7px}
+.writing-canvas-wrap{width:100%;overflow:hidden;border:1px solid #d5ded7;border-radius:13px;background:#fffef8;touch-action:none}
+#writingCanvas{display:block;width:100%;height:auto;aspect-ratio:15/4;touch-action:none;cursor:crosshair}
+.writing-tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.writing-tools button{border:1px solid #d7dfd9;background:#fff;color:#31594d;border-radius:10px;padding:10px 12px;font-size:10px;font-weight:800;cursor:pointer}
+.writing-tools button.primary{background:#173f36;color:#fff;border-color:#173f36}
+.writing-hint{margin:10px 0 0;font-size:9px;line-height:1.55;color:#77867f}
+@media(max-width:900px){.writing-layout{grid-template-columns:1fr}.writing-term-list{max-height:220px;grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.writing-term-list{grid-template-columns:1fr}.writing-panel-head h2{font-size:21px}.writing-tools button{flex:1}.writing-tools .primary{flex-basis:100%}}
