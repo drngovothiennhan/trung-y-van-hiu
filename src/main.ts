@@ -13,6 +13,7 @@ import { readingDrills } from './reading-drills';
 import { herbsFormulasSource, herbsFormulasTerms, herbsFormulasReadings, herbsFormulasQuiz } from './herbs-formulas';
 import { lessonAmDuongTextbookPages, lessonAmDuongTerms, lessonAmDuongQuiz, lessonAmDuongReadings } from './lesson-am-duong';
 import { writingPracticeView, bindWritingPractice, getWritingContext, restoreWritingContext } from './writing-practice';
+import { chietTuView, bindChietTu } from './chiet-tu';
 
 const STORAGE_KEY = 'trung-y-van-hiu-v4';
 
@@ -33,6 +34,7 @@ function applyUiMode() {
 function setUiMode(mode) {
   if (mode !== 'desktop' && mode !== 'mobile') return;
   uiMode = mode;
+  if (mode === 'mobile' && state.view === 'chiet-tu') state.view = 'home';
   localStorage.setItem(UI_MODE_KEY, mode);
   applyUiMode();
   render();
@@ -630,7 +632,7 @@ function flushUserStateSync() {
 
 function restoreContext(context, memberCode) {
   if (!validObject(context)) return false;
-  const viewNames = ['home','lessons','vocab','writing','reading','quiz','radicals','library','progress','admin'];
+  const viewNames = ['home','lessons','vocab','writing','reading','quiz','radicals','chiet-tu','library','progress','admin'];
   if (viewNames.includes(context.view)) state.view = context.view;
   if (Number.isInteger(context.card)) state.card = Math.max(0, Math.min(learningTerms.length - 1, context.card));
   if (Number.isInteger(context.vocabPhase)) state.vocabPhase = Math.max(0, Math.min(3, context.vocabPhase));
@@ -820,6 +822,7 @@ function shell(content) {
     ['writing', '✍', 'Luyện viết'],
     ['reading', '阅', 'Đọc hiểu'],
     ['radicals', '部', '214 bộ thủ'],
+    ...(uiMode === 'desktop' ? [['chiet-tu', '拆', 'Chiết Tự']] : []),
     ['quiz', '✓', 'Trắc nghiệm'],
     ['answers', '答', 'Đáp án'],
     ['library', '库', 'Kho tài liệu'],
@@ -1087,6 +1090,7 @@ function currentViewBody() {
     case 'writing': return writingPracticeView(learningTerms, access.member?.mssv || 'member');
     case 'reading': return readingView();
     case 'radicals': return radicalsView();
+    case 'chiet-tu': return uiMode === 'desktop' ? chietTuView() : home();
     case 'quiz': return quizView();
     case 'answers': return answersView();
     case 'library': return libraryView();
@@ -1183,6 +1187,7 @@ function bind(fullShell = true) {
   bindAdmin();
   const scope = document.querySelector('.content') || document;
   if (scope.querySelector('#writingCanvas')) bindWritingPractice(scope, learningTerms, access.member?.mssv || 'member', () => render(), () => scheduleUserStateSync());
+  if (scope.querySelector('#chietGrid')) bindChietTu(scope);
   scope.querySelectorAll('[data-nav]').forEach(e => e.addEventListener('click', () => nav(e.dataset.nav)));
   scope.querySelectorAll('[data-speak]').forEach(e => e.addEventListener('click', () => speak(e.dataset.speak)));
   scope.querySelectorAll('[data-source-open]').forEach(e => e.addEventListener('click', () => { state.source = e.dataset.sourceOpen; state.sourceQuery = ''; nav('library'); }));
