@@ -56,6 +56,8 @@ const access = {
   adminCandidatePage: 0,
   adminApprovedPage: 0,
   adminError: '',
+  adminAddMssv: '',
+  adminAddName: '',
   leaderboard: [],
   leaderboardDate: '',
   leaderboardLoading: false,
@@ -273,7 +275,7 @@ function adminView() {
     (access.adminError ? '<div class="auth-error admin-error">' + safe(access.adminError) + '</div>' : '') +
     '<section class="panel admin-summary"><div><b>' + approved.length + '</b><span>tài khoản đang được duyệt</span></div><div><b>' + pending.length + '</b><span>thành viên CLB chưa có quyền / đang khóa</span></div><button id="adminRefresh" ' + (access.adminLoading ? 'disabled' : '') + '>↻ Tải lại danh sách</button></section>' +
     adminAccessStatsMarkup() +
-    '<section class="panel admin-manual"><h3>Tạo tài khoản học tập</h3><form id="adminAddForm"><input id="adminAddMssv" inputmode="numeric" maxlength="14" placeholder="MSSV" required><input id="adminAddName" placeholder="Họ tên" required><button type="submit">Tạo tài khoản</button></form><small class="admin-rule">Bắt buộc có đủ MSSV và Họ tên. Mật khẩu mặc định = MSSV.</small></section>' +
+    '<section class="panel admin-manual"><h3>Tạo tài khoản học tập</h3><form id="adminAddForm" autocomplete="off"><input id="adminAddMssv" name="student_code" inputmode="numeric" maxlength="14" value="' + safe(access.adminAddMssv) + '" placeholder="MSSV" required><input id="adminAddName" name="display_name" value="' + safe(access.adminAddName) + '" placeholder="Họ tên" required><button type="submit">Tạo tài khoản</button></form><small class="admin-rule">Bắt buộc có đủ MSSV và Họ tên. Mật khẩu mặc định = MSSV.</small></section>' +
     '<section class="panel admin-section"><div class="admin-title"><div><span>DANH SÁCH CLB</span><h3>Chờ bạn duyệt</h3></div><small>' + pending.length + ' hồ sơ</small></div><div class="admin-list">' +
       (access.adminLoading ? '<div class="empty">Đang tải dữ liệu...</div>' : pending.length ? pendingPage.map(x => '<div class="admin-row"><div><b>' + safe(x.display_name || 'Chưa có tên') + '</b><span>' + safe(x.mssv) + (x.class_name ? ' · ' + safe(x.class_name) : '') + '</span><small>' + (x.access_status === 'suspended' ? 'Đang bị khóa' : 'Chưa được cấp quyền') + '</small></div><button data-admin-approve="' + safe(x.mssv) + '" data-admin-name="' + safe(x.display_name || '') + '">' + (x.access_status === 'suspended' ? 'Mở lại' : 'Duyệt') + '</button></div>').join('') : '<div class="empty">Không còn hồ sơ chờ duyệt.</div>') +
     '</div>' +
@@ -328,11 +330,18 @@ function bindAdmin() {
     render();
   }));
 
+  const addMssvInput = document.querySelector('#adminAddMssv');
+  if (addMssvInput) addMssvInput.addEventListener('input', event => { access.adminAddMssv = event.currentTarget.value; });
+  const addNameInput = document.querySelector('#adminAddName');
+  if (addNameInput) addNameInput.addEventListener('input', event => { access.adminAddName = event.currentTarget.value; });
+
   const addForm = document.querySelector('#adminAddForm');
   if (addForm) addForm.addEventListener('submit', event => {
     event.preventDefault();
     const mssv = String(document.querySelector('#adminAddMssv')?.value || '').trim();
     const name = String(document.querySelector('#adminAddName')?.value || '').trim();
+    access.adminAddMssv = mssv;
+    access.adminAddName = name;
     if (!/^[0-9]{8,14}$/.test(mssv)) {
       access.adminError = 'MSSV phải gồm 8–14 chữ số.';
       render();
@@ -343,7 +352,11 @@ function bindAdmin() {
       render();
       return;
     }
-    adminAction(() => authApi.adminAdd(mssv, name));
+    adminAction(async () => {
+      await authApi.adminAdd(mssv, name);
+      access.adminAddMssv = '';
+      access.adminAddName = '';
+    });
   });
 
   document.querySelectorAll('[data-admin-approve]').forEach(button => button.addEventListener('click', () => {
@@ -983,7 +996,21 @@ function render(forceShell = false) {
   if (!forceShell && sameMemberShell) {
     const content = app.querySelector('.content');
     if (content) {
+      const activeElement = document.activeElement;
+      const activeAdminFieldId = content.contains(activeElement)
+        && ['adminAddMssv', 'adminAddName'].includes(activeElement.id)
+        ? activeElement.id
+        : '';
+      const selectionStart = activeAdminFieldId ? activeElement.selectionStart : null;
+      const selectionEnd = activeAdminFieldId ? activeElement.selectionEnd : null;
       content.innerHTML = body;
+      if (activeAdminFieldId) {
+        const replacement = content.querySelector('#' + activeAdminFieldId);
+        if (replacement) {
+          replacement.focus({ preventScroll: true });
+          if (selectionStart !== null && selectionEnd !== null) replacement.setSelectionRange(selectionStart, selectionEnd);
+        }
+      }
       syncShellChrome();
       bind(false);
       return;
