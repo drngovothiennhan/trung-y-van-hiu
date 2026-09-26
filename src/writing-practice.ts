@@ -96,7 +96,12 @@ export function writingPracticeView(terms, memberId) {
 }
 
 export function getWritingContext(memberId) {
-  return { hanzi: selectedHanzi, search: searchQuery, progress: readProgress(memberId), strokes };
+  const savedStrokes = strokes.slice(-20).map(stroke => {
+    if (stroke.length <= 80) return stroke;
+    const stride = Math.ceil((stroke.length - 1) / 79);
+    return stroke.filter((_, index) => index % stride === 0 || index === stroke.length - 1);
+  }).map(stroke => stroke.map(point => ({ x: Math.round(point.x * 10) / 10, y: Math.round(point.y * 10) / 10 })));
+  return { hanzi: selectedHanzi, search: searchQuery, progress: readProgress(memberId), strokes: savedStrokes };
 }
 
 export function restoreWritingContext(memberId, context, terms) {
@@ -105,8 +110,8 @@ export function restoreWritingContext(memberId, context, terms) {
   if (typeof context.search === 'string') searchQuery = context.search.slice(0, 120);
   if (context.progress && typeof context.progress === 'object' && !Array.isArray(context.progress)) writeProgress(memberId, context.progress);
   if (Array.isArray(context.strokes)) {
-    strokes = context.strokes.slice(0, 40).map(stroke => Array.isArray(stroke)
-      ? stroke.slice(0, 1500).filter(point => point && Number.isFinite(point.x) && Number.isFinite(point.y)
+    strokes = context.strokes.slice(-20).map(stroke => Array.isArray(stroke)
+      ? stroke.slice(0, 80).filter(point => point && Number.isFinite(point.x) && Number.isFinite(point.y)
         && point.x >= 0 && point.x <= 900 && point.y >= 0 && point.y <= 360)
         .map(point => ({ x: point.x, y: point.y }))
       : []).filter(stroke => stroke.length);
@@ -300,8 +305,8 @@ export function bindWritingPractice(root, terms, memberId, onChange, onStateChan
     const pointFromEvent = event => {
       const rect = canvas.getBoundingClientRect();
       return {
-        x: (event.clientX - rect.left) * canvas.width / Math.max(1, rect.width),
-        y: (event.clientY - rect.top) * canvas.height / Math.max(1, rect.height),
+        x: Math.round((event.clientX - rect.left) * canvas.width / Math.max(1, rect.width) * 10) / 10,
+        y: Math.round((event.clientY - rect.top) * canvas.height / Math.max(1, rect.height) * 10) / 10,
       };
     };
     canvas.addEventListener('pointerdown', event => {
