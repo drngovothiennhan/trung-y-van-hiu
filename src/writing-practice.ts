@@ -105,6 +105,9 @@ export function getWritingContext(memberId) {
 }
 
 export function restoreWritingContext(memberId, context, terms) {
+  selectedHanzi = '';
+  searchQuery = '';
+  strokes = [];
   if (!context || typeof context !== 'object') return;
   if (typeof context.hanzi === 'string' && terms.some(term => term.hanzi === context.hanzi)) selectedHanzi = context.hanzi;
   if (typeof context.search === 'string') searchQuery = context.search.slice(0, 120);
