@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "hanzi-writer": "^3.7.3",
     "lucide": "^0.469.0"
   },
   "optionalDependencies": {
