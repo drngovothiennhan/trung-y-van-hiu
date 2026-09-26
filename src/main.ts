@@ -693,7 +693,7 @@ function shell(content) {
     navs.map(n => '<button data-nav="' + n[0] + '" class="' + (state.view === n[0] ? 'active' : '') + '"><i>' + n[1] + '</i><span>' + n[2] + '</span></button>').join('') +
     '</nav>' + leaderboardMarkup() + '<div class="side-note"><span>HIU · YHCT</span><p>Mục tiêu từ vựng: nhìn → nhận biết → hiểu → nhớ.</p></div></aside><main><div class="top"><button class="mini" data-nav="home">中</button><div><b>HIU CLB YHCT</b><small>Chinese for Traditional Medicine</small></div><span class="streak">🔥 ' +
     state.progress.xp + ' XP</span>' + uiModeMarkup() + '<div class="auth-user"><span>' + safe(access.member?.display_name || access.member?.mssv || '') + '</span><small>' + safe(access.member?.mssv || '') + '</small><button id="authLogout">Đăng xuất</button></div></div><div class="content">' + content + '</div></main><div class="bottom">' +
-    navs.slice(0, 6).map(n => '<button data-nav="' + n[0] + '" class="' + (state.view === n[0] ? 'active' : '') + '"><i>' + n[1] + '</i><small>' + n[2] + '</small></button>').join('') +
+    navs.filter(n => n[0] !== 'radicals').slice(0, 5).map(n => '<button data-nav="' + n[0] + '" class="' + (state.view === n[0] ? 'active' : '') + '"><i>' + n[1] + '</i><small>' + n[2] + '</small></button>').join('') +
     '</div></div>' + pwaInstallMarkup();
 }
 
