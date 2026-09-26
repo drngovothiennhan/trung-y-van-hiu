@@ -12,6 +12,7 @@ import { bookOriginalQuiz } from './book-original-quiz';
 import { readingDrills } from './reading-drills';
 import { herbsFormulasSource, herbsFormulasTerms, herbsFormulasReadings, herbsFormulasQuiz } from './herbs-formulas';
 import { lessonAmDuongTextbookPages, lessonAmDuongTerms, lessonAmDuongQuiz, lessonAmDuongReadings } from './lesson-am-duong';
+import { writingPracticeView, bindWritingPractice } from './writing-practice';
 
 const STORAGE_KEY = 'trung-y-van-hiu-v4';
 
@@ -679,6 +680,7 @@ function shell(content) {
     ['home', '⌂', 'Hôm nay'],
     ['lessons', '书', 'Bài học'],
     ['vocab', '字', 'Từ vựng'],
+    ['writing', '✍', 'Luyện viết'],
     ['reading', '阅', 'Đọc hiểu'],
     ['radicals', '部', '214 bộ thủ'],
     ['quiz', '✓', 'Trắc nghiệm'],
@@ -945,6 +947,7 @@ function currentViewBody() {
   switch (state.view) {
     case 'lessons': return lessonsView();
     case 'vocab': return vocabView();
+    case 'writing': return writingPracticeView(learningTerms, access.member?.mssv || 'member');
     case 'reading': return readingView();
     case 'radicals': return radicalsView();
     case 'quiz': return quizView();
@@ -1040,6 +1043,7 @@ function bind(fullShell = true) {
   }
 
   bindAdmin();
+  if (scope.querySelector('#writingCanvas')) bindWritingPractice(scope, learningTerms, access.member?.mssv || 'member', () => render());
   const scope = document.querySelector('.content') || document;
   scope.querySelectorAll('[data-nav]').forEach(e => e.addEventListener('click', () => nav(e.dataset.nav)));
   scope.querySelectorAll('[data-speak]').forEach(e => e.addEventListener('click', () => speak(e.dataset.speak)));
