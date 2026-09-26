@@ -79,7 +79,7 @@ export function writingPracticeView(terms, memberId) {
       '<div class="panel writing-workspace"><div class="writing-panel-head"><div><span class="writing-kicker">' + escapeHtml(term.group || 'TỪ VỰNG') + '</span><h2>' + escapeHtml(term.hanzi) + '</h2></div><button type="button" class="speak" data-writing-speak="' + escapeHtml(term.hanzi) + '" aria-label="Nghe phát âm">🔊</button></div>' +
       '<p class="writing-pronunciation"><b>' + escapeHtml(term.pinyin) + '</b><span>' + escapeHtml(term.hv) + '</span></p><p class="writing-meaning">' + escapeHtml(term.meaning) + '</p>' +
       '<div class="writing-board-head"><strong>Viết từng chữ trong từ</strong><button type="button" class="writing-guide-toggle" id="writingGuideToggle">' + (showGuide ? 'Ẩn chữ mẫu' : 'Hiện chữ mẫu') + '</button></div>' +
-      '<div class="writing-canvas-wrap"><canvas id="writingCanvas" width="900" height="240" role="img" aria-label="Bảng viết chữ Hán ' + escapeHtml(term.hanzi) + '"></canvas></div>' +
+      '<div class="writing-canvas-wrap"><canvas id="writingCanvas" width="900" height="360" role="img" aria-label="Bảng viết chữ Hán ' + escapeHtml(term.hanzi) + '"></canvas></div>' +
       '<div class="writing-tools"><button type="button" id="writingUndo">↶ Hoàn tác nét</button><button type="button" id="writingClear">Xóa bảng</button><button type="button" class="primary" id="writingComplete">Tôi đã luyện xong từ này</button></div>' +
       '<p class="writing-hint">Dùng chuột, bút cảm ứng hoặc ngón tay để viết. App ghi nhận lượt luyện do bạn tự xác nhận; hiện chưa tự chấm nét viết.</p></div></section>';
 }
