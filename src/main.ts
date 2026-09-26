@@ -645,6 +645,20 @@ function restoreContext(context, memberCode) {
   return true;
 }
 
+function resetUserContext(memberCode) {
+  state.view = 'home';
+  state.card = 0;
+  state.vocabPhase = 0;
+  state.reading = 0;
+  state.readingTopic = 'all';
+  state.quizMode = 'mixed';
+  state.quizIndex = 0;
+  state.quizAnswers = {};
+  state.quiz = prepareQuizRound(quizBank);
+  state.reviewMode = false;
+  restoreWritingContext(memberCode, null, learningTerms);
+}
+
 async function restoreSignedInUserState(member) {
   if (!member?.mssv) return;
   restoringUserState = true;
@@ -673,6 +687,7 @@ async function restoreSignedInUserState(member) {
   state.progress.wordStage = validObject(state.progress.wordStage) ? state.progress.wordStage : {};
   state.progress.memorySchedule = validObject(state.progress.memorySchedule) ? state.progress.memorySchedule : {};
   const context = validObject(serverState?.context) ? serverState.context : localMemberContext;
+  resetUserContext(memberCode);
   restoreContext(context, memberCode);
   restoringUserState = false;
   scheduleUserStateSync();
