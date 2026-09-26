@@ -11,6 +11,15 @@ let writers = [];
 let animationPaused = false;
 const characterDataCache = new Map();
 
+// Only show decomposition entries reviewed against dictionary/IDS data.
+// Keep mnemonics visual; do not present them as character etymology.
+const CHIET_TU = Object.freeze({
+  '阴': { structure: 'Trái + phải', parts: ['阝', '月'], cue: 'Đặt cạnh chữ 阳 để so sánh: giữ 阝 ở bên trái, nhận ra 月 ở bên phải.' },
+  '阳': { structure: 'Trái + phải', parts: ['阝', '日'], cue: 'Đặt cạnh chữ 阴 để so sánh: giữ 阝 ở bên trái, nhận ra 日 ở bên phải.' },
+  '中': { structure: 'Nét xuyên qua', parts: ['口', '丨'], cue: 'Nhớ hình 丨 xuyên qua 口; cách tách này giúp nhận dạng mặt chữ.' },
+  '医': { structure: 'Nửa bao quanh', parts: ['匚', '矢'], cue: 'Nhìn 匚 bao lấy phần 矢 ở bên trong; ghi nhớ theo hình thể.' },
+});
+
 function escapeHtml(value) {
   return String(value ?? '').replace(/[&<>"']/g, char => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;',
@@ -67,6 +76,17 @@ function animationMarkup(chars) {
   return chars.map((char, index) => '<article class="writing-animation-card"><div class="writing-animation-grid"><span class="writing-animation-cross writing-animation-cross-v"></span><span class="writing-animation-cross writing-animation-cross-h"></span><div class="writing-animation" data-animation-char="' + escapeHtml(char) + '" role="img" aria-label="Hoạt ảnh thứ tự nét chữ ' + escapeHtml(char) + '"></div></div><div class="writing-animation-caption"><b>' + (index + 1) + '</b><span data-stroke-count="' + escapeHtml(char) + '">Đang tải nét…</span></div></article>').join('');
 }
 
+function chietTuMarkup(chars) {
+  return chars.map((char, index) => {
+    const entry = CHIET_TU[char];
+    if (!entry) {
+      return '<article class="writing-decomposition-card writing-decomposition-unknown"><div class="writing-decomposition-title"><b>' + escapeHtml(char) + '</b><span>Chữ ' + (index + 1) + '</span></div><p>Chưa có phần chiết tự đã kiểm chứng cho chữ này. Hãy giữ nguyên chữ để học âm và nghĩa; không tự gán bộ phận.</p></article>';
+    }
+    const parts = entry.parts.map((part, partIndex) => '<span class="writing-decomposition-part"><b>' + escapeHtml(part) + '</b><small>' + (partIndex === 0 ? 'phần 1' : 'phần 2') + '</small></span>').join('<span class="writing-decomposition-plus" aria-hidden="true">' + (entry.structure === 'Nét xuyên qua' ? 'xuyên qua' : entry.structure === 'Nửa bao quanh' ? 'bao quanh' : '+') + '</span>');
+    return '<article class="writing-decomposition-card"><div class="writing-decomposition-title"><b>' + escapeHtml(char) + '</b><span>' + escapeHtml(entry.structure) + '</span></div><div class="writing-decomposition-parts" aria-label="Các thành phần tạo hình của chữ ' + escapeHtml(char) + '">' + parts + '</div><p>' + escapeHtml(entry.cue) + '</p></article>';
+  }).join('');
+}
+
 export function writingPracticeView(terms, memberId) {
   if (!selectedHanzi && terms.length) {
     selectedHanzi = terms.some(term => term.hanzi === '阴阳') ? '阴阳' : terms[0].hanzi;
@@ -76,7 +96,7 @@ export function writingPracticeView(terms, memberId) {
   const doneCount = Object.keys(progress).length;
   const totalWrites = Object.values(progress).reduce((sum, value) => sum + Number(value?.count || 0), 0);
   const chars = Array.from(term.hanzi || '');
-  return '<header class="page-head"><span>LUYỆN TẬP · 手写</span><h1>Luyện viết từ vựng</h1><p>Xem hoạt ảnh nét viết Hán theo đúng thứ tự, sau đó luyện viết từng chữ vào ô bên dưới.</p></header>' +
+  return '<header class="page-head"><span>NHẬN DIỆN · 拆字</span><h1>Học chữ bằng chiết tự</h1><p>Tách các bộ phận đã được kiểm chứng để nhận mặt chữ và tạo liên tưởng. Hoạt ảnh thứ tự nét và vùng viết nằm ở phần luyện thêm.</p></header>' +
     '<section class="stats writing-stats">' +
       '<article class="stat"><span>字</span><div><strong>' + doneCount + '</strong><small>Từ đã luyện</small></div></article>' +
       '<article class="stat"><span>✍</span><div><strong>' + totalWrites + '</strong><small>Lượt tự ghi nhận</small></div></article>' +
@@ -86,19 +106,21 @@ export function writingPracticeView(terms, memberId) {
       '<label class="writing-search-label" for="writingSearch">Tìm theo chữ, pinyin hoặc nghĩa</label><input id="writingSearch" class="writing-search" type="search" value="' + escapeHtml(searchQuery) + '" placeholder="Ví dụ: âm dương, yīnyáng, 阴阳" autocomplete="off">' +
       '<div id="writingTermList" class="writing-term-list">' + termListMarkup(terms, progress, term.hanzi) + '</div></div>' +
       '<div class="writing-workspace"><section class="panel writing-lesson-card"><div class="writing-panel-head"><div><span class="writing-kicker">' + escapeHtml(term.group || 'TỪ VỰNG') + '</span><h2>' + escapeHtml(term.hanzi) + '</h2></div><button type="button" class="speak" data-writing-speak="' + escapeHtml(term.hanzi) + '" aria-label="Nghe phát âm">🔊</button></div>' +
-      '<section class="writing-study-path" aria-label="Cách học để nhận mặt và ghi nhớ chữ">' +
-        '<div class="writing-study-path-head"><span class="writing-kicker">CÁCH HỌC NHỚ · 4 NHỊP</span><small>Đi lần lượt: nhìn chữ → gắn âm nghĩa → theo nét → tự viết</small></div>' +
+      '<section class="writing-study-path" aria-label="Học nhận diện chữ Hán bằng chiết tự">' +
+        '<div class="writing-study-path-head"><span class="writing-kicker">CHIẾT TỰ · 4 NHỊP HỌC</span><small>Nhìn cả từ → tách từng chữ → liên tưởng hình → tự nhắc lại</small></div>' +
         '<div class="writing-study-steps">' +
-          '<article><b>1</b><strong>Nhìn trọn chữ</strong><p>Đọc chậm cả từ <em>' + escapeHtml(term.hanzi) + '</em>; để ý thứ tự các chữ trong từ.</p></article>' +
-          '<article><b>2</b><strong>Gắn âm và nghĩa</strong><p>Tự nhẩm cách đọc và nghĩa trước khi mở phần kiểm tra bên dưới.</p></article>' +
-          '<article><b>3</b><strong>Nhìn nét chạy</strong><p>Theo từng chữ từ nét đầu đến nét cuối; nhẩm số thứ tự khi hoạt ảnh lặp.</p></article>' +
-          '<article><b>4</b><strong>Tự nhớ rồi viết</strong><p>Ẩn chữ mờ, viết lại cả từ và đọc lại âm cùng nghĩa.</p></article>' +
+          '<article><b>1</b><strong>Nhìn cả từ</strong><p>Đọc trọn <em>' + escapeHtml(term.hanzi) + '</em>; giữ nguyên thứ tự chữ trong từ.</p></article>' +
+          '<article><b>2</b><strong>Tách từng chữ</strong><p>Quan sát phần chiết tự bên dưới; chú ý trái–phải hoặc phần bao quanh.</p></article>' +
+          '<article><b>3</b><strong>Gắn liên tưởng hình</strong><p>Dùng gợi ý hình thể để phân biệt và nhớ mặt chữ; không suy diễn nguồn gốc.</p></article>' +
+          '<article><b>4</b><strong>Tự gọi lại</strong><p>Nhẩm âm và nghĩa trước, mở đáp án để kiểm tra; sau đó có thể luyện viết.</p></article>' +
         '</div>' +
+        '<div class="writing-decomposition-list" aria-label="Chiết tự từng chữ">' + chietTuMarkup(chars) + '</div>' +
         '<details class="writing-recall-answer"><summary>Tự nhắc lại âm đọc và nghĩa, rồi mở để kiểm tra</summary><div class="writing-recall-content"><p><span>Âm đọc</span><b>' + escapeHtml(term.pinyin) + '</b></p><p><span>Hán-Việt</span><b>' + escapeHtml(term.hv) + '</b></p><p><span>Nghĩa</span><b>' + escapeHtml(term.meaning) + '</b></p></div></details>' +
+        '<p class="writing-decomposition-note">Chiết tự ở đây mô tả hình thể để hỗ trợ nhận diện. Các gợi ý ghi nhớ không thay cho giải thích từ nguyên.</p>' +
       '</section>' +
-      '<div class="writing-section-head"><div><span class="writing-step">BƯỚC 3</span><strong>Xem thứ tự nét</strong><small>Mỗi chữ tự động phát lại liên tục</small></div><button type="button" class="writing-animation-toggle" id="writingAnimationToggle" aria-pressed="false">Tạm dừng</button></div>' +
+      '<div class="writing-section-head"><div><span class="writing-step">LUYỆN THÊM</span><strong>Hoạt ảnh nét viết</strong><small>Công cụ bổ trợ sau khi đã nhận diện cấu tạo chữ</small></div><button type="button" class="writing-animation-toggle" id="writingAnimationToggle" aria-pressed="false">Tạm dừng</button></div>' +
       '<div class="writing-animation-list" id="writingAnimationList">' + animationMarkup(chars) + '</div><p class="writing-animation-status" id="writingAnimationStatus" role="status">Đang tải dữ liệu nét viết…</p></section>' +
-      '<section class="panel writing-practice-card"><div class="writing-section-head"><div><span class="writing-step">BƯỚC 4</span><strong>Tự viết lại</strong><small>Viết theo thứ tự nét vừa quan sát</small></div><button type="button" class="writing-guide-toggle" id="writingGuideToggle">' + (showGuide ? 'Ẩn chữ mờ' : 'Hiện chữ mờ') + '</button></div>' +
+      '<section class="panel writing-practice-card"><div class="writing-section-head"><div><span class="writing-step">LUYỆN THÊM</span><strong>Tự viết lại</strong><small>Dùng cấu tạo vừa học để nhớ và viết trọn từ</small></div><button type="button" class="writing-guide-toggle" id="writingGuideToggle">' + (showGuide ? 'Ẩn chữ mờ' : 'Hiện chữ mờ') + '</button></div>' +
       '<div class="writing-canvas-wrap"><canvas id="writingCanvas" width="900" height="360" role="img" aria-label="Bảng viết chữ Hán ' + escapeHtml(term.hanzi) + '"></canvas></div>' +
       '<div class="writing-tools"><button type="button" id="writingUndo">↶ Hoàn tác nét</button><button type="button" id="writingClear">Xóa bảng</button><button type="button" class="primary" id="writingComplete">Tôi đã luyện xong từ này</button></div>' +
       '<p class="writing-hint">Dùng ngón tay, bút cảm ứng hoặc chuột. Tiến độ và nét đang viết được lưu theo tài khoản; ứng dụng chưa tự chấm nét viết.</p></section></div></section>';

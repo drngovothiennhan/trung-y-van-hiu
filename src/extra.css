@@ -510,6 +510,19 @@ html[data-ui-mode="mobile"] .admin-access-stats{display:none!important}
 .writing-recall-content p{display:grid;gap:4px;margin:0;padding:9px;border-radius:8px;background:#f7f5ed}
 .writing-recall-content span{font-size:9px;color:#7b877f}
 .writing-recall-content b{font-size:10px;color:#244f44;overflow-wrap:anywhere}
+.writing-decomposition-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:9px;margin-top:11px}
+.writing-decomposition-card{min-width:0;padding:11px;border:1px solid #dce5de;border-radius:11px;background:#fff}
+.writing-decomposition-title{display:flex;align-items:center;gap:9px}
+.writing-decomposition-title>b{display:grid;place-items:center;width:38px;height:38px;border-radius:10px;background:#edf3ed;color:#245b4d;font:700 24px Georgia,serif}
+.writing-decomposition-title>span{font-size:10px;font-weight:800;color:#52685e}
+.writing-decomposition-parts{display:flex;align-items:center;gap:6px;margin:10px 0}
+.writing-decomposition-part{display:grid;justify-items:center;min-width:46px;padding:5px 9px;border-radius:9px;background:#f5f6f1}
+.writing-decomposition-part>b{color:#245b4d;font:700 21px Georgia,serif}
+.writing-decomposition-part>small{font-size:8px;color:#7b877f}
+.writing-decomposition-plus{font-size:9px;color:#9a7a38}
+.writing-decomposition-card>p{margin:0;color:#6c7972;font-size:9px;line-height:1.5}
+.writing-decomposition-unknown{background:#fbfaf6}
+.writing-decomposition-note{margin:9px 2px 0;color:#7b877f;font-size:9px;line-height:1.5}
 @media(max-width:900px){.writing-picker{position:static}.writing-layout{grid-template-columns:1fr}.writing-term-list{max-height:220px;grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.writing-animation-list{grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:7px}.writing-section-head strong{font-size:13px}.writing-section-head small{font-size:9px}.writing-animation-toggle{padding:8px 9px}.writing-animation-caption{padding:6px 7px}.writing-hint{font-size:10px}.writing-tools button{min-height:42px}}
 @media(max-width:900px){.writing-study-steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
