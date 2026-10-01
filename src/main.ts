@@ -13,7 +13,8 @@ import { readingDrills } from './reading-drills';
 import { herbsFormulasSource, herbsFormulasTerms, herbsFormulasReadings, herbsFormulasQuiz } from './herbs-formulas';
 import { lessonAmDuongTextbookPages, lessonAmDuongTerms, lessonAmDuongQuiz, lessonAmDuongReadings } from './lesson-am-duong';
 import { writingPracticeView, bindWritingPractice, getWritingContext, restoreWritingContext } from './writing-practice';
-import { chietTuView, bindChietTu } from './chiet-tu';
+import { chietTuView, bindChietTu, componentHint } from './chiet-tu';
+import { smartOptions, loadExamConfig, saveExamConfig, daysUntil, examIntervalCap, buildExamDeck, seededRandom } from './exam-mode';
 
 const STORAGE_KEY = 'trung-y-van-hiu-v4';
 
@@ -540,6 +541,8 @@ const state = {
   sourceQuery: '',
   radicalQuery: '',
   answerLesson: 1,
+  optionSalt: 0,
+  exam: { phase: 'setup', cfg: loadExamConfig(), deck: [], pos: 0, flipped: false, ok: 0, miss: [] },
   progress: loadProgress()
 };
 
@@ -632,7 +635,7 @@ function flushUserStateSync() {
 
 function restoreContext(context, memberCode) {
   if (!validObject(context)) return false;
-  const viewNames = ['home','lessons','vocab','writing','reading','quiz','radicals','chiet-tu','library','progress','admin'];
+  const viewNames = ['home','lessons','vocab','exam','writing','reading','quiz','radicals','chiet-tu','library','progress','admin'];
   if (viewNames.includes(context.view)) state.view = context.view;
   if (Number.isInteger(context.card)) state.card = Math.max(0, Math.min(learningTerms.length - 1, context.card));
   if (Number.isInteger(context.vocabPhase)) state.vocabPhase = Math.max(0, Math.min(3, context.vocabPhase));
@@ -744,6 +747,13 @@ function memoryMeta(hanzi) {
   return state.progress.memorySchedule[hanzi];
 }
 
+// With an exam date set, cap the gap between reviews so each word returns several times before the exam.
+function intervalFor(level) {
+  const base = REVIEW_INTERVALS[Math.min(level, REVIEW_INTERVALS.length - 1)];
+  const cap = examIntervalCap(daysUntil(loadExamConfig().date));
+  return cap ? Math.min(base, Math.max(cap, REVIEW_INTERVALS[0])) : base;
+}
+
 function scheduleFirstReview(hanzi) {
   const m = memoryMeta(hanzi);
   m.level = 0;
@@ -769,7 +779,7 @@ function reviewSuccess(hanzi) {
   m.streak += 1;
   m.reviews += 1;
   m.last = Date.now();
-  m.due = Date.now() + REVIEW_INTERVALS[m.level];
+  m.due = Date.now() + intervalFor(m.level);
   state.progress.xp += 6;
   save();
 }
@@ -796,6 +806,7 @@ function dueLabel(ts) {
 }
 
 function nextCard() {
+  state.optionSalt += 1;
   state.card = (state.card + 1) % learningTerms.length;
   state.vocabPhase = Math.min(stage(learningTerms[state.card].hanzi), 3);
   state.vocabChoice = null;
@@ -805,13 +816,11 @@ function nextCard() {
 }
 
 function optionsFor(index, mapper) {
-  const answer = mapper(learningTerms[index]);
-  const out = [answer];
-  for (let step = 1; out.length < 4 && step < learningTerms.length; step++) {
-    const candidate = mapper(learningTerms[(index + step * 7) % learningTerms.length]);
-    if (!out.includes(candidate)) out.push(candidate);
-  }
-  return out.map((x, i) => ({ x, rank: (i * 3 + index) % 7 })).sort((a, b) => a.rank - b.rank).map(x => x.x);
+  const reviews = state.progress.memorySchedule?.[learningTerms[index].hanzi]?.reviews || 0;
+  return smartOptions(learningTerms, index, mapper, {
+    seed: index * 131 + state.optionSalt * 7919 + reviews * 17 + 1,
+    weak: new Set(state.progress.difficult)
+  });
 }
 
 function shell(content) {
@@ -819,6 +828,7 @@ function shell(content) {
     ['home', '⌂', 'Hôm nay'],
     ['lessons', '书', 'Bài học'],
     ['vocab', '字', 'Từ vựng'],
+    ['exam', '考', 'Ôn thi'],
     ['writing', '✍', 'Luyện viết'],
     ['reading', '阅', 'Đọc hiểu'],
     ['radicals', '部', '214 bộ thủ'],
@@ -833,7 +843,7 @@ function shell(content) {
     navs.map(n => '<button data-nav="' + n[0] + '" class="' + (state.view === n[0] ? 'active' : '') + '"><i>' + n[1] + '</i><span>' + n[2] + '</span></button>').join('') +
     '</nav>' + leaderboardMarkup() + '<div class="side-note"><span>HIU · YHCT</span><p>Mục tiêu từ vựng: nhìn → nhận biết → hiểu → nhớ.</p></div></aside><main><div class="top"><button class="mini" data-nav="home">中</button><div><b>HIU CLB YHCT</b><small>Chinese for Traditional Medicine</small></div><span class="streak">🔥 ' +
     state.progress.xp + ' XP</span>' + uiModeMarkup() + '<div class="auth-user"><span>' + safe(access.member?.display_name || access.member?.mssv || '') + '</span><small>' + safe(access.member?.mssv || '') + '</small><button id="authLogout">Đăng xuất</button></div></div><div class="content">' + content + '</div></main><div class="bottom">' +
-    navs.filter(n => n[0] !== 'radicals').slice(0, 5).map(n => '<button data-nav="' + n[0] + '" class="' + (state.view === n[0] ? 'active' : '') + '"><i>' + n[1] + '</i><small>' + n[2] + '</small></button>').join('') +
+    navs.filter(n => n[0] !== 'radicals').slice(0, 6).map(n => '<button data-nav="' + n[0] + '" class="' + (state.view === n[0] ? 'active' : '') + '"><i>' + n[1] + '</i><small>' + n[2] + '</small></button>').join('') +
     '</div></div>' + pwaInstallMarkup();
 }
 
@@ -842,7 +852,7 @@ function home() {
   const stage4 = learningTerms.filter(v => stage(v.hanzi) >= 4).length;
   const due = dueTerms().length;
   const durable = durableTerms().length;
-  return '<section class="hero"><div><span class="eyebrow">HIU CLB YHCT · 中医中文</span><h1>Trung Y Văn HIU</h1><p>Học Trung văn chuyên ngành theo vòng nhớ trọng tâm: <b>nhìn chữ → nhận biết → hiểu nghĩa → nhớ lại</b>, sau đó kiểm tra bằng đọc hiểu và trắc nghiệm.</p><div class="actions"><button class="primary" data-nav="vocab">Học từ vựng 4 bước</button><button id="homeDueReview">Ôn đến hạn · ' + due + '</button><button data-nav="quiz">Thi nhanh 10 câu</button></div></div><div class="seal">医<small>中医中文</small></div></section>' +
+  return '<section class="hero"><div><span class="eyebrow">HIU CLB YHCT · 中医中文</span><h1>Trung Y Văn HIU</h1><p>Học Trung văn chuyên ngành theo vòng nhớ trọng tâm: <b>nhìn chữ → nhận biết → hiểu nghĩa → nhớ lại</b>, sau đó kiểm tra bằng đọc hiểu và trắc nghiệm.</p><div class="actions"><button class="primary" data-nav="vocab">Học từ vựng 4 bước</button><button id="homeDueReview">Ôn đến hạn · ' + due + '</button><button data-nav="exam">Ôn thi nhanh</button><button data-nav="quiz">Thi nhanh 10 câu</button></div></div><div class="seal">医<small>中医中文</small></div></section>' +
     '<section class="stats">' + stat('字', learningTerms.length, 'Thuật ngữ nguồn') + stat('⏱', due, 'Từ đến hạn ôn') + stat('稳', durable, 'Từ bền ≥14 ngày') + stat('记', stage4, 'Từ đang ở mức Nhớ') + '</section>' +
     h('HỌC TỪ VỰNG', 'Nhìn · Nhận biết · Hiểu · Nhớ', 'Không đánh dấu “đã học” chỉ vì đã lật thẻ. Một từ chỉ được xem là nhớ khi hoàn thành đủ 4 mức.') +
     '<div class="memory-road">' +
@@ -882,7 +892,7 @@ function vocabView() {
   const phases = [['看','Nhìn'],['认','Nhận biết'],['懂','Hiểu'],['记','Nhớ']];
   let task = '';
   if (state.vocabPhase === 0) {
-    task = '<div class="look-card"><b>' + v.hanzi + '</b><button class="speak" data-speak="' + v.hanzi + '">🔊 Nghe phát âm</button><p>Nhìn cấu trúc chữ trước. Chưa cần đọc nghĩa.</p><button id="phaseNext" class="primary">Tôi đã nhìn rõ chữ →</button></div>';
+    task = '<div class="look-card"><b>' + v.hanzi + '</b><button class="speak" data-speak="' + v.hanzi + '">🔊 Nghe phát âm</button><p>Nhìn cấu trúc chữ trước. Chưa cần đọc nghĩa.</p>' + componentHint(v, radicals214) + '<button id="phaseNext" class="primary">Tôi đã nhìn rõ chữ →</button></div>';
   } else if (state.vocabPhase === 1) {
     const opts = optionsFor(state.card, x => x.hv + ' · ' + x.meaning);
     task = '<div class="recognition-card"><span class="big-hanzi">' + v.hanzi + '</span><h3>Chọn nghĩa đúng của từ này</h3><div class="memory-options">' +
@@ -897,7 +907,7 @@ function vocabView() {
     task = '<div class="remember-card"><span class="memory-kicker">TỪ NGHĨA → NHỚ LẠI CHỮ</span><h2>' + v.hv + '</h2><p>' + v.meaning + '</p>' +
       (!state.recallRevealed
         ? '<div class="recall-blank">Hãy nhẩm hoặc viết lại chữ Hán trong đầu trước khi mở đáp án.</div><button id="revealRecall" class="primary">Mở để tự kiểm tra</button>'
-        : '<div class="recall-answer"><b>' + v.hanzi + '</b><strong>' + v.pinyin + '</strong><small>' + v.group + '</small></div><div class="recall"><button id="rememberNo" class="danger">✕ Chưa nhớ</button><button id="rememberYes" class="success">✓ Nhớ được</button></div>') +
+        : '<div class="recall-answer"><b>' + v.hanzi + '</b><strong>' + v.pinyin + '</strong><small>' + v.group + '</small></div>' + componentHint(v, radicals214) + '<div class="recall"><button id="rememberNo" class="danger">✕ Chưa nhớ</button><button id="rememberYes" class="success">✓ Nhớ được</button></div>') +
       '</div>';
   }
   const due = dueTerms().length;
@@ -934,6 +944,150 @@ function reviewView() {
     '<section class="panel review-card"><div class="review-meta"><span>Cấp bền ' + m.level + '/6</span><span>Đúng liên tiếp ' + m.streak + '</span><span>Quên ' + m.lapses + ' lần</span></div>' +
     (reverse ? '<span class="memory-kicker">NGHĨA → CHỮ HÁN</span><h2>' + v.hv + '</h2><p>' + v.meaning + '</p>' : '<span class="memory-kicker">CHỮ HÁN → NGHĨA</span><b class="review-hanzi">' + v.hanzi + '</b><p class="pinyin">' + v.pinyin + '</p>') +
     '<div class="memory-options review-options">' + opts.map(o => '<button data-review-value="' + safe(o) + '" data-correct="' + safe(correct) + '">' + o + '</button>').join('') + '</div><button id="exitReview" class="review-exit">Thoát lượt ôn</button></section>';
+}
+
+// ---------- Ôn thi: thẻ lật hai chiều, ưu tiên từ yếu, lịch ôn nén theo ngày thi ----------
+
+function examTermsByGroup() {
+  const counts = {};
+  for (const t of learningTerms) counts[t.group] = (counts[t.group] || 0) + 1;
+  return Object.entries(counts).sort((a, b) => b[1] - a[1]);
+}
+
+function examTerm(hanzi) {
+  return learningTerms.find(t => t.hanzi === hanzi);
+}
+
+function examSetupView() {
+  const e = state.exam;
+  const cfg = e.cfg;
+  const days = daysUntil(cfg.date);
+  const pool = learningTerms.filter(t => cfg.group === 'all' || t.group === cfg.group);
+  const weak = pool.filter(t => stage(t.hanzi) < 4 || state.progress.difficult.includes(t.hanzi)).length;
+  const countdown = cfg.date
+    ? (days === null ? 'Ngày thi đã qua hoặc không hợp lệ — lịch ôn dùng mức mặc định.' : 'Còn <b>' + days + ' ngày</b> đến kỳ thi. Lịch ôn đã được nén để mỗi từ quay lại nhiều lần trước ngày thi.')
+    : 'Chưa đặt ngày thi. Đặt ngày để lịch ôn tự rút ngắn khoảng cách giữa các lần ôn.';
+  const groups = examTermsByGroup();
+  return h('ÔN THI', 'Ôn thi nhanh: nhớ mặt chữ và nghĩa', 'Thẻ lật hai chiều, không pinyin, không nghe, không viết. Từ hay sai và từ chưa nhớ được đưa lên trước.') +
+    '<section class="panel exam-setup">' +
+      '<label class="exam-field"><span>Ngày thi cuối kỳ</span><input id="examDate" type="date" value="' + safe(cfg.date) + '"></label>' +
+      '<p class="exam-countdown">' + countdown + '</p>' +
+      '<label class="exam-field"><span>Chủ đề ôn</span><select id="examGroup"><option value="all"' + (cfg.group === 'all' ? ' selected' : '') + '>Tất cả · ' + learningTerms.length + ' từ</option>' +
+        groups.map(g => '<option value="' + safe(g[0]) + '"' + (cfg.group === g[0] ? ' selected' : '') + '>' + safe(g[0]) + ' · ' + g[1] + ' từ</option>').join('') + '</select></label>' +
+      '<label class="exam-field"><span>Số thẻ mỗi lượt</span><select id="examSize">' + [10, 20, 30, 50].map(n => '<option value="' + n + '"' + (cfg.size === n ? ' selected' : '') + '>' + n + ' thẻ</option>').join('') + '</select></label>' +
+      '<div class="exam-weak"><b>' + weak + '</b><span>từ chưa nhớ hoặc hay sai trong chủ đề này</span></div>' +
+      '<button id="examStart" class="primary exam-start"' + (pool.length ? '' : ' disabled') + '>Bắt đầu lượt ôn →</button>' +
+    '</section>';
+}
+
+function examCardView() {
+  const e = state.exam;
+  const card = e.deck[e.pos];
+  const v = examTerm(card.hanzi);
+  const front = card.dir === 'han2vi'
+    ? '<span class="memory-kicker">CHỮ HÁN → NGHĨA</span><b class="exam-han">' + v.hanzi + '</b>'
+    : '<span class="memory-kicker">NGHĨA → CHỮ HÁN</span><h2 class="exam-vi">' + v.hv + '</h2><p class="exam-meaning">' + v.meaning + '</p>';
+  const back = card.dir === 'han2vi'
+    ? '<h2 class="exam-vi">' + v.hv + '</h2><p class="exam-meaning">' + v.meaning + '</p><small class="exam-pinyin">' + v.pinyin + ' · ' + v.group + '</small>'
+    : '<b class="exam-han">' + v.hanzi + '</b><small class="exam-pinyin">' + v.pinyin + ' · ' + v.group + '</small>';
+  const pct = Math.round(e.pos / e.deck.length * 100);
+  return h('ÔN THI', 'Thẻ ' + (e.pos + 1) + '/' + e.deck.length, card.again ? 'Thẻ này vừa sai — gặp lại để chắc hơn.' : 'Tự nhớ trước, rồi lật để kiểm tra.') +
+    '<section class="panel exam-card"><div class="track"><i style="width:' + pct + '%"></i></div><div class="exam-face">' + front +
+    (e.flipped
+      ? '<div class="exam-back">' + back + '</div><div class="recall"><button id="examMiss" class="danger">✕ Chưa nhớ</button><button id="examHit" class="success">✓ Nhớ được</button></div>' + componentHint(v, radicals214)
+      : '<button id="examFlip" class="primary exam-flip">Lật thẻ</button>') +
+    '</div><button id="examQuit" class="review-exit">Dừng lượt ôn</button></section>';
+}
+
+function examDoneView() {
+  const e = state.exam;
+  const missed = [...new Set(e.miss)].map(examTerm).filter(Boolean);
+  return h('ÔN THI', 'Hoàn thành lượt ôn', e.ok + ' lần nhớ được · ' + e.miss.length + ' lần chưa nhớ.') +
+    '<section class="panel exam-done"><div class="score"><b>' + e.ok + '</b><span>/' + (e.ok + e.miss.length) + '</span></div>' +
+    (missed.length
+      ? '<h3>Từ cần ôn lại (' + missed.length + ')</h3><div class="exam-missed">' + missed.map(v => '<div><b>' + v.hanzi + '</b><span><strong>' + v.hv + '</strong><small>' + v.meaning + '</small></span></div>').join('') + '</div><button id="examRetry" class="primary">Ôn lại các từ chưa nhớ</button>'
+      : '<p>Không có từ nào sai trong lượt này.</p>') +
+    '<button id="examAgain" class="exam-secondary">Lượt mới</button></section>';
+}
+
+function examView() {
+  const e = state.exam;
+  if (e.phase === 'run' && e.deck[e.pos]) return examCardView();
+  if (e.phase === 'done') return examDoneView();
+  return examSetupView();
+}
+
+function startExamDeck(deck) {
+  const e = state.exam;
+  e.deck = deck;
+  e.pos = 0;
+  e.flipped = false;
+  e.ok = 0;
+  e.miss = [];
+  e.phase = deck.length ? 'run' : 'setup';
+  render();
+}
+
+function gradeExam(ok) {
+  const e = state.exam;
+  const card = e.deck[e.pos];
+  const v = examTerm(card.hanzi);
+  if (!v) return;
+  if (ok) {
+    e.ok += 1;
+    const m = state.progress.memorySchedule?.[v.hanzi];
+    if (stage(v.hanzi) >= 4 && m && m.due > 0) reviewSuccess(v.hanzi);
+    else { setStage(v.hanzi, 4); scheduleFirstReview(v.hanzi); state.progress.xp += 4; }
+  } else {
+    e.miss.push(v.hanzi);
+    if (!state.progress.difficult.includes(v.hanzi)) state.progress.difficult.push(v.hanzi);
+    if (stage(v.hanzi) >= 4) {
+      const m = memoryMeta(v.hanzi);
+      m.level = 0; m.streak = 0; m.lapses += 1; m.reviews += 1; m.last = Date.now();
+      m.due = Date.now() + REVIEW_INTERVALS[0];
+    }
+    if (!card.again) e.deck.push({ hanzi: v.hanzi, dir: card.dir === 'han2vi' ? 'vi2han' : 'han2vi', again: true });
+  }
+  save();
+  e.pos += 1;
+  e.flipped = false;
+  if (e.pos >= e.deck.length) e.phase = 'done';
+  render();
+}
+
+function bindExam(scope) {
+  const e = state.exam;
+  const setCfg = patch => { e.cfg = { ...e.cfg, ...patch }; saveExamConfig(e.cfg); render(); };
+  const date = scope.querySelector('#examDate');
+  if (date) date.addEventListener('change', ev => setCfg({ date: ev.target.value }));
+  const group = scope.querySelector('#examGroup');
+  if (group) group.addEventListener('change', ev => setCfg({ group: ev.target.value }));
+  const size = scope.querySelector('#examSize');
+  if (size) size.addEventListener('change', ev => setCfg({ size: Number(ev.target.value) }));
+  const start = scope.querySelector('#examStart');
+  if (start) start.addEventListener('click', () => {
+    const rng = seededRandom((Date.now() & 0x7fffffff) || 1);
+    startExamDeck(buildExamDeck(learningTerms, e.cfg, {
+      stage,
+      meta: h => state.progress.memorySchedule?.[h],
+      difficult: state.progress.difficult,
+      now: Date.now()
+    }, rng));
+  });
+  const flip = scope.querySelector('#examFlip');
+  if (flip) flip.addEventListener('click', () => { e.flipped = true; render(); });
+  const hit = scope.querySelector('#examHit');
+  if (hit) hit.addEventListener('click', () => gradeExam(true));
+  const miss = scope.querySelector('#examMiss');
+  if (miss) miss.addEventListener('click', () => gradeExam(false));
+  const quit = scope.querySelector('#examQuit');
+  if (quit) quit.addEventListener('click', () => { e.phase = e.miss.length || e.ok ? 'done' : 'setup'; render(); });
+  const retry = scope.querySelector('#examRetry');
+  if (retry) retry.addEventListener('click', () => {
+    startExamDeck([...new Set(e.miss)].map((hanzi, i) => ({ hanzi, dir: i % 2 ? 'vi2han' : 'han2vi' })));
+  });
+  const again = scope.querySelector('#examAgain');
+  if (again) again.addEventListener('click', () => { e.phase = 'setup'; e.deck = []; e.pos = 0; render(); });
 }
 
 function activeReadings() {
@@ -1087,6 +1241,7 @@ function currentViewBody() {
   switch (state.view) {
     case 'lessons': return lessonsView();
     case 'vocab': return vocabView();
+    case 'exam': return examView();
     case 'writing': return writingPracticeView(learningTerms, access.member?.mssv || 'member');
     case 'reading': return readingView();
     case 'radicals': return radicalsView();
@@ -1189,6 +1344,7 @@ function bind(fullShell = true) {
   if (scope.querySelector('#writingCanvas')) bindWritingPractice(scope, learningTerms, access.member?.mssv || 'member', () => render(), () => scheduleUserStateSync());
   if (scope.querySelector('#chietTermList')) bindChietTu(scope, learningTerms, radicals214);
   scope.querySelectorAll('[data-nav]').forEach(e => e.addEventListener('click', () => nav(e.dataset.nav)));
+  bindExam(scope);
   scope.querySelectorAll('[data-speak]').forEach(e => e.addEventListener('click', () => speak(e.dataset.speak)));
   scope.querySelectorAll('[data-source-open]').forEach(e => e.addEventListener('click', () => { state.source = e.dataset.sourceOpen; state.sourceQuery = ''; nav('library'); }));
   scope.querySelectorAll('[data-answer-lesson]').forEach(e => e.addEventListener('click', () => { state.answerLesson = Number(e.dataset.answerLesson); render(); }));
@@ -1335,6 +1491,7 @@ function bind(fullShell = true) {
 function bindWordClicks() {
   document.querySelectorAll('[data-term-index]').forEach(x => x.addEventListener('click', () => {
     state.card = Number(x.dataset.termIndex);
+    state.optionSalt += 1;
     state.vocabPhase = Math.min(stage(learningTerms[state.card].hanzi), 3);
     state.vocabFeedback = null;
     state.recallRevealed = false;

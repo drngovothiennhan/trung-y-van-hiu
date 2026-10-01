@@ -243,7 +243,7 @@ html[data-ui-mode="mobile"] .features{grid-template-columns:1fr 1fr!important}
 html[data-ui-mode="mobile"] .radicals{grid-template-columns:repeat(3,1fr)!important}
 html[data-ui-mode="mobile"] .lesson{grid-template-columns:35px 60px 1fr!important}
 html[data-ui-mode="mobile"] .lesson .speak{grid-column:1/-1!important;justify-self:end!important}
-html[data-ui-mode="mobile"] .bottom{display:grid!important;position:fixed;z-index:30;bottom:0;left:50%;right:auto;transform:translateX(-50%);width:min(520px,100vw);height:65px;background:#ffffffef;border-top:1px solid #dfe2dc;backdrop-filter:blur(14px);grid-template-columns:repeat(5,1fr)}
+html[data-ui-mode="mobile"] .bottom{display:grid!important;position:fixed;z-index:30;bottom:0;left:50%;right:auto;transform:translateX(-50%);width:min(520px,100vw);height:65px;background:#ffffffef;border-top:1px solid #dfe2dc;backdrop-filter:blur(14px);grid-template-columns:repeat(6,1fr)}
 html[data-ui-mode="mobile"] .course-grid,
 html[data-ui-mode="mobile"] .grammar-grid,
 html[data-ui-mode="mobile"] .phrase-grid,
@@ -581,3 +581,38 @@ html[data-ui-mode="mobile"] .admin-access-stats{display:none!important}
 .chiet-footnote{margin:12px 2px 0;color:#75827b;font-size:9px;line-height:1.5}
 @media(max-width:900px){.chiet-workbench{grid-template-columns:1fr}.chiet-vocabulary{position:static}.chiet-term-list{max-height:260px;grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.chiet-selected{padding:12px}.chiet-character-list{grid-template-columns:1fr}.chiet-term-list{grid-template-columns:1fr}.chiet-character>header>span{font-size:9px}}
+
+/* ---- Ôn thi + mẹo nhìn chữ ---- */
+.char-hint{display:flex;flex-direction:column;gap:6px;align-items:center;margin:14px auto 0;padding:10px 12px;border:1px solid #e1d6b8;background:#fbf7e9;border-radius:12px;max-width:420px;width:100%}
+.char-hint-title{font-size:11px;font-weight:800;letter-spacing:.1em;color:#8a7444}
+.hint-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:center;font-size:14px;color:#34534b}
+.hint-row b,.hint-row i{font-family:var(--han-font);font-style:normal;font-size:22px;color:#174a3e}
+.hint-row i{display:inline-flex;flex-direction:column;align-items:center}
+.hint-row small{font:600 11px system-ui,sans-serif;color:#6c7a75;margin-left:4px}
+.hint-row em{font-style:normal;color:#a0a89f}
+.char-hint-note{font-size:10px;color:#8a8f86}
+.exam-setup{display:flex;flex-direction:column;gap:14px;max-width:560px;margin:0 auto}
+.exam-field{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700;color:#38574f}
+.exam-field input,.exam-field select{border:1px solid #d9ded8;background:#fff;border-radius:10px;padding:12px;font-size:15px;color:inherit}
+.exam-countdown{font-size:13px;line-height:1.55;color:#5e6d69;margin:0}
+.exam-weak{display:flex;align-items:baseline;gap:10px;background:#f2f0e7;border-radius:12px;padding:12px 14px}
+.exam-weak b{font:700 26px Georgia,serif;color:#1d5b4c}
+.exam-weak span{font-size:13px;color:#5e6d69}
+.exam-start,.exam-flip{border:0;background:#173f36;color:#fff;border-radius:12px;padding:14px 18px;font-size:15px;font-weight:800;cursor:pointer}
+.exam-start:disabled{opacity:.45;cursor:default}
+.exam-card{max-width:620px;margin:0 auto;text-align:center}
+.exam-face{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:14px;min-height:300px;padding:14px 4px}
+.exam-han{font:700 clamp(84px,22vw,128px) var(--han-font);color:#174a3e;line-height:1.05}
+.exam-vi{font:700 30px Georgia,serif;margin:0;color:#174a3e}
+.exam-meaning{font-size:16px;line-height:1.6;color:#34534b;margin:0;max-width:480px}
+.exam-pinyin{font-size:12px;color:var(--muted)}
+.exam-back{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;border-top:1px dashed #cfd6cf;padding-top:14px}
+.exam-face .recall{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:420px}
+.exam-face .recall button{padding:14px;font-size:15px;font-weight:800;border-radius:12px;border:1px solid #d9ded8;cursor:pointer}
+.exam-done{max-width:620px;margin:0 auto;text-align:center}
+.exam-missed{display:grid;gap:8px;margin:12px 0 16px;text-align:left}
+.exam-missed>div{display:flex;gap:12px;align-items:center;border:1px solid #e3e6df;border-radius:12px;padding:10px 12px;background:#fff}
+.exam-missed b{font:700 28px var(--han-font);color:#174a3e}
+.exam-missed span{display:flex;flex-direction:column;font-size:14px}
+.exam-missed small{font-size:12px;color:var(--muted)}
+.exam-secondary{border:1px solid #d9ded8;background:#fff;border-radius:12px;padding:12px 16px;font-size:14px;font-weight:800;color:#38574f;margin-top:10px;cursor:pointer}

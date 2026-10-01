@@ -966,7 +966,7 @@ details p {
     background: #ffffffef;
     border-top: 1px solid #dfe2dc;
     backdrop-filter: blur(14px);
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(6, 1fr);
   }
   .bottom button {
     border: 0;

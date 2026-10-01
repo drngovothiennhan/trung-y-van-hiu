@@ -168,3 +168,38 @@ export function bindChietTu(root: ParentNode, terms: Term[], radicals: Radical[]
     detail.querySelector('.chiet-selected-head')?.scrollIntoView({ block: 'nearest' });
   }));
 }
+
+/**
+ * Short, mobile-friendly "how to see this word" hint for a vocabulary card:
+ * first-level structure of each Han character (e.g. 肝 = 月 + 干).
+ * Uses the same IDS data as the Chiết Tự page. Graphic structure only, not etymology.
+ */
+export function componentHint(term: Term, radicals: Radical[]) {
+  const index = new Map<string, Radical>();
+  for (const radical of radicals) {
+    for (const variant of String(radical.hanzi || '').split(/\s+/)) if (variant) index.set(variant, radical);
+  }
+  const gloss = (char: string) => {
+    if (char === '月' || char === '⺼') return 'nhục · cơ thể';
+    const entry = index.get(char) || index.get(displayChar(char));
+    return entry ? entry.hv : '';
+  };
+  const rows = Array.from(term.hanzi || '')
+    .filter(char => /\p{Script=Han}/u.test(char))
+    .slice(0, 4)
+    .map(char => {
+      const expression = IDS_DATA[char];
+      if (!expression || expression === char) return '';
+      const parsed = parseExpression(expression);
+      if (!parsed?.children?.length) return '';
+      const parts = parsed.children.map(child => {
+        const g = gloss(child.char);
+        return '<i>' + escapeHtml(displayChar(child.char)) + '</i>' + (g ? '<small>' + escapeHtml(g) + '</small>' : '');
+      }).join('<em>+</em>');
+      return '<span class="hint-row"><b>' + escapeHtml(char) + '</b><em>=</em>' + parts + '</span>';
+    })
+    .filter(Boolean);
+  if (!rows.length) return '';
+  return '<div class="char-hint"><span class="char-hint-title">MẸO NHÌN CHỮ</span>' + rows.join('') +
+    '<small class="char-hint-note">Gợi nhớ theo hình thể, không phải từ nguyên.</small></div>';
+}
