@@ -999,15 +999,15 @@ function notifySupported() {
 function examRemindView() {
   const cfg = state.exam.cfg;
   const perm = notifySupported() ? Notification.permission : 'unsupported';
-  const on = cfg.notify && perm === 'granted';
-  const notifyNote = perm === 'unsupported'
-    ? 'Trình duyệt này không hỗ trợ thông báo. Hãy dùng nhắc trong lịch điện thoại.'
+  const on = cfg.notify;
+  const notifyNote = 'Khi bật, Linh thú trên trang chủ HIU TMC sẽ hiện nhắc học vào giờ đã chọn. ' + (perm === 'unsupported'
+    ? 'Trình duyệt này không hỗ trợ thông báo hệ thống; Linh thú vẫn nhắc.'
     : perm === 'denied'
-      ? 'Thông báo đang bị chặn trong cài đặt trình duyệt. Hãy cho phép lại, hoặc dùng nhắc trong lịch điện thoại.'
-      : 'Thông báo trình duyệt chỉ hiện khi app đang mở hoặc chạy nền. Nhắc trong lịch điện thoại hiện cả khi bạn không mở app.';
+      ? 'Thông báo hệ thống đang bị chặn trong trình duyệt; Linh thú vẫn nhắc.'
+      : 'Nếu bạn cho phép, trình duyệt cũng báo khi app đang mở hoặc chạy nền.') + ' Nhắc trong lịch điện thoại hiện cả khi bạn không mở app.';
   return '<section class="panel exam-remind"><h3>Nhắc học mỗi ngày</h3>' +
     '<label class="exam-field"><span>Giờ nhắc</span><input id="examRemindTime" type="time" value="' + safe(cfg.remindTime) + '"></label>' +
-    '<button id="examNotify" class="exam-secondary"' + (perm === 'unsupported' ? ' disabled' : '') + '>' + (on ? '🔔 Đang bật thông báo · bấm để tắt' : 'Bật thông báo trình duyệt') + '</button>' +
+    '<button id="examNotify" class="exam-secondary">' + (on ? '🔔 Đang bật nhắc học · bấm để tắt' : 'Bật nhắc học (Linh thú + thông báo)') + '</button>' +
     '<button id="examIcs" class="exam-secondary"' + (daysUntil(cfg.date) === null ? ' disabled' : '') + '>Thêm nhắc vào lịch điện thoại (.ics)</button>' +
     '<small class="exam-remind-note">' + notifyNote + '</small></section>';
 }
@@ -1044,6 +1044,28 @@ function checkReminder() {
     localStorage.setItem(NOTIFY_KEY, today);
   } catch {}
   showDailyNotification();
+}
+
+// Linh thú (hiutmc.com home page) reads this summary: same origin, so same localStorage.
+const SUMMARY_KEY = 'trung-y-van-hiu-exam-summary-v1';
+
+function publishExamSummary() {
+  try {
+    const cfg = loadExamConfig();
+    const st = cfg.notify ? examPlanState() : null;
+    if (!st) { localStorage.removeItem(SUMMARY_KEY); return; }
+    localStorage.setItem(SUMMARY_KEY, JSON.stringify({
+      v: 1,
+      examDate: cfg.date,
+      remindTime: cfg.remindTime,
+      day: todayStr(),
+      newPerDay: st.plan.newPerDay,
+      newLeft: st.newLeft,
+      due: st.due,
+      goalDone: st.goalDone,
+      url: '/apps/trungyvan/'
+    }));
+  } catch {}
 }
 
 function downloadReminderIcs() {
@@ -1203,12 +1225,13 @@ function bindExam(scope) {
   if (remindTime) remindTime.addEventListener('change', ev => { if (/^([01]\d|2[0-3]):[0-5]\d$/.test(ev.target.value)) { e.cfg = { ...e.cfg, remindTime: ev.target.value }; saveExamConfig(e.cfg); try { localStorage.removeItem(NOTIFY_KEY); } catch {} render(); } });
   const notifyBtn = scope.querySelector('#examNotify');
   if (notifyBtn) notifyBtn.addEventListener('click', async () => {
-    if (!notifySupported()) return;
-    if (e.cfg.notify && Notification.permission === 'granted') {
+    if (e.cfg.notify) {
       e.cfg = { ...e.cfg, notify: false };
     } else {
-      const result = Notification.permission === 'granted' ? 'granted' : await Notification.requestPermission();
-      e.cfg = { ...e.cfg, notify: result === 'granted' };
+      e.cfg = { ...e.cfg, notify: true };
+      if (notifySupported() && Notification.permission === 'default') {
+        try { await Notification.requestPermission(); } catch {}
+      }
     }
     saveExamConfig(e.cfg);
     render();
@@ -1407,6 +1430,11 @@ function syncShellChrome() {
 }
 
 function render(forceShell = false) {
+  renderApp(forceShell);
+  if (access.member) publishExamSummary();
+}
+
+function renderApp(forceShell = false) {
   const app = document.querySelector('#app');
   if (!access.ready) {
     app.innerHTML = authLoadingView();
