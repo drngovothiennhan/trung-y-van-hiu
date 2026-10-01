@@ -88,10 +88,10 @@ export function smartOptions(
 
 // ---------- exam config ----------
 
-export type ExamConfig = { date: string; group: string; size: number };
+export type ExamConfig = { date: string; group: string; size: number; remindTime: string; notify: boolean };
 
 const EXAM_KEY = 'trung-y-van-hiu-exam-v1';
-const DEFAULT_CONFIG: ExamConfig = { date: '', group: 'all', size: 20 };
+const DEFAULT_CONFIG: ExamConfig = { date: '', group: 'all', size: 20, remindTime: '19:00', notify: false };
 
 export function loadExamConfig(): ExamConfig {
   try {
@@ -101,6 +101,8 @@ export function loadExamConfig(): ExamConfig {
       date: typeof raw.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(raw.date) ? raw.date : '',
       group: typeof raw.group === 'string' && raw.group ? raw.group : 'all',
       size,
+      remindTime: typeof raw.remindTime === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(raw.remindTime) ? raw.remindTime : DEFAULT_CONFIG.remindTime,
+      notify: raw.notify === true,
     };
   } catch {
     return { ...DEFAULT_CONFIG };
@@ -162,4 +164,98 @@ export function buildExamDeck(terms: Term[], config: ExamConfig, context: ExamCo
     hanzi: term.hanzi,
     dir: (i % 2 === 0 ? first : first === 'han2vi' ? 'vi2han' : 'han2vi') as ExamCard['dir'],
   }));
+}
+
+// ---------- study plan from the exam date ----------
+
+export type StudyPlan = {
+  days: number;
+  unlearned: number;
+  learnDays: number;
+  reviewDays: number;
+  newPerDay: number;
+  heavy: boolean;
+};
+
+/**
+ * Splits the days left into learning days and a final review stretch.
+ * `unlearned` is the number of words still below "remembered" in the chosen scope
+ * at the start of today, so the daily goal stays stable while the learner works.
+ */
+export function computePlan(days: number, unlearned: number): StudyPlan {
+  const available = Math.max(1, days);
+  const reviewDays = days >= 10 ? Math.max(3, Math.round(days * 0.25)) : days >= 4 ? 2 : days >= 1 ? 1 : 0;
+  const learnDays = Math.max(1, available - reviewDays);
+  const inReviewStretch = days <= reviewDays;
+  const newPerDay = unlearned <= 0 || inReviewStretch ? 0 : Math.ceil(unlearned / learnDays);
+  return { days, unlearned, learnDays, reviewDays, newPerDay, heavy: newPerDay > 40 };
+}
+
+// ---------- what was done today (this device) ----------
+
+export type DailyLog = { date: string; added: number; reviewed: number };
+const DAILY_KEY = 'trung-y-van-hiu-exam-daily-v1';
+
+export function todayStr(now = new Date()) {
+  const m = String(now.getMonth() + 1).padStart(2, '0');
+  const d = String(now.getDate()).padStart(2, '0');
+  return now.getFullYear() + '-' + m + '-' + d;
+}
+
+export function loadDaily(now = new Date()): DailyLog {
+  const today = todayStr(now);
+  try {
+    const raw = JSON.parse(localStorage.getItem(DAILY_KEY) || '{}');
+    if (raw && raw.date === today) return { date: today, added: Number(raw.added) || 0, reviewed: Number(raw.reviewed) || 0 };
+  } catch { /* fall through */ }
+  return { date: today, added: 0, reviewed: 0 };
+}
+
+export function bumpDaily(kind: 'added' | 'reviewed', now = new Date()) {
+  const log = loadDaily(now);
+  log[kind] += 1;
+  try { localStorage.setItem(DAILY_KEY, JSON.stringify(log)); } catch { /* storage unavailable */ }
+}
+
+// ---------- reminder: calendar file ----------
+
+function icsStamp(date: Date) {
+  const p = (n: number) => String(n).padStart(2, '0');
+  return date.getFullYear() + p(date.getMonth() + 1) + p(date.getDate()) + 'T' + p(date.getHours()) + p(date.getMinutes()) + '00';
+}
+
+/**
+ * Daily repeating calendar event (floating local time) from today/tomorrow until the exam day.
+ * Works with any phone calendar, so the reminder fires even when the app is closed.
+ */
+export function buildReminderIcs(examDate: string, remindTime: string, link: string, now = new Date()) {
+  const [hh, mm] = remindTime.split(':').map(Number);
+  const start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hh, mm, 0);
+  if (start.getTime() <= now.getTime()) start.setDate(start.getDate() + 1);
+  const [y, m, d] = examDate.split('-').map(Number);
+  const until = new Date(y, m - 1, d, 23, 59, 0);
+  const end = new Date(start.getTime() + 20 * 60 * 1000);
+  const lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//HIU TMC//Trung Y Van//VI',
+    'CALSCALE:GREGORIAN',
+    'BEGIN:VEVENT',
+    'UID:trung-y-van-on-thi-' + examDate + '@hiutmc.com',
+    'DTSTAMP:' + icsStamp(now),
+    'DTSTART:' + icsStamp(start),
+    'DTEND:' + icsStamp(end),
+    'RRULE:FREQ=DAILY;UNTIL=' + icsStamp(until),
+    'SUMMARY:Ôn từ vựng Trung Y Văn',
+    'DESCRIPTION:Học từ mới và ôn từ đến hạn cho kỳ thi cuối kỳ. Mở: ' + link,
+    'URL:' + link,
+    'BEGIN:VALARM',
+    'ACTION:DISPLAY',
+    'DESCRIPTION:Ôn từ vựng Trung Y Văn',
+    'TRIGGER:PT0M',
+    'END:VALARM',
+    'END:VEVENT',
+    'END:VCALENDAR',
+  ];
+  return lines.join('\r\n') + '\r\n';
 }

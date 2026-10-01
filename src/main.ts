@@ -14,7 +14,7 @@ import { herbsFormulasSource, herbsFormulasTerms, herbsFormulasReadings, herbsFo
 import { lessonAmDuongTextbookPages, lessonAmDuongTerms, lessonAmDuongQuiz, lessonAmDuongReadings } from './lesson-am-duong';
 import { writingPracticeView, bindWritingPractice, getWritingContext, restoreWritingContext } from './writing-practice';
 import { chietTuView, bindChietTu, componentHint } from './chiet-tu';
-import { smartOptions, loadExamConfig, saveExamConfig, daysUntil, examIntervalCap, buildExamDeck, seededRandom } from './exam-mode';
+import { smartOptions, loadExamConfig, saveExamConfig, daysUntil, examIntervalCap, buildExamDeck, seededRandom, computePlan, loadDaily, bumpDaily, todayStr, buildReminderIcs } from './exam-mode';
 
 const STORAGE_KEY = 'trung-y-van-hiu-v4';
 
@@ -736,7 +736,7 @@ const REVIEW_INTERVALS = [10 * 60 * 1000, 24 * 60 * 60 * 1000, 3 * 24 * 60 * 60 
 function setStage(hanzi, value) {
   state.progress.wordStage ||= {};
   state.progress.wordStage[hanzi] = Math.max(stage(hanzi), value);
-  if (value >= 4 && !state.progress.mastered.includes(hanzi)) state.progress.mastered.push(hanzi);
+  if (value >= 4 && !state.progress.mastered.includes(hanzi)) { state.progress.mastered.push(hanzi); bumpDaily('added'); }
   if (value >= 4) state.progress.difficult = state.progress.difficult.filter(x => x !== hanzi);
   save();
 }
@@ -780,6 +780,7 @@ function reviewSuccess(hanzi) {
   m.reviews += 1;
   m.last = Date.now();
   m.due = Date.now() + intervalFor(m.level);
+  bumpDaily('reviewed');
   state.progress.xp += 6;
   save();
 }
@@ -853,6 +854,7 @@ function home() {
   const due = dueTerms().length;
   const durable = durableTerms().length;
   return '<section class="hero"><div><span class="eyebrow">HIU CLB YHCT · 中医中文</span><h1>Trung Y Văn HIU</h1><p>Học Trung văn chuyên ngành theo vòng nhớ trọng tâm: <b>nhìn chữ → nhận biết → hiểu nghĩa → nhớ lại</b>, sau đó kiểm tra bằng đọc hiểu và trắc nghiệm.</p><div class="actions"><button class="primary" data-nav="vocab">Học từ vựng 4 bước</button><button id="homeDueReview">Ôn đến hạn · ' + due + '</button><button data-nav="exam">Ôn thi nhanh</button><button data-nav="quiz">Thi nhanh 10 câu</button></div></div><div class="seal">医<small>中医中文</small></div></section>' +
+    examPlanCard(true) +
     '<section class="stats">' + stat('字', learningTerms.length, 'Thuật ngữ nguồn') + stat('⏱', due, 'Từ đến hạn ôn') + stat('稳', durable, 'Từ bền ≥14 ngày') + stat('记', stage4, 'Từ đang ở mức Nhớ') + '</section>' +
     h('HỌC TỪ VỰNG', 'Nhìn · Nhận biết · Hiểu · Nhớ', 'Không đánh dấu “đã học” chỉ vì đã lật thẻ. Một từ chỉ được xem là nhớ khi hoàn thành đủ 4 mức.') +
     '<div class="memory-road">' +
@@ -948,6 +950,116 @@ function reviewView() {
 
 // ---------- Ôn thi: thẻ lật hai chiều, ưu tiên từ yếu, lịch ôn nén theo ngày thi ----------
 
+// ---------- Kế hoạch học theo ngày thi + nhắc học ----------
+
+const NOTIFY_KEY = 'trung-y-van-hiu-exam-notified-v1';
+
+function examPlanState() {
+  const cfg = state.exam.cfg;
+  const days = daysUntil(cfg.date);
+  if (days === null) return null;
+  const scope = learningTerms.filter(t => cfg.group === 'all' || t.group === cfg.group);
+  const inScope = new Set(scope.map(t => t.hanzi));
+  const unlearnedNow = scope.filter(t => stage(t.hanzi) < 4).length;
+  const daily = loadDaily();
+  const plan = computePlan(days, unlearnedNow + daily.added);
+  const due = dueTerms().filter(t => inScope.has(t.hanzi)).length;
+  const newLeft = Math.max(0, plan.newPerDay - daily.added);
+  return { days, plan, daily, due, scopeTotal: scope.length, unlearnedNow, newLeft, goalDone: newLeft === 0 && due === 0 };
+}
+
+function examPlanCard(compact) {
+  const st = examPlanState();
+  if (!st) return '';
+  const { days, plan, daily, due, unlearnedNow, newLeft } = st;
+  const stretch = plan.newPerDay === 0 && unlearnedNow > 0
+    ? 'Đang trong giai đoạn ôn tổng: ' + unlearnedNow + ' từ chưa nhớ nên học nốt, ưu tiên ôn các từ đến hạn.'
+    : unlearnedNow === 0
+      ? 'Bạn đã nhớ hết các từ trong phạm vi này. Chỉ cần giữ nhịp ôn đến hạn.'
+      : 'Còn ' + unlearnedNow + ' từ chưa nhớ: học mới trong ' + plan.learnDays + ' ngày, ' + plan.reviewDays + ' ngày cuối dành để ôn tổng.';
+  const pct = plan.newPerDay ? Math.min(100, Math.round(daily.added / plan.newPerDay * 100)) : 100;
+  return '<section class="panel plan-card' + (compact ? ' compact' : '') + (st.goalDone ? ' done' : '') + '">' +
+    '<div class="plan-head"><span>KẾ HOẠCH ÔN THI</span><b>Còn ' + days + ' ngày</b></div>' +
+    '<div class="plan-grid">' +
+      '<div><strong>' + plan.newPerDay + '</strong><small>từ mới mỗi ngày</small></div>' +
+      '<div><strong>' + due + '</strong><small>từ đến hạn cần ôn</small></div>' +
+      '<div><strong>' + daily.added + '/' + plan.newPerDay + '</strong><small>đã học mới hôm nay</small></div>' +
+    '</div>' +
+    '<div class="track"><i style="width:' + pct + '%"></i></div>' +
+    '<p class="plan-note">' + (st.goalDone ? '✓ Hôm nay bạn đã xong mục tiêu. Giữ nhịp nhé.' : 'Hôm nay còn: ' + (newLeft ? newLeft + ' từ mới' : '') + (newLeft && due ? ' và ' : '') + (due ? due + ' từ cần ôn.' : (newLeft ? '.' : ''))) + '</p>' +
+    '<p class="plan-note muted">' + stretch + (plan.heavy ? ' <b>Khối lượng mỗi ngày khá lớn, hãy bắt đầu sớm hơn hoặc thu hẹp chủ đề.</b>' : '') + '</p>' +
+    (compact ? '<div class="plan-actions"><button class="primary" data-nav="vocab">Học từ mới</button><button id="planReview"' + (due ? '' : ' disabled') + '>Ôn đến hạn · ' + due + '</button><button data-nav="exam">Ôn thi nhanh</button></div>' : '') +
+    '</section>';
+}
+
+function notifySupported() {
+  return typeof window !== 'undefined' && 'Notification' in window;
+}
+
+function examRemindView() {
+  const cfg = state.exam.cfg;
+  const perm = notifySupported() ? Notification.permission : 'unsupported';
+  const on = cfg.notify && perm === 'granted';
+  const notifyNote = perm === 'unsupported'
+    ? 'Trình duyệt này không hỗ trợ thông báo. Hãy dùng nhắc trong lịch điện thoại.'
+    : perm === 'denied'
+      ? 'Thông báo đang bị chặn trong cài đặt trình duyệt. Hãy cho phép lại, hoặc dùng nhắc trong lịch điện thoại.'
+      : 'Thông báo trình duyệt chỉ hiện khi app đang mở hoặc chạy nền. Nhắc trong lịch điện thoại hiện cả khi bạn không mở app.';
+  return '<section class="panel exam-remind"><h3>Nhắc học mỗi ngày</h3>' +
+    '<label class="exam-field"><span>Giờ nhắc</span><input id="examRemindTime" type="time" value="' + safe(cfg.remindTime) + '"></label>' +
+    '<button id="examNotify" class="exam-secondary"' + (perm === 'unsupported' ? ' disabled' : '') + '>' + (on ? '🔔 Đang bật thông báo · bấm để tắt' : 'Bật thông báo trình duyệt') + '</button>' +
+    '<button id="examIcs" class="exam-secondary"' + (daysUntil(cfg.date) === null ? ' disabled' : '') + '>Thêm nhắc vào lịch điện thoại (.ics)</button>' +
+    '<small class="exam-remind-note">' + notifyNote + '</small></section>';
+}
+
+async function showDailyNotification() {
+  const st = examPlanState();
+  if (!st) return;
+  const parts = [];
+  if (st.newLeft) parts.push(st.newLeft + ' từ mới');
+  if (st.due) parts.push(st.due + ' từ cần ôn');
+  const body = 'Hôm nay còn ' + parts.join(' và ') + ' · còn ' + st.days + ' ngày đến kỳ thi.';
+  const options = { body, icon: './icon.svg', tag: 'trung-y-van-daily', data: { url: location.href } };
+  let reg = null;
+  try { reg = 'serviceWorker' in navigator ? await navigator.serviceWorker.getRegistration() : null; } catch {}
+  try {
+    if (reg && reg.showNotification) await reg.showNotification('Đến giờ ôn Trung Y Văn', options);
+    else new Notification('Đến giờ ôn Trung Y Văn', options);
+  } catch {
+    try { new Notification('Đến giờ ôn Trung Y Văn', options); } catch {}
+  }
+}
+
+function checkReminder() {
+  const cfg = loadExamConfig();
+  if (!cfg.notify || !notifySupported() || Notification.permission !== 'granted' || !access.member) return;
+  const st = examPlanState();
+  if (!st || st.goalDone) return;
+  const now = new Date();
+  const [hh, mm] = cfg.remindTime.split(':').map(Number);
+  if (now.getHours() * 60 + now.getMinutes() < hh * 60 + mm) return;
+  const today = todayStr(now);
+  try {
+    if (localStorage.getItem(NOTIFY_KEY) === today) return;
+    localStorage.setItem(NOTIFY_KEY, today);
+  } catch {}
+  showDailyNotification();
+}
+
+function downloadReminderIcs() {
+  const cfg = state.exam.cfg;
+  if (daysUntil(cfg.date) === null) return;
+  const ics = buildReminderIcs(cfg.date, cfg.remindTime, 'https://hiutmc.com/apps/trungyvan/');
+  const url = URL.createObjectURL(new Blob([ics], { type: 'text/calendar;charset=utf-8' }));
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'trung-y-van-on-thi.ics';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+
 function examTermsByGroup() {
   const counts = {};
   for (const t of learningTerms) counts[t.group] = (counts[t.group] || 0) + 1;
@@ -969,6 +1081,7 @@ function examSetupView() {
     : 'Chưa đặt ngày thi. Đặt ngày để lịch ôn tự rút ngắn khoảng cách giữa các lần ôn.';
   const groups = examTermsByGroup();
   return h('ÔN THI', 'Ôn thi nhanh: nhớ mặt chữ và nghĩa', 'Thẻ lật hai chiều, không pinyin, không nghe, không viết. Từ hay sai và từ chưa nhớ được đưa lên trước.') +
+    examPlanCard(false) +
     '<section class="panel exam-setup">' +
       '<label class="exam-field"><span>Ngày thi cuối kỳ</span><input id="examDate" type="date" value="' + safe(cfg.date) + '"></label>' +
       '<p class="exam-countdown">' + countdown + '</p>' +
@@ -977,7 +1090,7 @@ function examSetupView() {
       '<label class="exam-field"><span>Số thẻ mỗi lượt</span><select id="examSize">' + [10, 20, 30, 50].map(n => '<option value="' + n + '"' + (cfg.size === n ? ' selected' : '') + '>' + n + ' thẻ</option>').join('') + '</select></label>' +
       '<div class="exam-weak"><b>' + weak + '</b><span>từ chưa nhớ hoặc hay sai trong chủ đề này</span></div>' +
       '<button id="examStart" class="primary exam-start"' + (pool.length ? '' : ' disabled') + '>Bắt đầu lượt ôn →</button>' +
-    '</section>';
+    '</section>' + examRemindView();
 }
 
 function examCardView() {
@@ -1086,6 +1199,24 @@ function bindExam(scope) {
   if (retry) retry.addEventListener('click', () => {
     startExamDeck([...new Set(e.miss)].map((hanzi, i) => ({ hanzi, dir: i % 2 ? 'vi2han' : 'han2vi' })));
   });
+  const remindTime = scope.querySelector('#examRemindTime');
+  if (remindTime) remindTime.addEventListener('change', ev => { if (/^([01]\d|2[0-3]):[0-5]\d$/.test(ev.target.value)) { e.cfg = { ...e.cfg, remindTime: ev.target.value }; saveExamConfig(e.cfg); try { localStorage.removeItem(NOTIFY_KEY); } catch {} render(); } });
+  const notifyBtn = scope.querySelector('#examNotify');
+  if (notifyBtn) notifyBtn.addEventListener('click', async () => {
+    if (!notifySupported()) return;
+    if (e.cfg.notify && Notification.permission === 'granted') {
+      e.cfg = { ...e.cfg, notify: false };
+    } else {
+      const result = Notification.permission === 'granted' ? 'granted' : await Notification.requestPermission();
+      e.cfg = { ...e.cfg, notify: result === 'granted' };
+    }
+    saveExamConfig(e.cfg);
+    render();
+  });
+  const icsBtn = scope.querySelector('#examIcs');
+  if (icsBtn) icsBtn.addEventListener('click', downloadReminderIcs);
+  const planReview = scope.querySelector('#planReview');
+  if (planReview) planReview.addEventListener('click', () => { state.view = 'vocab'; state.reviewMode = true; state.reviewFeedback = null; render(); });
   const again = scope.querySelector('#examAgain');
   if (again) again.addEventListener('click', () => { e.phase = 'setup'; e.deck = []; e.pos = 0; render(); });
 }
@@ -1504,9 +1635,12 @@ setupPwa();
 render();
 bootstrapAccess();
 setInterval(verifyAccessHeartbeat, 5 * 60 * 1000);
+setInterval(checkReminder, 60 * 1000);
+setTimeout(checkReminder, 4000);
 window.addEventListener('pagehide', () => { void flushUserStateSync(); });
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') {
+    checkReminder();
     verifyAccessHeartbeat();
     trackVisitOnce().then(() => {
       if (uiMode === 'desktop') loadDesktopUsageInsights();

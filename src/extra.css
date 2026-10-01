@@ -616,3 +616,25 @@ html[data-ui-mode="mobile"] .admin-access-stats{display:none!important}
 .exam-missed span{display:flex;flex-direction:column;font-size:14px}
 .exam-missed small{font-size:12px;color:var(--muted)}
 .exam-secondary{border:1px solid #d9ded8;background:#fff;border-radius:12px;padding:12px 16px;font-size:14px;font-weight:800;color:#38574f;margin-top:10px;cursor:pointer}
+
+/* ---- Kế hoạch ôn thi + nhắc học ---- */
+.plan-card{border:1px solid #d9e3d8;background:linear-gradient(180deg,#f4faf5,#fff);margin:0 0 14px}
+.plan-card.done{border-color:#9fcfae;background:#f1faf3}
+.plan-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:10px}
+.plan-head span{font-size:11px;font-weight:800;letter-spacing:.12em;color:#8a7444}
+.plan-head b{font:700 16px Georgia,serif;color:#174a3e}
+.plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.plan-grid>div{background:#fff;border:1px solid #e1e6df;border-radius:12px;padding:10px 8px;text-align:center}
+.plan-grid strong{display:block;font:700 22px Georgia,serif;color:#1d5b4c}
+.plan-grid small{font-size:11px;color:var(--muted);line-height:1.3}
+.plan-note{font-size:13px;line-height:1.55;color:#34534b;margin:8px 0 0}
+.plan-note.muted{color:#6c7a75;font-size:12px}
+.plan-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.plan-actions button{border:1px solid #d9ded8;background:#fff;border-radius:11px;padding:11px 14px;font-size:13px;font-weight:800;color:#38574f;cursor:pointer}
+.plan-actions button.primary{background:#173f36;color:#fff;border-color:#173f36}
+.plan-actions button:disabled{opacity:.45;cursor:default}
+.exam-remind{display:flex;flex-direction:column;gap:12px;max-width:560px;margin:14px auto 0}
+.exam-remind h3{margin:0;font-size:16px;color:#174a3e}
+.exam-remind .exam-secondary{margin-top:0;text-align:center}
+.exam-remind .exam-secondary:disabled{opacity:.5;cursor:default}
+.exam-remind-note{font-size:12px;line-height:1.5;color:#6c7a75}
