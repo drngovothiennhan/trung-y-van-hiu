@@ -34,6 +34,7 @@ function applyUiMode() {
 
 function setUiMode(mode) {
   if (mode !== 'desktop' && mode !== 'mobile') return;
+  if (mode === uiMode) return;
   uiMode = mode;
   if (mode === 'mobile' && state.view === 'chiet-tu') state.view = 'home';
   localStorage.setItem(UI_MODE_KEY, mode);
@@ -1483,7 +1484,7 @@ function renderApp(forceShell = false) {
 
 function bind(fullShell = true) {
   if (fullShell) {
-    document.querySelectorAll('[data-ui-mode]').forEach(button => button.addEventListener('click', () => setUiMode(button.dataset.uiMode)));
+    document.querySelectorAll('button[data-ui-mode]').forEach(button => button.addEventListener('click', () => setUiMode(button.dataset.uiMode)));
 
     const logout = document.querySelector('#authLogout');
     if (logout) logout.addEventListener('click', handleLogout);
