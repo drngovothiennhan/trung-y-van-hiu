@@ -14,6 +14,9 @@ import { herbsFormulasSource, herbsFormulasTerms, herbsFormulasReadings, herbsFo
 import { lessonAmDuongTextbookPages, lessonAmDuongTerms, lessonAmDuongQuiz, lessonAmDuongReadings } from './lesson-am-duong';
 import { writingPracticeView, bindWritingPractice, getWritingContext, restoreWritingContext } from './writing-practice';
 import { chietTuView, bindChietTu, componentHint } from './chiet-tu';
+import { nguHanhSlidePages, nguHanhSlideTerms, nguHanhSlideQuiz, nguHanhSlideReadings } from './lesson-ngu-hanh-slide';
+import { analyzeTerms, rankTerms, priorityBoost } from './priority';
+import { buildRoadmapSource } from './roadmap';
 import { smartOptions, loadExamConfig, saveExamConfig, daysUntil, examIntervalCap, buildExamDeck, seededRandom, computePlan, loadDaily, bumpDaily, todayStr, buildReminderIcs } from './exam-mode';
 
 const STORAGE_KEY = 'trung-y-van-hiu-v4';
@@ -480,8 +483,30 @@ function setupPwa() {
     });
   }
 }
+const nguHanhSlideSource = {
+  id: 'slide-ngu-hanh',
+  title: 'Slide bài giảng — Học thuyết Ngũ Hành (HIU)',
+  pages: nguHanhSlidePages,
+  status: 'Đã nạp slide 25 trang: bảng Tạng–Thể–Khiếu, sinh/khắc, thừa/vũ, 的 地 得'
+};
+const termsUnordered = [...baseLearningTerms, ...lesson2Terms, ...lesson3Terms, ...remainingTerms, ...herbsFormulasTerms, ...lessonAmDuongTerms, ...nguHanhSlideTerms]
+  .filter((t, i, a) => a.findIndex(x => x.hanzi === t.hanzi) === i);
+const pagesText = pages => pages.map(p => p.text).join('\n');
+const sourceText = id => pagesText((baseSources.find(s => s.id === id) || { pages: [] }).pages);
+const slideDocs = [
+  { id: 'compact', label: 'Bài 6–9 tinh gọn', text: sourceText('compact') },
+  { id: 'basic', label: 'Kiến thức cơ bản', text: sourceText('basic') },
+  { id: 'dialogue', label: 'Đối thoại YHCT', text: sourceText('dialogue') },
+  { id: 'amduong', label: 'Âm Dương', text: pagesText(lessonAmDuongTextbookPages) + ' ' + lessonAmDuongTerms.map(t => t.hanzi).join(' ') },
+  { id: 'nguhanh', label: 'Ngũ Hành', text: pagesText(nguHanhSlidePages) + ' ' + lesson2Terms.concat(nguHanhSlideTerms).map(t => t.hanzi).join(' ') }
+];
+const bookText = [sourceText('textbook'), pagesText(lesson2TextbookPages), pagesText(lesson3TextbookPages), pagesText(remainingTextbookPages)].join('\n');
+const priorityInfo = analyzeTerms(termsUnordered, slideDocs, bookText);
+const learningTerms = rankTerms(termsUnordered, priorityInfo);
+const roadmapSource = buildRoadmapSource(learningTerms, priorityInfo, slideDocs.length);
 const textbookSource = baseSources.find(s => s.id === 'textbook');
 const sources = [
+  roadmapSource,
   ...baseSources
     .filter(s => s.id !== 'textbook')
     .concat({
@@ -489,14 +514,13 @@ const sources = [
       pages: [...textbookSource.pages, ...lesson2TextbookPages, ...lesson3TextbookPages, ...remainingTextbookPages, ...lessonAmDuongTextbookPages],
       status: 'Đã chuyển đủ Bài 1–8 và bổ sung chuyên đề Âm Dương theo bài giảng.'
     }),
+  nguHanhSlideSource,
   appendixSource,
   herbsFormulasSource
 ];
-const learningTerms = [...baseLearningTerms, ...lesson2Terms, ...lesson3Terms, ...remainingTerms, ...herbsFormulasTerms, ...lessonAmDuongTerms]
-  .filter((t, i, a) => a.findIndex(x => x.hanzi === t.hanzi) === i);
-const coreQuizBank = [...baseQuizBank, ...lesson2Quiz, ...lesson3Quiz, ...remainingQuiz, ...herbsFormulasQuiz, ...lessonAmDuongQuiz];
+const coreQuizBank = [...baseQuizBank, ...lesson2Quiz, ...lesson3Quiz, ...remainingQuiz, ...herbsFormulasQuiz, ...lessonAmDuongQuiz, ...nguHanhSlideQuiz];
 const quizBank = [...coreQuizBank, ...pathologyQuiz, ...bookOriginalQuiz];
-const readingBank = [...readings.map(r => ({...r, topic:'Lâm sàng', source:'Cách diễn đạt YHCT', words:[]})), ...readingDrills, ...herbsFormulasReadings, ...lessonAmDuongReadings];
+const readingBank = [...readings.map(r => ({...r, topic:'Lâm sàng', source:'Cách diễn đạt YHCT', words:[]})), ...readingDrills, ...herbsFormulasReadings, ...lessonAmDuongReadings, ...nguHanhSlideReadings];
 
 function shuffleArray(items) {
   const out = [...items];
@@ -1207,6 +1231,7 @@ function bindExam(scope) {
       stage,
       meta: h => state.progress.memorySchedule?.[h],
       difficult: state.progress.difficult,
+      priority: priorityBoost(priorityInfo),
       now: Date.now()
     }, rng));
   });

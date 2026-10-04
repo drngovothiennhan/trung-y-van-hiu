@@ -134,6 +134,7 @@ export type ExamContext = {
   stage: (hanzi: string) => number;
   meta: (hanzi: string) => { level: number; lapses: number; due: number } | undefined;
   difficult: string[];
+  priority?: (hanzi: string) => number;
   now: number;
 };
 
@@ -152,6 +153,7 @@ export function buildExamDeck(terms: Term[], config: ExamConfig, context: ExamCo
       if (meta && meta.due > 0 && meta.due <= context.now) score += 60;
       if (stage < 4) score += 40 - stage * 5;
       if (meta) score -= meta.level * 3;
+      if (context.priority && stage < 4) score += context.priority(term.hanzi);
       return { term, score };
     })
     .sort((a, b) => b.score - a.score)
