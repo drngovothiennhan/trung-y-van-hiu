@@ -849,6 +849,54 @@ function optionsFor(index, mapper) {
   });
 }
 
+// Phase "Hiểu" must compare peer topics, not unrelated modules.
+// Example: a Ngũ tạng term may be contrasted with Lục phủ/Kinh lạc/Du huyệt,
+// but never with labels such as "An toàn · Bài 03" from the dược liệu module.
+const CORE_GROUP_PEERS = {
+  'Tạng phủ': ['Tạng phủ', 'Ngũ tạng', 'Lục phủ', 'Kinh lạc'],
+  'Ngũ tạng': ['Ngũ tạng', 'Lục phủ', 'Kinh lạc', 'Du huyệt'],
+  'Lục phủ': ['Lục phủ', 'Ngũ tạng', 'Kinh lạc', 'Du huyệt'],
+  'Kinh lạc': ['Kinh lạc', 'Du huyệt', 'Ngũ tạng', 'Lục phủ'],
+  'Du huyệt': ['Du huyệt', 'Kinh lạc', 'Ngũ tạng', 'Lục phủ'],
+  'Âm Dương': ['Âm Dương', 'Ngũ Hành', 'Khí Huyết', 'Tạng phủ'],
+  'Ngũ Hành': ['Ngũ Hành', 'Âm Dương', 'Khí Huyết', 'Tạng phủ'],
+  'Khí Huyết': ['Khí Huyết', 'Âm Dương', 'Ngũ Hành', 'Tạng phủ'],
+  'Tứ chẩn': ['Tứ chẩn', 'Lưỡi mạch', 'Triệu chứng', 'Điều trị'],
+  'Lưỡi mạch': ['Lưỡi mạch', 'Tứ chẩn', 'Triệu chứng', 'Điều trị'],
+  'Triệu chứng': ['Triệu chứng', 'Tứ chẩn', 'Lưỡi mạch', 'Điều trị'],
+  'Điều trị': ['Điều trị', 'Dưỡng sinh', 'Thực dưỡng', 'Triệu chứng'],
+  'Dưỡng sinh': ['Dưỡng sinh', 'Thực dưỡng', 'Điều trị', 'Triệu chứng'],
+  'Thực dưỡng': ['Thực dưỡng', 'Dưỡng sinh', 'Điều trị', 'Triệu chứng']
+};
+
+function groupOptionPool(target) {
+  const peers = CORE_GROUP_PEERS[target.group];
+  if (peers) return learningTerms.filter(term => peers.includes(term.group));
+
+  if (/^(Dược liệu|Bào chế|Phương tễ|Cách dùng|An toàn) · Bài 03$/.test(target.group)) {
+    return learningTerms.filter(term => /^(Dược liệu|Bào chế|Phương tễ|Cách dùng|An toàn) · Bài 03$/.test(term.group));
+  }
+
+  if (target.group.startsWith('Giáo trình ·') || target.group.startsWith('Ngữ pháp ·')) {
+    return learningTerms.filter(term => term.group.startsWith('Giáo trình ·') || term.group.startsWith('Ngữ pháp ·'));
+  }
+
+  return learningTerms;
+}
+
+function groupOptionsFor(index) {
+  const target = learningTerms[index];
+  const pool = groupOptionPool(target);
+  const scopedIndex = pool.findIndex(term => term.hanzi === target.hanzi);
+  if (scopedIndex < 0) return optionsFor(index, term => term.group);
+
+  const reviews = state.progress.memorySchedule?.[target.hanzi]?.reviews || 0;
+  return smartOptions(pool, scopedIndex, term => term.group, {
+    seed: index * 131 + state.optionSalt * 7919 + reviews * 17 + 1,
+    weak: new Set(state.progress.difficult)
+  });
+}
+
 function shell(content) {
   const navs = [
     ['home', '⌂', 'Hôm nay'],
@@ -926,7 +974,7 @@ function vocabView() {
       opts.map((o, i) => '<button data-vchoice="' + i + '" data-value="' + safe(o) + '">' + o + '</button>').join('') +
       '</div>' + (state.vocabFeedback ? '<div class="feedback ' + (state.vocabFeedback === 'ok' ? 'good' : 'bad') + '">' + (state.vocabFeedback === 'ok' ? 'Đúng. Bạn đã nhận biết được từ.' : 'Chưa đúng. Hãy nhìn lại mặt chữ và thử lại.') + '</div>' : '') + '</div>';
   } else if (state.vocabPhase === 2) {
-    const groups = optionsFor(state.card, x => x.group);
+    const groups = groupOptionsFor(state.card);
     task = '<div class="understand-card"><span class="big-hanzi">' + v.hanzi + '</span><p class="pinyin">' + v.pinyin + ' · ' + v.hv + '</p><div class="meaning-box">' + v.meaning + '</div><h3>Từ này thuộc ngữ cảnh/chủ đề nào?</h3><div class="memory-options">' +
       groups.map((o, i) => '<button data-gchoice="' + i + '" data-value="' + safe(o) + '">' + o + '</button>').join('') +
       '</div>' + (state.vocabFeedback ? '<div class="feedback ' + (state.vocabFeedback === 'ok' ? 'good' : 'bad') + '">' + (state.vocabFeedback === 'ok' ? 'Đúng. Bạn đã hiểu vị trí của từ trong hệ kiến thức.' : 'Chưa đúng. Hãy nối nghĩa với đúng chủ đề.') + '</div>' : '') + '</div>';
