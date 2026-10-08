@@ -88,10 +88,10 @@ export function smartOptions(
 
 // ---------- exam config ----------
 
-export type ExamConfig = { date: string; group: string; size: number; remindTime: string; notify: boolean };
+export type ExamConfig = { date: string; group: string; size: number; remindTime: string; notify: boolean; adaptive: boolean };
 
 const EXAM_KEY = 'trung-y-van-hiu-exam-v1';
-const DEFAULT_CONFIG: ExamConfig = { date: '', group: 'all', size: 20, remindTime: '19:00', notify: false };
+const DEFAULT_CONFIG: ExamConfig = { date: '', group: 'all', size: 20, remindTime: '19:00', notify: false, adaptive: true };
 
 export function loadExamConfig(): ExamConfig {
   try {
@@ -103,6 +103,7 @@ export function loadExamConfig(): ExamConfig {
       size,
       remindTime: typeof raw.remindTime === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(raw.remindTime) ? raw.remindTime : DEFAULT_CONFIG.remindTime,
       notify: raw.notify === true,
+      adaptive: raw.adaptive !== false,
     };
   } catch {
     return { ...DEFAULT_CONFIG };
@@ -135,10 +136,11 @@ export type ExamContext = {
   meta: (hanzi: string) => { level: number; lapses: number; due: number } | undefined;
   difficult: string[];
   priority?: (hanzi: string) => number;
+  modeFor?: (hanzi: string) => ExamCard['dir'];
   now: number;
 };
 
-export type ExamCard = { hanzi: string; dir: 'han2vi' | 'vi2han'; again?: boolean };
+export type ExamCard = { hanzi: string; dir: 'han2vi' | 'vi2han' | 'pick'; again?: boolean };
 
 export function buildExamDeck(terms: Term[], config: ExamConfig, context: ExamContext, rng: () => number): ExamCard[] {
   const hard = new Set(context.difficult);
@@ -164,7 +166,7 @@ export function buildExamDeck(terms: Term[], config: ExamConfig, context: ExamCo
   const first = rng() < 0.5 ? 'han2vi' : 'vi2han';
   return order.map((term, i) => ({
     hanzi: term.hanzi,
-    dir: (i % 2 === 0 ? first : first === 'han2vi' ? 'vi2han' : 'han2vi') as ExamCard['dir'],
+    dir: context.modeFor ? context.modeFor(term.hanzi) : (i % 2 === 0 ? first : first === 'han2vi' ? 'vi2han' : 'han2vi') as ExamCard['dir'],
   }));
 }
 

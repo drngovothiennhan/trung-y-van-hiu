@@ -17,6 +17,7 @@ import { chietTuView, bindChietTu, componentHint } from './chiet-tu';
 import { nguHanhSlidePages, nguHanhSlideTerms, nguHanhSlideQuiz, nguHanhSlideReadings } from './lesson-ngu-hanh-slide';
 import { analyzeTerms, rankTerms, priorityBoost } from './priority';
 import { buildRoadmapSource } from './roadmap';
+import { emptyLearner, normalizeLearner, recordAnswer, pickMode, insights, learnerSummary, MIN_EVENTS } from './learner-profile';
 import { smartOptions, loadExamConfig, saveExamConfig, daysUntil, examIntervalCap, buildExamDeck, seededRandom, computePlan, loadDaily, bumpDaily, todayStr, buildReminderIcs } from './exam-mode';
 
 const STORAGE_KEY = 'trung-y-van-hiu-v4';
@@ -594,6 +595,18 @@ function save() {
   scheduleUserStateSync();
 }
 
+function learnerOf() {
+  if (!state.progress.learner || state.progress.learner.v !== 1) state.progress.learner = normalizeLearner(state.progress.learner);
+  return state.progress.learner;
+}
+
+function noteAnswer(hanzi, mode, ok, ms) {
+  try {
+    const t = learningTerms.find(x => x.hanzi === hanzi);
+    recordAnswer(learnerOf(), { hanzi, group: t ? t.group : '', mode, ok: !!ok, ms: ms || 0 });
+  } catch {}
+}
+
 function validObject(value) {
   return value && typeof value === 'object' && !Array.isArray(value);
 }
@@ -716,6 +729,7 @@ async function restoreSignedInUserState(member) {
   state.progress.quizHistory = Array.isArray(state.progress.quizHistory) ? state.progress.quizHistory : [];
   state.progress.wordStage = validObject(state.progress.wordStage) ? state.progress.wordStage : {};
   state.progress.memorySchedule = validObject(state.progress.memorySchedule) ? state.progress.memorySchedule : {};
+  state.progress.learner = normalizeLearner(state.progress.learner);
   const context = validObject(serverState?.context) ? serverState.context : localMemberContext;
   resetUserContext(memberCode);
   restoreContext(context, memberCode);
@@ -1177,6 +1191,7 @@ function examSetupView() {
   const groups = examTermsByGroup();
   return h('ÔN THI', 'Ôn thi nhanh: nhớ mặt chữ và nghĩa', 'Thẻ lật hai chiều, không pinyin, không nghe, không viết. Từ hay sai và từ chưa nhớ được đưa lên trước.') +
     examPlanCard(false) +
+    examProfileCard() +
     '<section class="panel exam-setup">' +
       '<label class="exam-field"><span>Ngày thi cuối kỳ</span><input id="examDate" type="date" value="' + safe(cfg.date) + '"></label>' +
       '<p class="exam-countdown">' + countdown + '</p>' +
@@ -1192,9 +1207,10 @@ function examCardView() {
   const e = state.exam;
   const card = e.deck[e.pos];
   const v = examTerm(card.hanzi);
-  const front = card.dir === 'han2vi'
-    ? '<span class="memory-kicker">CHỮ HÁN → NGHĨA</span><b class="exam-han">' + v.hanzi + '</b>'
+  const front = card.dir === 'han2vi' || card.dir === 'pick'
+    ? '<span class="memory-kicker">' + (card.dir === 'pick' ? 'CHỌN NGHĨA ĐÚNG' : 'CHỮ HÁN → NGHĨA') + '</span><b class="exam-han">' + v.hanzi + '</b>'
     : '<span class="memory-kicker">NGHĨA → CHỮ HÁN</span><h2 class="exam-vi">' + v.hv + '</h2><p class="exam-meaning">' + v.meaning + '</p>';
+  if (card.dir === 'pick') return examPickView(e, card, v, front);
   const back = card.dir === 'han2vi'
     ? '<h2 class="exam-vi">' + v.hv + '</h2><p class="exam-meaning">' + v.meaning + '</p><small class="exam-pinyin">' + v.pinyin + ' · ' + v.group + '</small>'
     : '<b class="exam-han">' + v.hanzi + '</b><small class="exam-pinyin">' + v.pinyin + ' · ' + v.group + '</small>';
@@ -1205,6 +1221,38 @@ function examCardView() {
       ? '<div class="exam-back">' + back + '</div><div class="recall"><button id="examMiss" class="danger">✕ Chưa nhớ</button><button id="examHit" class="success">✓ Nhớ được</button></div>' + componentHint(v, radicals214)
       : '<button id="examFlip" class="primary exam-flip">Lật thẻ</button>') +
     '</div><button id="examQuit" class="review-exit">Dừng lượt ôn</button></section>';
+}
+
+function examPickView(e, card, v, front) {
+  const idx = learningTerms.findIndex(x => x.hanzi === v.hanzi);
+  const correct = v.hv + ' · ' + v.meaning;
+  const opts = smartOptions(learningTerms, idx, x => x.hv + ' · ' + x.meaning, { seed: idx * 131 + e.pos * 7919 + e.deck.length * 13 + 5, weak: new Set(state.progress.difficult) });
+  const pct = Math.round(e.pos / e.deck.length * 100);
+  const chosen = e.pick;
+  const buttons = opts.map(o => {
+    const cls = chosen ? (o === correct ? 'success' : o === chosen.value ? 'danger' : '') : '';
+    return '<button data-exam-pick="' + safe(o) + '" class="exam-pick ' + cls + '"' + (chosen ? ' disabled' : '') + '>' + safe(o) + '</button>';
+  }).join('');
+  return h('ÔN THI', 'Thẻ ' + (e.pos + 1) + '/' + e.deck.length, card.again ? 'Thẻ này vừa sai — đổi cách hỏi để nhớ chắc hơn.' : 'Chọn nghĩa đúng của chữ Hán.') +
+    '<section class="panel exam-card"><div class="track"><i style="width:' + pct + '%"></i></div><div class="exam-face">' + front +
+    '<div class="exam-picks">' + buttons + '</div>' +
+    (chosen ? '<button id="examPickNext" class="primary exam-flip">Tiếp →</button>' + componentHint(v, radicals214) : '') +
+    '</div><button id="examQuit" class="review-exit">Dừng lượt ôn</button></section>';
+}
+
+function examProfileCard() {
+  const l = learnerOf();
+  const cfg = state.exam.cfg;
+  const toggle = '<label class="exam-adapt"><input type="checkbox" id="examAdaptive"' + (cfg.adaptive ? ' checked' : '') + '><span>Tự xoay cách ôn theo cách học của tôi</span></label>';
+  if (l.n < MIN_EVENTS) {
+    return '<section class="panel exam-profile"><h3>Cách học của bạn</h3>' + toggle +
+      '<p class="exam-profile-note">App đang ghi nhớ cách bạn học. Còn <b>' + (MIN_EVENTS - l.n) + '</b> lượt trả lời nữa là có gợi ý riêng. Trong lúc này mỗi từ sẽ được hỏi bằng các cách khác nhau mỗi lần gặp lại.</p></section>';
+  }
+  const sum = learnerSummary(l);
+  const list = insights(l);
+  return '<section class="panel exam-profile"><h3>Cách học của bạn</h3>' + toggle +
+    '<div class="exam-modes">' + sum.parts.map(p => '<div><b>' + (p.a === null ? '—' : p.a + '%') + '</b><span>' + p.name + '</span></div>').join('') + '</div>' +
+    '<ul class="exam-insights">' + list.map((it, i) => '<li>' + it.text + (it.apply ? ' <button data-apply="' + i + '" class="exam-apply">' + safe(it.apply.label) + '</button>' : '') + '</li>').join('') + '</ul></section>';
 }
 
 function examDoneView() {
@@ -1233,7 +1281,15 @@ function startExamDeck(deck) {
   e.ok = 0;
   e.miss = [];
   e.phase = deck.length ? 'run' : 'setup';
+  e.shownAt = Date.now();
+  e.ms = 0;
+  e.pick = null;
   render();
+}
+
+function nextDir(hanzi, prev) {
+  if (state.exam.cfg.adaptive) return pickMode(learnerOf(), hanzi, Math.random, prev);
+  return prev === 'han2vi' ? 'vi2han' : 'han2vi';
 }
 
 function gradeExam(ok) {
@@ -1241,6 +1297,7 @@ function gradeExam(ok) {
   const card = e.deck[e.pos];
   const v = examTerm(card.hanzi);
   if (!v) return;
+  noteAnswer(v.hanzi, card.dir, ok, e.ms);
   if (ok) {
     e.ok += 1;
     const m = state.progress.memorySchedule?.[v.hanzi];
@@ -1254,11 +1311,14 @@ function gradeExam(ok) {
       m.level = 0; m.streak = 0; m.lapses += 1; m.reviews += 1; m.last = Date.now();
       m.due = Date.now() + REVIEW_INTERVALS[0];
     }
-    if (!card.again) e.deck.push({ hanzi: v.hanzi, dir: card.dir === 'han2vi' ? 'vi2han' : 'han2vi', again: true });
+    if (!card.again) e.deck.push({ hanzi: v.hanzi, dir: nextDir(v.hanzi, card.dir), again: true });
   }
   save();
   e.pos += 1;
   e.flipped = false;
+  e.pick = null;
+  e.shownAt = Date.now();
+  e.ms = 0;
   if (e.pos >= e.deck.length) e.phase = 'done';
   render();
 }
@@ -1280,11 +1340,34 @@ function bindExam(scope) {
       meta: h => state.progress.memorySchedule?.[h],
       difficult: state.progress.difficult,
       priority: priorityBoost(priorityInfo),
+      modeFor: e.cfg.adaptive ? hz => pickMode(learnerOf(), hz, Math.random) : undefined,
       now: Date.now()
     }, rng));
   });
   const flip = scope.querySelector('#examFlip');
-  if (flip) flip.addEventListener('click', () => { e.flipped = true; render(); });
+  if (flip) flip.addEventListener('click', () => { e.flipped = true; e.ms = Date.now() - (e.shownAt || Date.now()); render(); });
+  scope.querySelectorAll('[data-exam-pick]').forEach(b => b.addEventListener('click', () => {
+    if (e.pick) return;
+    const card = e.deck[e.pos];
+    const v = examTerm(card.hanzi);
+    const value = b.dataset.examPick;
+    e.ms = Date.now() - (e.shownAt || Date.now());
+    e.pick = { value, ok: value === v.hv + ' · ' + v.meaning };
+    render();
+  }));
+  const pickNext = scope.querySelector('#examPickNext');
+  if (pickNext) pickNext.addEventListener('click', () => gradeExam(!!(e.pick && e.pick.ok)));
+  const adaptive = scope.querySelector('#examAdaptive');
+  if (adaptive) adaptive.addEventListener('change', ev => setCfg({ adaptive: ev.target.checked }));
+  scope.querySelectorAll('[data-apply]').forEach(b => b.addEventListener('click', () => {
+    const it = insights(learnerOf())[Number(b.dataset.apply)];
+    if (!it || !it.apply) return;
+    const patch = {};
+    if (it.apply.group) patch.group = it.apply.group;
+    if (it.apply.size) patch.size = it.apply.size;
+    if (it.apply.remindTime) { patch.remindTime = it.apply.remindTime; try { localStorage.removeItem(NOTIFY_KEY); } catch {} }
+    setCfg(patch);
+  }));
   const hit = scope.querySelector('#examHit');
   if (hit) hit.addEventListener('click', () => gradeExam(true));
   const miss = scope.querySelector('#examMiss');
@@ -1293,7 +1376,7 @@ function bindExam(scope) {
   if (quit) quit.addEventListener('click', () => { e.phase = e.miss.length || e.ok ? 'done' : 'setup'; render(); });
   const retry = scope.querySelector('#examRetry');
   if (retry) retry.addEventListener('click', () => {
-    startExamDeck([...new Set(e.miss)].map((hanzi, i) => ({ hanzi, dir: i % 2 ? 'vi2han' : 'han2vi' })));
+    startExamDeck([...new Set(e.miss)].map((hanzi, i) => ({ hanzi, dir: e.cfg.adaptive ? pickMode(learnerOf(), hanzi, Math.random) : (i % 2 ? 'vi2han' : 'han2vi') })));
   });
   const remindTime = scope.querySelector('#examRemindTime');
   if (remindTime) remindTime.addEventListener('change', ev => { if (/^([01]\d|2[0-3]):[0-5]\d$/.test(ev.target.value)) { e.cfg = { ...e.cfg, remindTime: ev.target.value }; saveExamConfig(e.cfg); try { localStorage.removeItem(NOTIFY_KEY); } catch {} render(); } });
@@ -1589,6 +1672,7 @@ function bind(fullShell = true) {
   scope.querySelectorAll('[data-vchoice]').forEach(e => e.addEventListener('click', () => {
     const v = learningTerms[state.card];
     const correct = v.hv + ' · ' + v.meaning;
+    noteAnswer(v.hanzi, 'choice', e.dataset.value === correct, 0);
     if (e.dataset.value === correct) {
       setStage(v.hanzi, 2);
       state.progress.xp += 4;
@@ -1622,6 +1706,7 @@ function bind(fullShell = true) {
   const rememberYes = document.querySelector('#rememberYes');
   if (rememberYes) rememberYes.addEventListener('click', () => {
     const v = learningTerms[state.card];
+    noteAnswer(v.hanzi, 'recall', true, 0);
     setStage(v.hanzi, 4);
     scheduleFirstReview(v.hanzi);
     state.progress.xp += 8;
@@ -1631,6 +1716,7 @@ function bind(fullShell = true) {
   const rememberNo = document.querySelector('#rememberNo');
   if (rememberNo) rememberNo.addEventListener('click', () => {
     const v = learningTerms[state.card];
+    noteAnswer(v.hanzi, 'recall', false, 0);
     state.progress.wordStage[v.hanzi] = 1;
     memoryMeta(v.hanzi).due = 0;
     if (!state.progress.difficult.includes(v.hanzi)) state.progress.difficult.push(v.hanzi);
@@ -1655,6 +1741,7 @@ function bind(fullShell = true) {
     const v = dueTerms()[0];
     if (!v) return;
     const ok = e.dataset.value === e.dataset.correct;
+    noteAnswer(v.hanzi, 'rev', ok, 0);
     if (ok) reviewSuccess(v.hanzi); else reviewFail(v.hanzi);
     state.reviewFeedback = { hanzi: v.hanzi, ok };
     render();

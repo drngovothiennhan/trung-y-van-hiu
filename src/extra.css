@@ -638,3 +638,19 @@ html[data-ui-mode="mobile"] .admin-access-stats{display:none!important}
 .exam-remind .exam-secondary{margin-top:0;text-align:center}
 .exam-remind .exam-secondary:disabled{opacity:.5;cursor:default}
 .exam-remind-note{font-size:12px;line-height:1.5;color:#6c7a75}
+
+.exam-profile{max-width:560px;margin:0 auto 14px;display:flex;flex-direction:column;gap:10px}
+.exam-profile h3{margin:0}
+.exam-adapt{display:flex;gap:10px;align-items:center;font-weight:600;cursor:pointer}
+.exam-adapt input{width:20px;height:20px;accent-color:#1d5b4c}
+.exam-profile-note{margin:0;color:#5e6d69;font-size:14px;line-height:1.5}
+.exam-modes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.exam-modes div{background:#f2f0e7;border-radius:12px;padding:10px;text-align:center}
+.exam-modes b{display:block;font:700 22px Georgia,serif;color:#1d5b4c}
+.exam-modes span{font-size:11px;color:#5e6d69;line-height:1.3;display:block}
+.exam-insights{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:8px;font-size:14px;line-height:1.5}
+.exam-apply{margin-left:6px;padding:4px 10px;border-radius:999px;border:1px solid #1d5b4c;background:#fff;color:#1d5b4c;font-weight:600;cursor:pointer;min-height:32px}
+.exam-picks{display:flex;flex-direction:column;gap:10px;width:100%;margin-top:14px}
+.exam-pick{padding:14px;border-radius:14px;border:1.5px solid #cfd6d2;background:#fff;font-size:16px;text-align:left;min-height:48px;cursor:pointer}
+.exam-pick.success{background:#e3f4ea;border-color:#2f8f5b}
+.exam-pick.danger{background:#fbe5e3;border-color:#c0443a}
