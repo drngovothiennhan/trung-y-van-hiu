@@ -161,22 +161,39 @@ Deno.serve(async (req: Request) => {
       return json(req, { ok: false, code: account.status === 'suspended' ? 'ACCOUNT_SUSPENDED' : 'WAITING_APPROVAL' }, 403)
     }
 
+    const uaHash = await sha256(req.headers.get('user-agent') || 'unknown')
     if (account.role !== 'admin') {
+      const { data: accountRow } = await db.from('trung_y_van_accounts').select('max_devices').eq('id', account.id).maybeSingle()
+      const maxDevices = Math.max(1, Math.min(10, Number(accountRow?.max_devices) || 1))
       const { data: existingSessions } = await db.from('trung_y_van_sessions').select('*').eq('account_id', account.id)
-      const active = (existingSessions || []).find((s: any) => !s.revoked_at && new Date(s.expires_at).getTime() > Date.now())
-      const activeNow = !!active
-      if (activeNow && active.ip_hash !== currentIp) {
-        await audit(mssv, 'login_rejected_other_ip', currentIp)
-        return json(req, { ok: false, code: 'ACTIVE_ON_OTHER_IP' }, 409)
-      }
+      const nowMs = Date.now()
+      const isLive = (s: any) => !s.revoked_at && new Date(s.expires_at).getTime() > nowMs
 
-      // Keep exactly one session for normal student/member accounts.
-      await db.from('trung_y_van_sessions').delete().eq('account_id', account.id)
+      if (maxDevices <= 1) {
+        const active = (existingSessions || []).find(isLive)
+        if (active && active.ip_hash !== currentIp) {
+          await audit(mssv, 'login_rejected_other_ip', currentIp)
+          return json(req, { ok: false, code: 'ACTIVE_ON_OTHER_IP' }, 409)
+        }
+        // Keep exactly one session for normal student/member accounts.
+        await db.from('trung_y_van_sessions').delete().eq('account_id', account.id)
+      } else {
+        // Accounts granted several devices: each device keeps its own session (still locked to the IP that created it).
+        // Logging in again from the same device (same browser/phone, even after the network changed) replaces that device's session.
+        const live = (existingSessions || []).filter(isLive)
+        const sameDevice = live.filter((s: any) => s.user_agent_hash === uaHash)
+        const otherLive = live.filter((s: any) => !sameDevice.includes(s))
+        if (otherLive.length >= maxDevices) {
+          await audit(mssv, 'login_rejected_device_limit', currentIp, { max_devices: maxDevices })
+          return json(req, { ok: false, code: 'DEVICE_LIMIT', max_devices: maxDevices }, 409)
+        }
+        const dropTokens = (existingSessions || []).filter((s: any) => !isLive(s) || sameDevice.includes(s)).map((s: any) => s.token_hash)
+        if (dropTokens.length) await db.from('trung_y_van_sessions').delete().in('token_hash', dropTokens)
+      }
     }
 
     const token = randomToken()
     const tokenHash = await sha256(token)
-    const uaHash = await sha256(req.headers.get('user-agent') || 'unknown')
     const now = new Date()
     const expires = new Date(now.getTime() + SESSION_MS)
     const { error: sessionError } = await db.from('trung_y_van_sessions').insert({

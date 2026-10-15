@@ -108,6 +108,7 @@ export function authMessage(code) {
     INVALID_CREDENTIALS: 'Sai MSSV hoặc mật khẩu.',
     WAITING_APPROVAL: 'Tài khoản chưa được quản trị viên duyệt.',
     ACCOUNT_SUSPENDED: 'Tài khoản đang bị tạm khóa.',
+    DEVICE_LIMIT: 'Tài khoản đã đăng nhập đủ số thiết bị được phép. Đăng xuất một thiết bị cũ hoặc liên hệ admin.',
     ACTIVE_ON_OTHER_IP: 'Tài khoản đang hoạt động trên một IP khác. Liên hệ admin để đăng xuất phiên cũ.',
     TOO_MANY_ATTEMPTS: 'Đăng nhập sai quá nhiều lần. Hãy thử lại sau 15 phút.',
     IP_MISMATCH: 'IP hiện tại khác IP đã đăng nhập. Phiên bị khóa để bảo vệ tài khoản.',
