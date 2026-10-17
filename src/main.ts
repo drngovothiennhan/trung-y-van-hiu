@@ -15,6 +15,7 @@ import { lessonAmDuongTextbookPages, lessonAmDuongTerms, lessonAmDuongQuiz, less
 import { writingPracticeView, bindWritingPractice, getWritingContext, restoreWritingContext } from './writing-practice';
 import { chietTuView, bindChietTu, componentHint } from './chiet-tu';
 import { nguHanhSlidePages, nguHanhSlideTerms, nguHanhSlideQuiz, nguHanhSlideReadings } from './lesson-ngu-hanh-slide';
+import { tangPhuSlidePages, tangPhuSlideTerms, tangPhuSlideQuiz, tangPhuSlideReadings } from './lesson-tang-phu-slide';
 import { analyzeTerms, rankTerms, priorityBoost } from './priority';
 import { buildRoadmapSource } from './roadmap';
 import { emptyLearner, normalizeLearner, recordAnswer, pickMode, insights, learnerSummary, MIN_EVENTS } from './learner-profile';
@@ -490,7 +491,13 @@ const nguHanhSlideSource = {
   pages: nguHanhSlidePages,
   status: 'Đã nạp slide 25 trang: bảng Tạng–Thể–Khiếu, sinh/khắc, thừa/vũ, 的 地 得'
 };
-const termsUnordered = [...baseLearningTerms, ...lesson2Terms, ...lesson3Terms, ...remainingTerms, ...herbsFormulasTerms, ...lessonAmDuongTerms, ...nguHanhSlideTerms]
+const tangPhuSlideSource = {
+  id: 'slide-tang-phu',
+  title: 'Slide bài giảng — Tạng phủ (脏腑, HIU)',
+  pages: tangPhuSlidePages,
+  status: 'Đã nạp slide Tạng phủ: bài khóa, từ vựng, ngữ pháp 除了……以外 / 以上 / 以下, câu hỏi lượng giá'
+};
+const termsUnordered = [...baseLearningTerms, ...lesson2Terms, ...lesson3Terms, ...remainingTerms, ...herbsFormulasTerms, ...lessonAmDuongTerms, ...nguHanhSlideTerms, ...tangPhuSlideTerms]
   .filter((t, i, a) => a.findIndex(x => x.hanzi === t.hanzi) === i);
 const pagesText = pages => pages.map(p => p.text).join('\n');
 const sourceText = id => pagesText((baseSources.find(s => s.id === id) || { pages: [] }).pages);
@@ -499,7 +506,8 @@ const slideDocs = [
   { id: 'basic', label: 'Kiến thức cơ bản', text: sourceText('basic') },
   { id: 'dialogue', label: 'Đối thoại YHCT', text: sourceText('dialogue') },
   { id: 'amduong', label: 'Âm Dương', text: pagesText(lessonAmDuongTextbookPages) + ' ' + lessonAmDuongTerms.map(t => t.hanzi).join(' ') },
-  { id: 'nguhanh', label: 'Ngũ Hành', text: pagesText(nguHanhSlidePages) + ' ' + lesson2Terms.concat(nguHanhSlideTerms).map(t => t.hanzi).join(' ') }
+  { id: 'nguhanh', label: 'Ngũ Hành', text: pagesText(nguHanhSlidePages) + ' ' + lesson2Terms.concat(nguHanhSlideTerms).map(t => t.hanzi).join(' ') },
+  { id: 'tangphu', label: 'Tạng phủ', text: pagesText(tangPhuSlidePages) + ' ' + tangPhuSlideTerms.map(t => t.hanzi).join(' ') }
 ];
 const bookText = [sourceText('textbook'), pagesText(lesson2TextbookPages), pagesText(lesson3TextbookPages), pagesText(remainingTextbookPages)].join('\n');
 const priorityInfo = analyzeTerms(termsUnordered, slideDocs, bookText);
@@ -516,12 +524,13 @@ const sources = [
       status: 'Đã chuyển đủ Bài 1–8 và bổ sung chuyên đề Âm Dương theo bài giảng.'
     }),
   nguHanhSlideSource,
+  tangPhuSlideSource,
   appendixSource,
   herbsFormulasSource
 ];
-const coreQuizBank = [...baseQuizBank, ...lesson2Quiz, ...lesson3Quiz, ...remainingQuiz, ...herbsFormulasQuiz, ...lessonAmDuongQuiz, ...nguHanhSlideQuiz];
+const coreQuizBank = [...baseQuizBank, ...lesson2Quiz, ...lesson3Quiz, ...remainingQuiz, ...herbsFormulasQuiz, ...lessonAmDuongQuiz, ...nguHanhSlideQuiz, ...tangPhuSlideQuiz];
 const quizBank = [...coreQuizBank, ...pathologyQuiz, ...bookOriginalQuiz];
-const readingBank = [...readings.map(r => ({...r, topic:'Lâm sàng', source:'Cách diễn đạt YHCT', words:[]})), ...readingDrills, ...herbsFormulasReadings, ...lessonAmDuongReadings, ...nguHanhSlideReadings];
+const readingBank = [...readings.map(r => ({...r, topic:'Lâm sàng', source:'Cách diễn đạt YHCT', words:[]})), ...readingDrills, ...herbsFormulasReadings, ...lessonAmDuongReadings, ...nguHanhSlideReadings, ...tangPhuSlideReadings];
 
 function shuffleArray(items) {
   const out = [...items];
