@@ -530,8 +530,9 @@ const sources = [
   appendixSource,
   herbsFormulasSource
 ];
-const coreQuizBank = [...baseQuizBank, ...lesson2Quiz, ...lesson3Quiz, ...remainingQuiz, ...herbsFormulasQuiz, ...lessonAmDuongQuiz, ...nguHanhSlideQuiz, ...tangPhuSlideQuiz, ...onThiQuiz];
+const coreQuizBank = [...baseQuizBank, ...lesson2Quiz, ...lesson3Quiz, ...remainingQuiz, ...herbsFormulasQuiz, ...lessonAmDuongQuiz, ...nguHanhSlideQuiz, ...tangPhuSlideQuiz];
 const quizBank = [...coreQuizBank, ...pathologyQuiz, ...bookOriginalQuiz];
+const onThiBank = onThiQuiz;
 const readingBank = [...readings.map(r => ({...r, topic:'Lâm sàng', source:'Cách diễn đạt YHCT', words:[]})), ...readingDrills, ...herbsFormulasReadings, ...lessonAmDuongReadings, ...nguHanhSlideReadings, ...tangPhuSlideReadings];
 
 function shuffleArray(items) {
@@ -690,7 +691,7 @@ function restoreContext(context, memberCode) {
   if (Number.isInteger(context.vocabPhase)) state.vocabPhase = Math.max(0, Math.min(3, context.vocabPhase));
   if (Number.isInteger(context.reading)) state.reading = Math.max(0, context.reading);
   if (typeof context.readingTopic === 'string') state.readingTopic = context.readingTopic;
-  if (['mixed','herbs','pathology','book'].includes(context.quizMode)) state.quizMode = context.quizMode;
+  if (['mixed','herbs','pathology','book','onthi'].includes(context.quizMode)) state.quizMode = context.quizMode;
   if (Number.isInteger(context.quizIndex)) state.quizIndex = Math.max(0, Math.min(10, context.quizIndex));
   if (validObject(context.quizAnswers)) state.quizAnswers = context.quizAnswers;
   if (Array.isArray(context.quiz) && context.quiz.length <= 20) state.quiz = context.quiz;
@@ -1449,7 +1450,9 @@ function newQuiz() {
       ? bookOriginalQuiz
       : state.quizMode === 'herbs'
         ? herbsFormulasQuiz
-        : quizBank;
+        : state.quizMode === 'onthi'
+          ? onThiBank
+          : quizBank;
   state.quiz = prepareQuizRound(pool);
   state.quizIndex = 0;
   state.quizAnswers = {};
@@ -1461,17 +1464,22 @@ function quizView() {
     '<button data-quizmode="mixed" class="' + (state.quizMode === 'mixed' ? 'active' : '') + '">Tổng hợp · ' + quizBank.length + '</button>' +
     '<button data-quizmode="herbs" class="' + (state.quizMode === 'herbs' ? 'active' : '') + '">Dược liệu · ' + herbsFormulasQuiz.length + '</button>' +
     '<button data-quizmode="pathology" class="' + (state.quizMode === 'pathology' ? 'active' : '') + '">Bệnh lý · ' + pathologyQuiz.length + '</button>' +
-    '<button data-quizmode="book" class="' + (state.quizMode === 'book' ? 'active' : '') + '">Gốc sách · ' + bookOriginalQuiz.length + '</button></div>' +
+    '<button data-quizmode="book" class="' + (state.quizMode === 'book' ? 'active' : '') + '">Gốc sách · ' + bookOriginalQuiz.length + '</button>' +
+    '<button data-quizmode="onthi" class="' + (state.quizMode === 'onthi' ? 'active' : '') + '">Ôn thi · ' + onThiBank.length + '</button></div>' +
     (state.quizMode === 'herbs'
       ? '<div class="clinical-note">20 câu bám trực tiếp PPT “Dược liệu và phương tễ trong YHCT”: dược liệu, bào chế, phương tễ, cách dùng và lưu ý an toàn.</div>'
       : state.quizMode === 'pathology'
         ? '<div class="clinical-note">Câu hỏi bệnh lý chỉ bám tài liệu đã cung cấp; dùng cho học thuật/ngôn ngữ chuyên ngành, không thay thế chẩn đoán lâm sàng.</div>'
+        : state.quizMode === 'onthi'
+          ? '<div class="clinical-note">Câu ôn thi buổi 24/10/2026 (Thầy Việt): Tạng phủ (đáp án tham khảo, Thầy chưa chấm) và Khí – Huyết – Tân dịch (đáp án Thầy Việt). Tách riêng khỏi ngân hàng Tổng hợp.</div>'
         : state.quizMode === 'book'
           ? '<div class="clinical-note">Đây là các câu 5.1 判断正误 có thật trong giáo trình. Sách không trình bày chúng dưới dạng A–D; app giữ nguyên nội dung và dùng lựa chọn √ Đúng / × Sai, đối chiếu đáp án phụ lục.</div>'
           : '');
 
   const modeCount = state.quizMode === 'herbs'
     ? herbsFormulasQuiz.length
+    : state.quizMode === 'onthi'
+      ? onThiBank.length
     : state.quizMode === 'book'
       ? bookOriginalQuiz.length
       : state.quizMode === 'pathology'
@@ -1480,6 +1488,8 @@ function quizView() {
 
   const modeTitle = state.quizMode === 'herbs'
     ? 'Dược liệu & Phương tễ'
+    : state.quizMode === 'onthi'
+      ? 'Ôn thi học phần · Thầy Việt'
     : state.quizMode === 'pathology'
       ? 'Trắc nghiệm bệnh lý theo tài liệu'
       : state.quizMode === 'book'
@@ -1488,6 +1498,8 @@ function quizView() {
 
   const modeDescription = state.quizMode === 'herbs'
     ? 'Mỗi lượt lấy 10 câu từ ngân hàng 20 câu của bài Dược liệu & Phương tễ.'
+    : state.quizMode === 'onthi'
+      ? 'Mỗi lượt lấy 10 câu từ ngân hàng ' + onThiBank.length + ' câu ôn thi, tách riêng khỏi trắc nghiệm từ vựng.'
     : state.quizMode === 'pathology'
       ? 'Mỗi lượt lấy 10 câu bệnh lý/chẩn đoán chỉ từ tài liệu nguồn.'
       : state.quizMode === 'book'
@@ -1498,6 +1510,8 @@ function quizView() {
     const score = state.quiz.reduce((n, q, i) => n + (state.quizAnswers[i] === q.a ? 1 : 0), 0);
     const resultTitle = state.quizMode === 'herbs'
       ? 'Kết quả Dược liệu & Phương tễ'
+      : state.quizMode === 'onthi'
+        ? 'Kết quả ôn thi học phần'
       : state.quizMode === 'pathology'
         ? 'Kết quả trắc nghiệm bệnh lý'
         : state.quizMode === 'book'
