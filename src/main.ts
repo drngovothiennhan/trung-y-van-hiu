@@ -16,6 +16,7 @@ import { writingPracticeView, bindWritingPractice, getWritingContext, restoreWri
 import { chietTuView, bindChietTu, componentHint } from './chiet-tu';
 import { nguHanhSlidePages, nguHanhSlideTerms, nguHanhSlideQuiz, nguHanhSlideReadings } from './lesson-ngu-hanh-slide';
 import { tangPhuSlidePages, tangPhuSlideTerms, tangPhuSlideQuiz, tangPhuSlideReadings } from './lesson-tang-phu-slide';
+import { onThiSource, onThiQuiz } from './lesson-on-thi-thay-viet';
 import { analyzeTerms, rankTerms, priorityBoost } from './priority';
 import { buildRoadmapSource } from './roadmap';
 import { emptyLearner, normalizeLearner, recordAnswer, pickMode, insights, learnerSummary, MIN_EVENTS } from './learner-profile';
@@ -525,10 +526,11 @@ const sources = [
     }),
   nguHanhSlideSource,
   tangPhuSlideSource,
+  onThiSource,
   appendixSource,
   herbsFormulasSource
 ];
-const coreQuizBank = [...baseQuizBank, ...lesson2Quiz, ...lesson3Quiz, ...remainingQuiz, ...herbsFormulasQuiz, ...lessonAmDuongQuiz, ...nguHanhSlideQuiz, ...tangPhuSlideQuiz];
+const coreQuizBank = [...baseQuizBank, ...lesson2Quiz, ...lesson3Quiz, ...remainingQuiz, ...herbsFormulasQuiz, ...lessonAmDuongQuiz, ...nguHanhSlideQuiz, ...tangPhuSlideQuiz, ...onThiQuiz];
 const quizBank = [...coreQuizBank, ...pathologyQuiz, ...bookOriginalQuiz];
 const readingBank = [...readings.map(r => ({...r, topic:'Lâm sàng', source:'Cách diễn đạt YHCT', words:[]})), ...readingDrills, ...herbsFormulasReadings, ...lessonAmDuongReadings, ...nguHanhSlideReadings, ...tangPhuSlideReadings];
 
