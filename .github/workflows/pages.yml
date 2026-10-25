@@ -27,10 +27,16 @@ jobs:
           node-version: '24'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
+
+      - name: Check learning content
+        run: node --test tests/*.test.mjs
 
       - name: Build
         run: npm run build
+
+      - name: Report build size
+        run: node scripts/size-report.mjs dist
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
