@@ -116,11 +116,18 @@ async function verifySession(req: Request, token: string, requireAdmin = false) 
   const { data: account } = await db.from('trung_y_van_accounts').select('id,student_code,display_name,role,status').eq('id', session.account_id).maybeSingle()
   if (!account || account.status !== 'approved') return { ok: false as const, status: 403, code: 'ACCOUNT_NOT_APPROVED' }
 
-  // Member accounts remain locked to the IP that created the session.
-  // Admin accounts are intentionally exempt so the admin can use multiple devices/IPs.
+  // Member sessions are tied to the device that created them, not to its network.
+  // A phone moves between Wi-Fi and mobile data all day: when the IP changes but the browser is the same,
+  // the session follows it (the new IP is recorded and audited). A token that shows up from a different
+  // browser is still rejected. Admin accounts stay exempt so the admin can use several devices/IPs.
   if (account.role !== 'admin' && session.ip_hash !== currentIp) {
-    await audit(account.student_code, 'session_ip_mismatch', currentIp, { account_id: session.account_id })
-    return { ok: false as const, status: 401, code: 'IP_MISMATCH' }
+    const uaHash = await sha256(req.headers.get('user-agent') || 'unknown')
+    if (!session.user_agent_hash || session.user_agent_hash !== uaHash) {
+      await audit(account.student_code, 'session_ip_mismatch', currentIp, { account_id: session.account_id })
+      return { ok: false as const, status: 401, code: 'IP_MISMATCH' }
+    }
+    await db.from('trung_y_van_sessions').update({ ip_hash: currentIp }).eq('token_hash', tokenHash)
+    await audit(account.student_code, 'session_ip_roamed', currentIp, { account_id: session.account_id })
   }
 
   if (requireAdmin && account.role !== 'admin') return { ok: false as const, status: 403, code: 'ADMIN_REQUIRED' }
@@ -171,14 +178,16 @@ Deno.serve(async (req: Request) => {
 
       if (maxDevices <= 1) {
         const active = (existingSessions || []).find(isLive)
-        if (active && active.ip_hash !== currentIp) {
+        // One device at a time. The same browser logging in again after its network changed replaces its own
+        // session; only a different device is turned away while the first one is still signed in.
+        if (active && active.ip_hash !== currentIp && active.user_agent_hash !== uaHash) {
           await audit(mssv, 'login_rejected_other_ip', currentIp)
           return json(req, { ok: false, code: 'ACTIVE_ON_OTHER_IP' }, 409)
         }
         // Keep exactly one session for normal student/member accounts.
         await db.from('trung_y_van_sessions').delete().eq('account_id', account.id)
       } else {
-        // Accounts granted several devices: each device keeps its own session (still locked to the IP that created it).
+        // Accounts granted several devices: each device keeps its own session (tied to that device's browser).
         // Logging in again from the same device (same browser/phone, even after the network changed) replaces that device's session.
         const live = (existingSessions || []).filter(isLive)
         const sameDevice = live.filter((s: any) => s.user_agent_hash === uaHash)
