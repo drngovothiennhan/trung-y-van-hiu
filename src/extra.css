@@ -664,3 +664,5 @@ html[data-ui-mode="mobile"] .admin-access-stats{display:none!important}
   font-family:var(--han-font)!important;font-weight:400!important;font-synthesis:none;
 }
 .han-line span{font-weight:500!important}
+
+.offline-note{margin:0 0 14px;padding:10px 13px;border:1px solid #e3d3a8;background:#fbf5e3;color:#6d5720;border-radius:12px;font-size:13px;line-height:1.5}

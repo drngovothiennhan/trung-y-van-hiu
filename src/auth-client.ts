@@ -38,7 +38,38 @@ function token() {
 
 function setToken(value) {
   if (value) localStorage.setItem(TOKEN_KEY, value);
-  else localStorage.removeItem(TOKEN_KEY);
+  else { localStorage.removeItem(TOKEN_KEY); clearOfflineGrant(); }
+}
+
+// Học ngoại tuyến: sau khi máy chủ xác minh phiên, thiết bị được học tiếp khi mất mạng trong OFFLINE_GRACE_MS
+// kể từ lần xác minh gần nhất. Hết hạn, đăng xuất hoặc máy chủ từ chối phiên thì quyền này mất.
+const GRANT_KEY = 'trung-y-van-hiu-offline-grant-v1';
+export const OFFLINE_GRACE_MS = 72 * 60 * 60 * 1000;
+
+export function saveOfflineGrant(member) {
+  if (!member?.mssv) return;
+  try {
+    localStorage.setItem(GRANT_KEY, JSON.stringify({
+      member: { mssv: String(member.mssv), display_name: String(member.display_name || ''), role: member.role === 'admin' ? 'admin' : 'member' },
+      verifiedAt: Date.now(),
+    }));
+  } catch {}
+}
+
+export function clearOfflineGrant() {
+  try { localStorage.removeItem(GRANT_KEY); } catch {}
+}
+
+/** Thành viên đã được xác minh gần đây trên thiết bị này, hoặc null. */
+export function readOfflineGrant(now = Date.now()) {
+  try {
+    if (!token()) return null;
+    const grant = JSON.parse(localStorage.getItem(GRANT_KEY) || 'null');
+    const verifiedAt = Number(grant?.verifiedAt);
+    if (!grant?.member?.mssv || !Number.isFinite(verifiedAt)) return null;
+    if (verifiedAt > now + 60 * 1000 || now - verifiedAt > OFFLINE_GRACE_MS) return null;
+    return grant.member;
+  } catch { return null; }
 }
 
 async function withToken(action, payload = {}, options = {}) {
@@ -109,14 +140,14 @@ export function authMessage(code) {
     WAITING_APPROVAL: 'Tài khoản chưa được quản trị viên duyệt.',
     ACCOUNT_SUSPENDED: 'Tài khoản đang bị tạm khóa.',
     DEVICE_LIMIT: 'Tài khoản đã đăng nhập đủ số thiết bị được phép. Đăng xuất một thiết bị cũ hoặc liên hệ admin.',
-    ACTIVE_ON_OTHER_IP: 'Tài khoản đang hoạt động trên một IP khác. Liên hệ admin để đăng xuất phiên cũ.',
+    ACTIVE_ON_OTHER_IP: 'Tài khoản đang đăng nhập trên một thiết bị khác. Đăng xuất ở thiết bị đó, hoặc liên hệ admin để đăng xuất phiên cũ.',
     TOO_MANY_ATTEMPTS: 'Đăng nhập sai quá nhiều lần. Hãy thử lại sau 15 phút.',
-    IP_MISMATCH: 'IP hiện tại khác IP đã đăng nhập. Phiên bị khóa để bảo vệ tài khoản.',
+    IP_MISMATCH: 'Phiên này được tạo trên một thiết bị khác nên bị khóa để bảo vệ tài khoản. Hãy đăng nhập lại.',
     SESSION_INVALID: 'Phiên đăng nhập không còn hợp lệ.',
     SESSION_EXPIRED: 'Phiên đăng nhập đã hết hạn.',
     ACCOUNT_NOT_APPROVED: 'Tài khoản hiện không còn được phép truy cập.',
     ADMIN_REQUIRED: 'Chỉ tài khoản admin mới được dùng chức năng này.',
-    NETWORK_ERROR: 'Không thể xác minh phiên vì mất kết nối mạng. Ứng dụng đang khóa an toàn.',
+    NETWORK_ERROR: 'Không thể xác minh phiên vì mất kết nối mạng. Hãy kết nối mạng rồi thử lại.',
     NO_SESSION: 'Chưa có phiên đăng nhập.',
     ADD_MEMBER_FAILED: 'Không thể duyệt tài khoản này.',
     MEMBER_NOT_FOUND: 'Không tìm thấy thành viên.',

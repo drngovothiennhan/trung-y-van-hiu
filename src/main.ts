@@ -1,7 +1,7 @@
 // @ts-nocheck
 import './styles.css';
 import './extra.css';
-import { authApi, authMessage } from './auth-client';
+import { authApi, authMessage, saveOfflineGrant, readOfflineGrant, clearOfflineGrant } from './auth-client';
 import { sources as baseSources, radicals214, learningTerms as baseLearningTerms, readings, quizBank as baseQuizBank } from './content';
 import { lesson2TextbookPages, lesson2Terms, lesson2Quiz } from './lesson2';
 import { lesson3TextbookPages, lesson3Terms, lesson3Quiz } from './lesson3';
@@ -93,7 +93,7 @@ function loginView() {
     (access.error ? '<div class="auth-error">' + safe(access.error) + '</div>' : '') +
     '<form id="authLoginForm" autocomplete="on"><label>MSSV<input id="authMssv" inputmode="numeric" autocomplete="username" maxlength="14" value="' + safe(access.loginMssv) + '" placeholder="Nhập MSSV"></label><label>Mật khẩu<input id="authPassword" type="password" autocomplete="current-password" placeholder="Mật khẩu"></label><button class="auth-submit" type="submit">Đăng nhập</button></form>' +
     (retry ? '<button id="authRetry" class="auth-retry">Xác minh lại phiên hiện có</button>' : '') +
-    '<small>Tài khoản sinh viên chỉ có một phiên/IP hoạt động. Tài khoản admin được phép đăng nhập nhiều thiết bị/IP đồng thời.</small></section></div>';
+    '<small>Mỗi tài khoản sinh viên dùng trên một thiết bị. Đổi mạng (Wi-Fi, 4G) không cần đăng nhập lại; sau khi đăng nhập, bạn học tiếp được cả khi mất mạng.</small></section></div>';
 }
 
 async function bootstrapAccess() {
@@ -107,18 +107,49 @@ async function bootstrapAccess() {
   try {
     const data = await authApi.session();
     access.member = data.member;
+    access.offline = false;
+    markSessionVerified(data.member);
     await restoreSignedInUserState(data.member);
     access.ready = true;
     render();
     await trackVisitOnce();
     if (uiMode === 'desktop') loadDesktopUsageInsights();
   } catch (error) {
+    const offlineMember = error?.code === 'NETWORK_ERROR' ? readOfflineGrant() : null;
+    if (offlineMember) {
+      // Mất mạng nhưng phiên vừa được máy chủ xác minh gần đây: học tiếp bằng dữ liệu trên máy.
+      access.member = offlineMember;
+      access.offline = true;
+      await restoreSignedInUserState(offlineMember);
+      access.ready = true;
+      render();
+      return;
+    }
     access.member = null;
+    access.offline = false;
     access.ready = true;
     access.error = authMessage(error?.code);
-    if (error?.code !== 'NETWORK_ERROR') authApi.clearToken();
+    if (error?.code !== 'NETWORK_ERROR') { authApi.clearToken(); setOfflineShell(false); }
     render();
   }
+}
+
+// Báo cho service worker lưu (hoặc xoá) các tệp của ứng dụng để học khi mất mạng.
+function setOfflineShell(enabled) {
+  if (!('serviceWorker' in navigator)) return;
+  const urls = enabled ? [...new Set([
+    location.href,
+    ...[...document.querySelectorAll('script[src],link[rel="stylesheet"][href],link[rel="modulepreload"][href]')].map(el => el.src || el.href),
+    ...performance.getEntriesByType('resource').map(entry => entry.name),
+  ].filter(u => typeof u === 'string' && u.startsWith(location.origin)))] : [];
+  navigator.serviceWorker.ready
+    .then(reg => { (reg.active || navigator.serviceWorker.controller)?.postMessage({ type: 'TYV_OFFLINE_SHELL', enabled, urls }); })
+    .catch(() => {});
+}
+
+function markSessionVerified(member) {
+  saveOfflineGrant(member);
+  setOfflineShell(true);
 }
 
 async function handleLogin(mssv, password) {
@@ -127,6 +158,8 @@ async function handleLogin(mssv, password) {
   try {
     const data = await authApi.login(mssv, password);
     access.member = data.member;
+    access.offline = false;
+    markSessionVerified(data.member);
     await restoreSignedInUserState(data.member);
     access.ready = true;
     access.loginMssv = '';
@@ -143,6 +176,9 @@ async function handleLogin(mssv, password) {
 async function handleLogout() {
   await flushUserStateSync();
   await authApi.logout();
+  clearOfflineGrant();
+  setOfflineShell(false);
+  access.offline = false;
   access.member = null;
   access.adminMembers = [];
   access.adminCandidates = [];
@@ -160,11 +196,26 @@ async function verifyAccessHeartbeat() {
   if (!access.member || !authApi.hasToken()) return;
   try {
     const data = await authApi.session();
+    const wasOffline = access.offline === true;
     access.member = data.member;
+    access.offline = false;
+    saveOfflineGrant(data.member);
+    if (wasOffline) {
+      // Có mạng trở lại: gửi tiến độ đã học lúc ngoại tuyến lên máy chủ.
+      setOfflineShell(true);
+      void flushUserStateSync();
+      render();
+    }
   } catch (error) {
+    if (error?.code === 'NETWORK_ERROR' && readOfflineGrant()) {
+      // Mất mạng giữa buổi học: không khoá màn hình, chỉ báo đang ngoại tuyến.
+      if (access.offline !== true) { access.offline = true; render(); }
+      return;
+    }
     access.member = null;
+    access.offline = false;
     access.error = authMessage(error?.code);
-    if (error?.code !== 'NETWORK_ERROR') authApi.clearToken();
+    if (error?.code !== 'NETWORK_ERROR') { authApi.clearToken(); setOfflineShell(false); }
     state.view = 'home';
     render();
   }
@@ -942,7 +993,7 @@ function shell(content) {
   return '<div class="shell" data-member="' + safe(access.member?.mssv || '') + '" data-role="' + safe(access.member?.role || '') + '"><aside><div class="brand"><b>中医中文</b><strong>TRUNG Y VĂN</strong><small>HIU CLB YHCT</small></div><nav>' +
     navs.map(n => '<button data-nav="' + n[0] + '" class="' + (state.view === n[0] ? 'active' : '') + '"><i>' + n[1] + '</i><span>' + n[2] + '</span></button>').join('') +
     '</nav>' + leaderboardMarkup() + '<div class="side-note"><span>HIU · YHCT</span><p>Mục tiêu từ vựng: nhìn → nhận biết → hiểu → nhớ.</p></div></aside><main><div class="top"><button class="mini" data-nav="home">中</button><div><b>HIU CLB YHCT</b><small>Chinese for Traditional Medicine</small></div><span class="streak">🔥 ' +
-    state.progress.xp + ' XP</span>' + uiModeMarkup() + '<div class="auth-user"><span>' + safe(access.member?.display_name || access.member?.mssv || '') + '</span><small>' + safe(access.member?.mssv || '') + '</small><button id="authLogout">Đăng xuất</button></div></div><div class="content">' + content + '</div></main><div class="bottom">' +
+    state.progress.xp + ' XP</span>' + uiModeMarkup() + '<div class="auth-user"><span>' + safe(access.member?.display_name || access.member?.mssv || '') + '</span><small>' + safe(access.member?.mssv || '') + '</small><button id="authLogout">Đăng xuất</button></div></div><div class="content">' + (access.offline ? '<div class="offline-note" role="status">Đang học ngoại tuyến. Tiến độ được lưu trên máy và sẽ đồng bộ khi có mạng.</div>' : '') + content + '</div></main><div class="bottom">' +
     navs.filter(n => n[0] !== 'radicals').slice(0, 6).map(n => '<button data-nav="' + n[0] + '" class="' + (state.view === n[0] ? 'active' : '') + '"><i>' + n[1] + '</i><small>' + n[2] + '</small></button>').join('') +
     '</div></div>' + pwaInstallMarkup();
 }
@@ -1852,6 +1903,8 @@ setInterval(verifyAccessHeartbeat, 5 * 60 * 1000);
 setInterval(checkReminder, 60 * 1000);
 setTimeout(checkReminder, 4000);
 window.addEventListener('pagehide', () => { void flushUserStateSync(); });
+window.addEventListener('online', () => { verifyAccessHeartbeat(); });
+window.addEventListener('offline', () => { verifyAccessHeartbeat(); });
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') {
     checkReminder();
