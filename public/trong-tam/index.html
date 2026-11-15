@@ -1,5 +1,15 @@
 <title>Trung Y Văn HIU — Ôn Trọng Tâm</title>
 <meta name="claude:viewport-fit-sides" content="cover">
+<script>
+/* Chế độ nhúng: chỉ chạy khi trang chính mở bằng ?embed=1, dùng cùng token và phông với Trung Y Văn HIU */
+(function(){try{
+  if(new URLSearchParams(location.search).get('embed')!=='1')return;
+  var d=document.documentElement;d.classList.add('embed');d.dataset.theme='light';
+  var link=function(h){var l=document.createElement('link');l.rel='stylesheet';l.href=h;document.head.appendChild(l)};
+  link('https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css');link('embed.css');
+  var s=document.createElement('script');s.src='embed.js';document.head.appendChild(s);
+}catch(e){}})();
+</script>
 <meta name="description" content="Ôn Trung văn chuyên ngành YHCT: thẻ nhớ, trọng tâm, bài khóa, tra từ, kiểm tra và lịch học theo điểm yếu.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

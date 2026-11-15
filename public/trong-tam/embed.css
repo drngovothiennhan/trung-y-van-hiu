@@ -1,0 +1,200 @@
+/* Chế độ nhúng (?embed=1): app Ôn Trọng Tâm dùng cùng token, phông, màu và hình khối với khung Trung Y Văn HIU.
+   Chỉ nạp khi nhúng trong trang chính. Selector bắt đầu bằng html.embed để thắng style gốc của app. */
+
+html.embed {
+  --paper: #f7f5ee;
+  --card: #ffffff;
+  --ink: #17352f;
+  --muted: #586761;
+  --line: #e3ddcd;
+  --jade: #1d5d4e;
+  --jade-soft: #e7efe9;
+  --seal: #8a6a22;
+  --seal-soft: #f4ead3;
+  --ok: #2c7a4b;
+  --bad: #b23e29;
+  --gold: #b68c3a;
+  --gold-soft: #f4ead3;
+  --r: 18px;
+  --body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+  --hz: 'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', 'Noto Serif CJK SC', 'Songti SC', serif;
+  color-scheme: light;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+html.embed,
+html.embed body {
+  height: auto !important;
+  min-height: 0;
+  background: transparent;
+  overflow-y: hidden;
+}
+html.embed body {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--body);
+}
+html.embed body::before {
+  display: none;
+}
+
+/* Tiêu đề, logo và tên trang đã có ở khung ngoài; chỉ hiện thanh phụ khi cần nút quay lại */
+html.embed header.top {
+  display: none;
+}
+html.embed header.top:has(#backBtn:not([hidden])) {
+  display: block;
+  position: static;
+  background: transparent;
+  border: 0;
+}
+html.embed header.top .wrap {
+  padding: 0 0 12px;
+  min-height: 0;
+}
+html.embed .brand .seal,
+html.embed .brand h1 {
+  display: none;
+}
+html.embed .brand small {
+  font-size: 13px;
+}
+html.embed #installBtn,
+html.embed #editBtn {
+  display: none;
+}
+
+html.embed main {
+  order: 1;
+  padding-bottom: 8px;
+}
+html.embed .wrap {
+  max-width: none;
+  padding-left: 0;
+  padding-right: 0;
+}
+html.embed main .wrap {
+  padding-block: 4px 8px;
+  gap: 14px;
+}
+
+/* Thanh chức năng chuyển lên đầu, dạng nhóm nút liền, thay cho thanh dưới (khung ngoài đã có thanh dưới) */
+html.embed nav.tabs {
+  order: 0;
+  position: sticky;
+  top: 0;
+  bottom: auto;
+  z-index: 3;
+  padding: 0 0 12px;
+  background: transparent;
+  border: 0;
+}
+html.embed nav.tabs .wrap {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 4px;
+  gap: 2px;
+  box-shadow: var(--tyv-shadow, 0 6px 18px rgba(24, 63, 54, 0.07));
+}
+html.embed nav.tabs button {
+  min-height: 48px;
+  border-radius: 12px;
+  color: var(--muted);
+  font-size: 12px;
+}
+html.embed nav.tabs button .g {
+  font: 500 18px/1 var(--hz);
+}
+html.embed nav.tabs button[aria-current='page'] {
+  background: #123d35;
+  color: #ffffff;
+}
+html.embed nav.tabs button[aria-current='page'] .g {
+  color: #d4b36a;
+}
+
+/* Hình khối giống khối giới thiệu của Trung Y Văn HIU */
+html.embed .hero {
+  background: radial-gradient(circle at 82% 0, rgba(255, 255, 255, 0.1) 0, transparent 42%), linear-gradient(135deg, #0d352e, #1d5d4e);
+  border-radius: 24px;
+  padding: 22px 20px;
+}
+html.embed .hero h2 {
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: 750;
+  letter-spacing: -0.01em;
+}
+html.embed .cta {
+  background: #d4b36a;
+  color: #0d352e;
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.16);
+}
+html.embed .cta .s {
+  color: #274a40;
+}
+html.embed .mini,
+html.embed .panel,
+html.embed .wk,
+html.embed .grp,
+html.embed .plan,
+html.embed .unit {
+  border-color: var(--line);
+  border-radius: var(--r);
+  box-shadow: var(--tyv-shadow, 0 6px 18px rgba(24, 63, 54, 0.07));
+}
+html.embed .mini b {
+  color: #123d35;
+}
+html.embed .mini.fire b {
+  color: #8a6a22;
+}
+html.embed .label,
+html.embed .page-head > span {
+  color: #8a6a22;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+html.embed h2 {
+  font-weight: 750;
+  letter-spacing: -0.01em;
+  color: #123d35;
+}
+html.embed .btn {
+  border-radius: 12px;
+}
+html.embed .btn.pri {
+  background: #123d35;
+  border-color: #123d35;
+  color: #ffffff;
+}
+html.embed .chip[aria-pressed='true'] {
+  background: #123d35;
+  border-color: #123d35;
+  color: #ffffff;
+}
+html.embed .prow.today {
+  background: var(--seal-soft);
+}
+html.embed .wk .go {
+  border-color: #123d35;
+  background: transparent;
+  color: #123d35;
+}
+html.embed .toast {
+  bottom: 24px;
+}
+html.embed .score {
+  color: #123d35;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.embed *,
+  html.embed *::before,
+  html.embed *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
