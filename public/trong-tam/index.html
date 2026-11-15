@@ -106,6 +106,10 @@ td.py{color:var(--jade);white-space:nowrap}
 .item .q .n{font:600 12px var(--body);color:var(--muted);margin-right:6px}
 .ans{font:500 15px/1.6 var(--hz);color:var(--jade);background:var(--jade-soft);border-radius:8px;padding:6px 10px}
 .reveal{align-self:flex-start;font-size:13px}
+.olab{font-size:12px;font-weight:700;color:var(--seal);letter-spacing:.04em}
+.opy{color:var(--jade);font-size:13.5px;line-height:1.5}
+.otbl table{min-width:540px}
+.otbl td{min-width:120px}
 .pairs{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
 .pair{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--card);text-align:center;font:500 18px/1.3 var(--hz);min-height:var(--tap)}
 .pair .b{display:block;color:var(--jade);margin-top:4px}
@@ -185,6 +189,7 @@ textarea.code{font-family:ui-monospace,"SFMono-Regular",Menlo,monospace;font-siz
 </script>
 <script src="focus-data.js"></script>
 <script src="focus-150.js"></script>
+<script src="units-u01-u10.js"></script>
 <script src="plan.js"></script>
 <script src="focus.js"></script>
 <script src="today.js"></script>
@@ -259,8 +264,9 @@ function vHome(v){
   v.querySelectorAll("[data-u]").forEach(b=>b.onclick=()=>{S.unit=b.dataset.u;S.sub="vocab";S.reveal={};render();scrollTo(0,0)});
   $("#quick").onclick=()=>{S.tab="cards";startCards(null,true);render()};
 }
-const SUBS=[["vocab","Từ vựng"],["text","Bài khóa"],["gram","Ngữ pháp"],["ex","Bài tập"]];
+const SUBS=[["vocab","Từ vựng"],["text","Bài khóa"],["gram","Ngữ pháp"],["ex","Bài tập"],["outline","Đề cương"]];
 function vUnit(v,u){
+  if(S.sub==="outline"&&!u.outline)S.sub="vocab";
   const n=k=>(u[k]||[]).length;
   v.innerHTML=`
   <div class="panel" style="display:flex;flex-direction:column;gap:8px">
@@ -268,12 +274,12 @@ function vUnit(v,u){
     <p class="note" style="margin:0">${esc(u.source||"")}</p>
     <div class="row"><button class="btn pri" id="uCards">Học thẻ (${n("vocab")})</button><button class="btn" id="uQuiz">Kiểm tra bài này</button></div>
   </div>
-  <div class="seg" role="tablist">${SUBS.map(([id,l])=>`<button class="chip" role="tab" data-s="${id}" aria-pressed="${S.sub===id}">${l}</button>`).join("")}</div>
+  <div class="seg" role="tablist">${SUBS.filter(([id])=>id!=="outline"||u.outline).map(([id,l])=>`<button class="chip" role="tab" data-s="${id}" aria-pressed="${S.sub===id}">${l}</button>`).join("")}</div>
   <div id="sub"></div>`;
   v.querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>{S.sub=b.dataset.s;render()});
   $("#uCards").onclick=()=>{S.tab="cards";startCards([u.id]);render();scrollTo(0,0)};
   $("#uQuiz").onclick=()=>{S.tab="quiz";startQuiz([u.id],20);render();scrollTo(0,0)};
-  ({vocab:sVocab,text:sText,gram:sGram,ex:sEx})[S.sub]($("#sub"),u);
+  ({vocab:sVocab,text:sText,gram:sGram,ex:sEx,outline:sOutline})[S.sub]($("#sub"),u);
 }
 function sVocab(box,u){
   const hc=S.hideCol;
@@ -308,6 +314,22 @@ function sEx(box,u){
   ${qa.length?`<div class="panel ex"><h3>回答题 · Trả lời câu hỏi</h3>${qa.map((f,i)=>`<div class="item"><div class="q"><span class="n">${i+1}</span>${esc(f.q)}</div>${ans("q"+i,f.a)}</div>`).join("")}</div>`:""}
   ${!pairs.length&&!fills.length&&!qa.length?`<div class="panel empty">Chưa có bài tập.</div>`:""}`;
   box.querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>{R[b.dataset.r]=true;const y=scrollY;render();scrollTo(0,y)});
+}
+
+/* ---------- đề cương lý thuyết (HIU): bài khóa kèm pinyin, bảng, bẫy cô dặn ---------- */
+const nl=s=>esc(s).replace(/\n/g,"<br>");
+function oItem(it){
+  if(it.k==="note")return `<p class="note" style="margin:0">${nl(it.x)}</p>`;
+  if(it.k==="traps")return `<div class="why">${it.lines.map(l=>`<div>${nl(l)}</div>`).join("")}</div>`;
+  if(it.k==="passages")return it.rows.map(r=>`<div class="para"><span class="olab">${esc(r.label)}</span><div class="zh">${esc(r.zh)}</div><div class="opy">${esc(r.py)}</div><div class="vi">${nl(r.vi)}</div></div>`).join("");
+  if(it.k==="table")return `<div class="tbl otbl"><table><thead><tr>${it.head.map(h=>`<th>${nl(h)}</th>`).join("")}</tr></thead><tbody>${it.rows.map(r=>`<tr>${r.map(c=>`<td>${nl(c)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+  return "";
+}
+function sOutline(box,u){
+  const o=u.outline;
+  if(!o){box.innerHTML=`<div class="panel empty">Bài này chưa có phần đề cương.</div>`;return}
+  box.innerHTML=`<div class="panel" style="display:flex;flex-direction:column;gap:8px"><span class="label">Đề cương HIU · lý thuyết</span><h3>${esc(o.title)}</h3>${(o.intro||[]).map(x=>`<p class="note" style="margin:0">${esc(x)}</p>`).join("")}</div>`+
+    o.sections.map(sec=>`<div class="panel ex"><h3>${esc((sec.no?sec.no+". ":"")+sec.title)}</h3>${sec.items.map(oItem).join("")}</div>`).join("");
 }
 
 /* ---------- thẻ nhớ ---------- */

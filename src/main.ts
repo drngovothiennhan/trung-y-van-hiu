@@ -18,6 +18,7 @@ import { chietTuView, bindChietTu, componentHint } from './chiet-tu';
 import { nguHanhSlidePages, nguHanhSlideTerms, nguHanhSlideQuiz, nguHanhSlideReadings } from './lesson-ngu-hanh-slide';
 import { tangPhuSlidePages, tangPhuSlideTerms, tangPhuSlideQuiz, tangPhuSlideReadings } from './lesson-tang-phu-slide';
 import { onThiSource, onThiQuiz } from './lesson-on-thi-thay-viet';
+import { trongTamSource, trongTamTerms } from './lesson-trong-tam';
 import { analyzeTerms, rankTerms, priorityBoost } from './priority';
 import { buildRoadmapSource } from './roadmap';
 import { emptyLearner, normalizeLearner, recordAnswer, pickMode, insights, learnerSummary, MIN_EVENTS } from './learner-profile';
@@ -550,7 +551,7 @@ const tangPhuSlideSource = {
   pages: tangPhuSlidePages,
   status: 'Đã nạp slide Tạng phủ: bài khóa, từ vựng, ngữ pháp 除了……以外 / 以上 / 以下, câu hỏi lượng giá'
 };
-const termsUnordered = [...baseLearningTerms, ...lesson2Terms, ...lesson3Terms, ...remainingTerms, ...herbsFormulasTerms, ...lessonAmDuongTerms, ...nguHanhSlideTerms, ...tangPhuSlideTerms]
+const termsUnordered = [...baseLearningTerms, ...lesson2Terms, ...lesson3Terms, ...remainingTerms, ...herbsFormulasTerms, ...lessonAmDuongTerms, ...nguHanhSlideTerms, ...tangPhuSlideTerms, ...trongTamTerms]
   .filter((t, i, a) => a.findIndex(x => x.hanzi === t.hanzi) === i);
 const pagesText = pages => pages.map(p => p.text).join('\n');
 const sourceText = id => pagesText((baseSources.find(s => s.id === id) || { pages: [] }).pages);
@@ -578,6 +579,7 @@ const sources = [
     }),
   nguHanhSlideSource,
   tangPhuSlideSource,
+  trongTamSource,
   onThiSource,
   appendixSource,
   herbsFormulasSource
@@ -1028,7 +1030,8 @@ function lessonsView() {
     ['03', '中医词汇', 'Từ vựng YHCT Bài 6–9', 'Cấu trúc cơ thể, lý luận, chẩn đoán, điều trị.', 'compact'],
     ['04', '药材方剂', 'Dược liệu & Phương tễ', '14 dược liệu · phân loại · 4 cách bào chế · 8 phương tễ · cách dùng và lưu ý.', 'herbs-formulas'],
     ['05', '专业教材', 'Giáo trình chuyên ngành', 'Đủ 8 bài học từ Âm Dương đến Sơ lược giải phẫu cơ thể.', 'textbook'],
-    ['06', '答案', 'Đáp án & phụ lục', 'Đáp án Bài 1–7, tài liệu tham khảo và thông tin xuất bản.', 'appendix']
+    ['06', '答案', 'Đáp án & phụ lục', 'Đáp án Bài 1–7, tài liệu tham khảo và thông tin xuất bản.', 'appendix'],
+    ['07', '要点', 'Lý thuyết Ôn Trọng Tâm', '7 chuyên đề: bài khóa kèm pinyin và dịch nghĩa, bảng quy loại, bẫy cô dặn, từ trái nghĩa, đáp án điền khuyết.', 'trong-tam-ly-thuyet']
   ];
   return h('LỘ TRÌNH', 'Bài học theo tài liệu', 'Mỗi cụm mở trực tiếp đúng nguồn đã cung cấp.') +
     '<div class="lesson-list">' + modules.map(x => '<article class="lesson"><b>' + x[0] + '</b><span>' + x[1] + '</span><div><small>NGUỒN HỌC</small><h3>' + x[2] + '</h3><p>' + x[3] + '</p></div><button class="speak source-go" data-source-open="' + x[4] + '">→</button></article>').join('') + '</div>' +
