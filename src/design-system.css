@@ -238,3 +238,16 @@ html[data-ui-mode='desktop'] .more-sheet {
     scroll-behavior: auto !important;
   }
 }
+
+/* Ô lọc/tìm không được rộng hơn màn hình (Kho tài liệu bị tràn ngang ~50px trên điện thoại, làm lệch thanh dưới) */
+main select,
+main input[type='search'],
+main input[type='text'] {
+  max-width: 100%;
+  min-width: 0;
+}
+.library-tools > *,
+.library-tools .search {
+  min-width: 0;
+  max-width: 100%;
+}
