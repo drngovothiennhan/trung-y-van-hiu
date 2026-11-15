@@ -17,7 +17,9 @@ html.embed {
   --gold-soft: #f4ead3;
   --r: 18px;
   --body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
-  --hz: 'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', 'Noto Serif CJK SC', 'Songti SC', serif;
+  /* Phông Hán chỉ dùng cho cụm chữ Hán (embed.js bọc bằng .han). --hz dùng cho cả dòng có chữ Việt nên phải là phông giao diện. */
+  --han: 'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', 'Noto Serif CJK SC', 'Songti SC', serif;
+  --hz: var(--body);
   color-scheme: light;
   padding-top: 0;
   padding-bottom: 0;
@@ -39,6 +41,10 @@ html.embed body::before {
 }
 
 /* Tiêu đề, logo và tên trang đã có ở khung ngoài; chỉ hiện thanh phụ khi cần nút quay lại */
+html.embed .han {
+  font-family: var(--han);
+}
+
 html.embed header.top {
   display: none;
 }
