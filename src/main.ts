@@ -980,6 +980,7 @@ function shell(content) {
     ['lessons', '书', 'Bài học'],
     ['vocab', '字', 'Từ vựng'],
     ['exam', '考', 'Ôn thi'],
+    ['trongtam', '要', 'Ôn Trọng Tâm'],
     ['writing', '✍', 'Luyện viết'],
     ['reading', '阅', 'Đọc hiểu'],
     ['radicals', '部', '214 bộ thủ'],
@@ -1624,11 +1625,19 @@ function progressView() {
     '<section>' + h('LỊCH SỬ', 'Lượt trắc nghiệm gần đây', '') + '<div class="history">' + (state.progress.quizHistory.length ? state.progress.quizHistory.map((x, i) => '<div><span>Lượt ' + (i + 1) + '</span><b>' + x.score + '/10</b><small>' + new Date(x.at).toLocaleString('vi-VN') + '</small></div>').join('') : '<div class="empty">Chưa có lượt thi.</div>') + '</div></section>';
 }
 
+/* Ôn Trọng Tâm: toàn bộ app Trung Văn YHCT (public/trong-tam/) nhúng trong iframe cùng origin. Chạy độc lập, tiến độ lưu trong trình duyệt. */
+function trongTamView() {
+  const src = import.meta.env.BASE_URL + 'trong-tam/index.html';
+  return '<section class="trongtam-frame"><div class="trongtam-head"><b>Ôn Trọng Tâm</b><small>Thẻ nhớ, trọng tâm, bài khóa, tra từ và lịch ôn theo điểm yếu</small></div>' +
+    '<iframe src="' + safe(src) + '" title="Ôn Trọng Tâm — Trung Văn YHCT" loading="lazy" style="width:100%;min-height:78vh;border:0;border-radius:14px;background:transparent"></iframe></section>';
+}
+
 function currentViewBody() {
   switch (state.view) {
     case 'lessons': return lessonsView();
     case 'vocab': return vocabView();
     case 'exam': return examView();
+    case 'trongtam': return trongTamView();
     case 'writing': return writingPracticeView(learningTerms, access.member?.mssv || 'member');
     case 'reading': return readingView();
     case 'radicals': return radicalsView();

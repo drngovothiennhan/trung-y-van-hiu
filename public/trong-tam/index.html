@@ -1,0 +1,496 @@
+<title>Trung Văn YHCT</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Ôn Trung văn chuyên ngành YHCT: thẻ nhớ, trọng tâm, bài khóa, tra từ, kiểm tra và lịch học theo điểm yếu.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Noto+Serif+SC:wght@500;700&display=swap">
+<style>
+/* Shell: một cột, header dính, thanh tab đáy 5 mục một hàng. Màu là token; có bản tối. */
+:root{
+  color-scheme:light;box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+  --paper:#F1F4F2;--card:#FFFFFF;--ink:#15201B;--muted:#4F5D57;--line:#D3DCD7;
+  --jade:#1D6B58;--jade-soft:#DDEBE5;--seal:#B23E29;--seal-soft:#F6E3DE;--ok:#2C7A4B;--bad:#B23E29;
+  --hz:"Noto Serif SC","Songti SC","SimSun",serif;
+  --body:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --r:14px;--tap:44px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;
+  --paper:#0F1513;--card:#17201C;--ink:#E4ECE8;--muted:#A9B8B0;--line:#2A3631;
+  --jade:#5DC1A2;--jade-soft:#1A2D27;--seal:#E58068;--seal-soft:#3A2420;--ok:#6BC991;--bad:#E58068}}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --paper:#0F1513;--card:#17201C;--ink:#E4ECE8;--muted:#A9B8B0;--line:#2A3631;
+  --jade:#5DC1A2;--jade-soft:#1A2D27;--seal:#E58068;--seal-soft:#3A2420;--ok:#6BC991;--bad:#E58068}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 var(--body);-webkit-tap-highlight-color:transparent;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;touch-action:manipulation}
+:focus-visible{outline:2px solid var(--jade);outline-offset:2px}
+.hz{font-family:var(--hz)}
+.wrap{max-width:760px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));min-width:0}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;gap:10px;padding-block:10px;min-height:60px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0;flex:1}
+.seal{display:inline-grid;place-items:center;width:36px;height:36px;border-radius:8px;background:var(--seal);color:#fff;font:700 15px/1 var(--hz);flex:none}
+.brand h1{font-size:16px;margin:0;font-weight:700;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.brand small{display:block;color:var(--muted);font-size:12.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hact{display:flex;gap:6px;flex:none;align-items:center}
+.ibtn,.back{min-height:var(--tap);border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 14px;font-size:13.5px;font-weight:600;white-space:nowrap}
+.ibtn[aria-pressed="true"]{border-color:var(--jade);color:var(--jade);background:var(--jade-soft)}
+main{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+main .wrap{padding-block:16px;display:flex;flex-direction:column;gap:16px;min-width:0}
+/* Thanh tab đáy: 5 mục, mỗi mục một cột bằng nhau, nhãn không xuống dòng */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav.tabs .wrap{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding-block:2px}
+nav.tabs button{min-height:58px;min-width:0;border:0;background:none;padding:6px 2px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--muted);font-size:11.5px;font-weight:600;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:10px}
+nav.tabs button .g{font:500 19px/1 var(--hz)}
+nav.tabs button[aria-current="page"]{color:var(--jade)}
+nav.tabs button[aria-current="page"] .g{color:var(--seal)}
+h2{font-size:20px;margin:0;text-wrap:balance}
+h3{font-size:15px;margin:0}
+.lead{color:var(--muted);margin:0}
+.label{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;min-width:0}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{min-height:var(--tap);border:1px solid var(--line);background:var(--card);border-radius:12px;padding:8px 14px;font-weight:600;font-size:14px}
+.btn.pri{background:var(--jade);border-color:var(--jade);color:#fff}
+.btn.warn{color:var(--bad);border-color:var(--bad)}
+.btn:disabled{opacity:.5;cursor:default}
+.chip{min-height:var(--tap);border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 14px;font-size:13.5px;font-weight:500}
+.chip[aria-pressed="true"]{background:var(--jade-soft);border-color:var(--jade);color:var(--jade);font-weight:600}
+.tag{display:inline-block;font-size:12px;font-weight:600;padding:2px 9px;border-radius:999px;background:var(--seal-soft);color:var(--seal)}
+.tag.j{background:var(--jade-soft);color:var(--jade)}
+.units{display:flex;flex-direction:column;gap:8px}
+.unit{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;width:100%;min-height:64px}
+.unit .num{width:42px;height:42px;border-radius:10px;border:1.5px solid var(--seal);color:var(--seal);display:grid;place-items:center;font:700 14px/1 var(--hz);flex:none}
+.unit .t{min-width:0}
+.unit .t b{display:block;font-size:15px;overflow-wrap:anywhere}
+.unit .t .z{font:500 14px/1.3 var(--hz);color:var(--muted)}
+.bar{height:6px;background:var(--line);border-radius:6px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--jade);border-radius:6px}
+.unit .pc{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.seg{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;min-width:0}
+.seg::-webkit-scrollbar{display:none}
+.seg button{flex:none}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.03em;text-transform:uppercase;background:var(--paper)}
+tr:last-child td{border-bottom:0}
+td.zh{font:500 18px/1.3 var(--hz);white-space:nowrap}
+td.py{color:var(--jade);white-space:nowrap}
+.hidecol td.c-hide{color:transparent;background:var(--jade-soft);border-radius:4px;cursor:pointer}
+.para{display:flex;flex-direction:column;gap:6px;padding:14px 0;border-bottom:1px solid var(--line)}
+.para:last-child{border-bottom:0}
+.para .zh{font:500 19px/1.8 var(--hz);letter-spacing:.02em}
+.para .vi{color:var(--muted);font-size:14px}
+.para .vi.hide{filter:blur(5px);cursor:pointer;user-select:none}
+.ex{display:flex;flex-direction:column;gap:10px}
+.item{border-top:1px solid var(--line);padding-top:10px;display:flex;flex-direction:column;gap:6px}
+.item:first-child{border-top:0;padding-top:0}
+.item .q{font:500 16px/1.7 var(--hz)}
+.item .q .n{font:600 12px var(--body);color:var(--muted);margin-right:6px}
+.ans{font:500 15px/1.6 var(--hz);color:var(--jade);background:var(--jade-soft);border-radius:8px;padding:6px 10px}
+.reveal{align-self:flex-start;font-size:13px}
+.pairs{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
+.pair{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--card);text-align:center;font:500 18px/1.3 var(--hz);min-height:var(--tap)}
+.pair .b{display:block;color:var(--jade);margin-top:4px}
+.pair .b.h{color:transparent;background:var(--jade-soft);border-radius:6px}
+.card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:18px;min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:28px 16px;text-align:center;cursor:pointer;user-select:none}
+.grid{position:relative;width:150px;height:150px;display:grid;place-items:center;border:1.5px solid var(--seal);
+  background:linear-gradient(var(--seal-soft),var(--seal-soft)) center/1px 100% no-repeat,linear-gradient(var(--seal-soft),var(--seal-soft)) center/100% 1px no-repeat}
+.grid.wide{width:auto;min-width:150px;max-width:100%;padding:0 18px}
+.card .big{font:700 64px/1.1 var(--hz)}
+.card .big.m{font-size:40px}
+.card .big.s{font-size:28px}
+.card .py{color:var(--jade);font-size:20px;font-weight:500}
+.card .hv{font-size:15px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--seal)}
+.card .vi{font-size:17px;max-width:32ch}
+.card .hint{position:absolute;bottom:12px;font-size:12.5px;color:var(--muted)}
+.card .from{position:absolute;top:12px;left:14px;font-size:12px;color:var(--muted);max-width:70%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.grade{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grade .no{color:var(--bad);border-color:var(--bad)}
+.grade .yes{background:var(--jade);color:#fff;border-color:var(--jade)}
+.prog{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.qq{font:500 19px/1.6 var(--hz)}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{text-align:left;border:1.5px solid var(--line);background:var(--card);border-radius:12px;padding:12px 14px;min-height:var(--tap);font:500 16px/1.4 var(--hz);display:flex;gap:10px;align-items:flex-start}
+.opt .k{font:600 13px var(--body);color:var(--muted);width:18px;flex:none;padding-top:2px}
+.opt.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,var(--card))}
+.opt.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 14%,var(--card))}
+.score{font-size:48px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--jade);line-height:1}
+.review{display:flex;flex-direction:column;gap:10px}
+.review .r{border-left:3px solid var(--bad);padding:4px 0 4px 10px}
+.review .r .hz{font-size:16px}
+.review .r small{color:var(--muted)}
+input[type=search],input[type=text],textarea,select{width:100%;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:10px 12px;min-height:var(--tap)}
+textarea{min-height:140px;font-size:14px;line-height:1.5;resize:vertical}
+textarea.code{font-family:ui-monospace,"SFMono-Regular",Menlo,monospace;font-size:12.5px;min-height:260px}
+.res{display:flex;flex-direction:column;gap:6px}
+.hit{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 14px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.hit .z{font:500 22px/1.2 var(--hz);grid-row:span 2}
+.hit .m{min-width:0;overflow-wrap:anywhere}
+.hit .m .p{color:var(--jade)}
+.hit small{color:var(--muted)}
+.empty{text-align:center;color:var(--muted);padding:28px 12px}
+.empty .hz{font-size:40px;color:var(--line);display:block}
+.note{font-size:13px;color:var(--muted)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(92px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:999px;font-size:13.5px;z-index:9;max-width:calc(100% - 32px)}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:13px;font-weight:600}
+.confirm{background:var(--seal-soft);border-radius:12px;padding:10px 12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.installbar{display:flex;gap:10px;align-items:center;justify-content:space-between;background:var(--jade-soft);border:1px solid var(--jade);border-radius:var(--r);padding:12px 14px}
+@media (prefers-reduced-motion:no-preference){.card{transition:transform .15s}.card:active{transform:scale(.99)}}
+@media (max-width:359px){nav.tabs button{font-size:10.5px}.brand small{display:none}}
+</style>
+
+<header class="top"><div class="wrap">
+  <div class="brand"><span class="seal" aria-hidden="true">中</span><div style="min-width:0"><h1 id="hTitle">Trung Văn YHCT</h1><small id="hSub">Học phần Trung văn chuyên ngành</small></div></div>
+  <div class="hact">
+    <button class="ibtn" id="installBtn" hidden>Cài app</button>
+    <button class="ibtn" id="editBtn" hidden aria-pressed="false">Soạn</button>
+    <button class="back" id="backBtn" hidden>‹ Bài học</button>
+  </div>
+</div></header>
+<main><div class="wrap" id="view"></div></main>
+<nav class="tabs" aria-label="Chức năng chính"><div class="wrap" id="tabs"></div></nav>
+<div class="toast" id="toast" hidden role="status"></div>
+
+<script>
+/* PWA: manifest, theme, icon, service worker. Mỗi bước bọc try/catch: môi trường artifact có thể chặn. */
+(function(){
+  try{
+    const h=document.head,add=(t,a)=>{const e=document.createElement(t);Object.assign(e,a);h.appendChild(e)};
+    add("meta",{name:"theme-color",content:"#1D6B58"});
+    add("meta",{name:"apple-mobile-web-app-capable",content:"yes"});
+    add("meta",{name:"apple-mobile-web-app-title",content:"Trung Văn YHCT"});
+    add("link",{rel:"apple-touch-icon",href:"icon-192.png"});
+    add("link",{rel:"icon",href:"icon.svg",type:"image/svg+xml"});
+  }catch(e){}
+  })();
+</script>
+<script src="focus-data.js"></script>
+<script src="focus-150.js"></script>
+<script src="plan.js"></script>
+<script src="focus.js"></script>
+<script src="today.js"></script>
+<script>
+(function(){
+const TABS=[["today","今","Hôm nay"],["focus","要","Trọng tâm"],["cards","记","Thẻ nhớ"],["learn","学","Bài học"],["find","查","Tra từ"]];
+const DAY=86400000, BOX=[0,1,2,4,7,15];
+const S={tab:"today",unit:null,sub:"vocab",units:[],loaded:false,db:null,user:null,uid:null,canEdit:false,
+  prog:{cards:{},scores:{}},cards:null,quiz:null,find:"",editId:null,hideVi:true,hideCol:null,reveal:{},dir:"zh"};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const norm=s=>String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/đ/g,"d").replace(/Đ/g,"d").toLowerCase();
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+let toastT=0;
+function toast(t){const e=$("#toast");e.textContent=t;e.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>e.hidden=true,2200)}
+const key=(u,v)=>u.id+":"+v.zh;
+function mergeUnits(a){const ex=(window.TV_EXTRA&&window.TV_EXTRA.units)||[],ids=new Set(a.map(x=>x.id));return a.concat(ex.filter(x=>!ids.has(x.id)).map(x=>JSON.parse(JSON.stringify(x))))}
+function unitsSorted(){return S.units.slice().sort((a,b)=>(a.order||99)-(b.order||99))}
+function allVocab(){const r=[];unitsSorted().forEach(u=>(u.vocab||[]).forEach(v=>r.push({u,v,k:key(u,v)})));return r}
+function cardState(k){return S.prog.cards[k]||null}
+function isDue(k){const c=cardState(k);return !c||c.d<=Date.now()}
+function known(u){const vs=u.vocab||[];if(!vs.length)return 0;let n=0;vs.forEach(v=>{const c=cardState(key(u,v));if(c&&c.b>=2)n++});return n/vs.length}
+
+/* ---------- lưu tiến độ: localStorage (dự phòng) + DB của app ---------- */
+const LS="tvyhct-progress";
+function loadLocal(){try{const t=localStorage.getItem(LS);if(t)S.prog=Object.assign({cards:{},scores:{}},JSON.parse(t))}catch(e){}}
+function saveLocal(){try{localStorage.setItem(LS,JSON.stringify(S.prog))}catch(e){}}
+let saving=false,dirty=false,saveT=0;
+function saveProg(){saveLocal();if(!S.db||!S.uid)return;dirty=true;clearTimeout(saveT);saveT=setTimeout(flush,1500)}
+async function flush(){if(saving||!dirty)return;saving=true;dirty=false;
+  try{await S.db.doc("data/users/"+S.uid+"/progress").set({cards:S.prog.cards,scores:S.prog.scores,qs:S.prog.qs||{},stats:S.prog.stats||null,updated:Date.now()})}catch(e){}
+  saving=false;if(dirty)flush()}
+
+/* ---------- tab & header ---------- */
+function drawTabs(){$("#tabs").innerHTML=TABS.map(([id,g,l])=>`<button data-tab="${id}" ${S.tab===id?'aria-current="page"':''}><span class="g" aria-hidden="true">${g}</span>${l}</button>`).join("")}
+$("#tabs").addEventListener("click",e=>{const b=e.target.closest("[data-tab]");if(!b)return;S.tab=b.dataset.tab;if(S.tab!=="learn")S.unit=null;render();scrollTo(0,0)});
+$("#backBtn").addEventListener("click",()=>{S.unit=null;render();scrollTo(0,0)});
+$("#editBtn").addEventListener("click",()=>{S.tab=S.tab==="edit"?"today":"edit";S.unit=null;render();scrollTo(0,0)});
+let deferredInstall=null;
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredInstall=e;$("#installBtn").hidden=false});
+$("#installBtn").addEventListener("click",async()=>{if(!deferredInstall)return;deferredInstall.prompt();try{await deferredInstall.userChoice}catch(e){}deferredInstall=null;$("#installBtn").hidden=true});
+
+function render(){drawTabs();const u=S.unit&&S.units.find(x=>x.id===S.unit);
+  $("#backBtn").hidden=!(S.tab==="learn"&&u);
+  $("#editBtn").hidden=!S.canEdit;
+  $("#editBtn").setAttribute("aria-pressed",String(S.tab==="edit"));
+  $("#hTitle").textContent=u?u.title:"Trung Văn YHCT";
+  $("#hSub").innerHTML=u?`<span class="hz">${esc(u.zh)}</span>${u.teacher?" · "+esc(u.teacher):""}`:"Học phần Trung văn chuyên ngành";
+  const v=$("#view");
+  if(!S.loaded){v.innerHTML=`<div class="empty"><span class="hz" aria-hidden="true">学</span>Đang mở bài học…</div>`;return}
+  ({today:v3=>window.TVT?window.TVT.view(v3):0,learn:v=>u?vUnit(v,u):vHome(v),focus:v2=>window.TVF?window.TVF.view(v2):0,cards:vCards,quiz:vQuiz,find:vFind,edit:vEdit})[S.tab](v,u)}
+
+function emptyUnits(v){v.innerHTML=`<div class="panel empty"><span class="hz" aria-hidden="true">空</span>Chưa có bài học nào. ${S.canEdit?'Bấm <b>Soạn</b> ở góc phải trên để thêm bài đầu tiên.':'Người soạn chưa thêm nội dung.'}</div>`}
+
+/* ---------- bài học ---------- */
+function vHome(v){
+  if(!S.units.length)return emptyUnits(v);
+  v.innerHTML=`
+  <section class="panel row" style="justify-content:space-between">
+    <div style="min-width:0;flex:1"><h3>Ôn nhanh hôm nay</h3><p class="note" style="margin:2px 0 0">20 thẻ đến hạn, rồi 10 câu trắc nghiệm trộn mọi bài.</p></div>
+    <button class="btn pri" id="quick">Bắt đầu</button>
+  </section>
+  <section style="display:flex;flex-direction:column;gap:8px">
+    <span class="label">Các bài</span>
+    <div class="units">${unitsSorted().map((u,i)=>{const p=Math.round(known(u)*100);return `
+      <button class="unit" data-u="${esc(u.id)}">
+        <span class="num">${esc(String(u.order??i+1).padStart(2,"0"))}</span>
+        <span class="t"><b>${esc(u.title)}</b><span class="z">${esc(u.zh)}</span>${u.teacher?` <span class="tag">${esc(u.teacher.replace(/^ThS\.\s*/,"Thầy "))}</span>`:""}
+          <span class="bar"><i style="width:${p}%"></i></span></span>
+        <span class="pc">${p}%</span></button>`}).join("")}</div>
+  </section>`;
+  v.querySelectorAll("[data-u]").forEach(b=>b.onclick=()=>{S.unit=b.dataset.u;S.sub="vocab";S.reveal={};render();scrollTo(0,0)});
+  $("#quick").onclick=()=>{S.tab="cards";startCards(null,true);render()};
+}
+const SUBS=[["vocab","Từ vựng"],["text","Bài khóa"],["gram","Ngữ pháp"],["ex","Bài tập"]];
+function vUnit(v,u){
+  const n=k=>(u[k]||[]).length;
+  v.innerHTML=`
+  <div class="panel" style="display:flex;flex-direction:column;gap:8px">
+    <h2>${esc(u.title)} <span class="hz" style="color:var(--seal)">${esc(u.zh)}</span></h2>
+    <p class="note" style="margin:0">${esc(u.source||"")}</p>
+    <div class="row"><button class="btn pri" id="uCards">Học thẻ (${n("vocab")})</button><button class="btn" id="uQuiz">Kiểm tra bài này</button></div>
+  </div>
+  <div class="seg" role="tablist">${SUBS.map(([id,l])=>`<button class="chip" role="tab" data-s="${id}" aria-pressed="${S.sub===id}">${l}</button>`).join("")}</div>
+  <div id="sub"></div>`;
+  v.querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>{S.sub=b.dataset.s;render()});
+  $("#uCards").onclick=()=>{S.tab="cards";startCards([u.id]);render();scrollTo(0,0)};
+  $("#uQuiz").onclick=()=>{S.tab="quiz";startQuiz([u.id],20);render();scrollTo(0,0)};
+  ({vocab:sVocab,text:sText,gram:sGram,ex:sEx})[S.sub]($("#sub"),u);
+}
+function sVocab(box,u){
+  const hc=S.hideCol;
+  box.innerHTML=`<div class="row" style="margin-bottom:8px"><span class="note">Che cột để tự kiểm tra:</span>
+    ${[["vi","Nghĩa"],["hv","Hán Việt"],["py","Pinyin"]].map(([k,l])=>`<button class="chip" data-h="${k}" aria-pressed="${hc===k}">${l}</button>`).join("")}</div>
+  <div class="tbl ${hc?"hidecol":""}"><table><thead><tr><th>Chữ</th><th>Pinyin</th><th>Hán Việt</th><th>Nghĩa</th></tr></thead><tbody>
+  ${(u.vocab||[]).map(x=>`<tr><td class="zh">${esc(x.zh)}</td><td class="py ${hc==="py"?"c-hide":""}">${esc(x.py)}</td><td class="${hc==="hv"?"c-hide":""}">${esc(x.hv)}</td><td class="${hc==="vi"?"c-hide":""}">${esc(x.vi)}</td></tr>`).join("")}
+  </tbody></table></div>
+  ${u.table?`<span class="label" style="display:block;margin:14px 0 6px">Bảng thầy cho</span><div class="tbl"><table><thead><tr>${u.table.head.map(h=>`<th class="hz">${esc(h)}</th>`).join("")}</tr></thead><tbody>${u.table.rows.map(r=>`<tr>${r.map(c=>`<td class="zh">${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`:""}`;
+  box.querySelectorAll("[data-h]").forEach(b=>b.onclick=()=>{S.hideCol=S.hideCol===b.dataset.h?null:b.dataset.h;render()});
+  box.querySelectorAll(".c-hide").forEach(td=>td.onclick=()=>td.classList.remove("c-hide"));
+}
+function sText(box,u){
+  const ps=u.passage||[];
+  if(!ps.length){box.innerHTML=`<div class="panel empty">Bài này chưa có bài khóa.</div>`;return}
+  box.innerHTML=`<div class="row" style="margin-bottom:8px"><button class="chip" id="tv" aria-pressed="${!S.hideVi}">Hiện bản dịch</button><span class="note">Đọc to từng câu, tự dịch rồi chạm vào dòng mờ để xem.</span></div>
+  <div class="panel" style="padding-block:4px">${ps.map(p=>`<div class="para"><div class="zh">${esc(p.zh)}</div><div class="vi ${S.hideVi?"hide":""}">${esc(p.vi)}</div></div>`).join("")}</div>`;
+  $("#tv").onclick=()=>{S.hideVi=!S.hideVi;render()};
+  box.querySelectorAll(".vi.hide").forEach(e=>e.onclick=()=>e.classList.remove("hide"));
+}
+function sGram(box,u){
+  const g=u.grammar||[];
+  box.innerHTML=g.length?`<div class="panel ex">${g.map(x=>`<div class="item"><div class="q">${esc(x.pat)}</div><div>${esc(x.vi)}</div><div class="hz" style="color:var(--jade);font-size:16px">${esc(x.ex)}</div></div>`).join("")}</div>`:`<div class="panel empty">Chưa có ngữ pháp.</div>`;
+}
+function sEx(box,u){
+  const R=S.reveal,ans=(id,a)=>R[id]?`<div class="ans">${esc(a)}</div>`:`<button class="btn reveal" data-r="${id}">Xem đáp án</button>`;
+  const pairs=u.pairs||[],fills=u.fills||[],qa=u.qa||[];
+  box.innerHTML=`
+  ${pairs.length?`<div class="panel ex"><div class="row" style="justify-content:space-between"><h3>反义词 · Từ trái nghĩa</h3><button class="chip" data-r="pairsAll">Hiện tất cả</button></div>
+    <div class="pairs">${pairs.map((p,i)=>`<button class="pair" data-r="p${i}">${esc(p[0])}<span class="b ${R["p"+i]||R.pairsAll?"":"h"}">${esc(p[1])}</span></button>`).join("")}</div></div>`:""}
+  ${fills.length?`<div class="panel ex"><h3>填空 · Điền khuyết</h3>${fills.map((f,i)=>`<div class="item"><div class="q"><span class="n">${i+1}</span>${esc(f.q)}</div>${ans("f"+i,f.a)}</div>`).join("")}</div>`:""}
+  ${qa.length?`<div class="panel ex"><h3>回答题 · Trả lời câu hỏi</h3>${qa.map((f,i)=>`<div class="item"><div class="q"><span class="n">${i+1}</span>${esc(f.q)}</div>${ans("q"+i,f.a)}</div>`).join("")}</div>`:""}
+  ${!pairs.length&&!fills.length&&!qa.length?`<div class="panel empty">Chưa có bài tập.</div>`:""}`;
+  box.querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>{R[b.dataset.r]=true;const y=scrollY;render();scrollTo(0,y)});
+}
+
+/* ---------- thẻ nhớ ---------- */
+function startCards(ids,dueOnly){
+  let pool=allVocab().filter(x=>!ids||ids.includes(x.u.id));
+  let due=pool.filter(x=>isDue(x.k));
+  due.sort((a,b)=>(cardState(a.k)?0:1)-(cardState(b.k)?0:1));
+  let list=(dueOnly||due.length)?due:pool;
+  if(!ids||dueOnly)list=list.slice(0,20);
+  S.cards={ids,list:ids?shuffle(list):list,i:0,flip:false,ok:0,miss:0,thenQuiz:!!dueOnly&&!ids};
+}
+function vCards(v){
+  if(!S.units.length)return emptyUnits(v);
+  if(!S.cards){v.innerHTML=cardPicker();bindPicker(v);return}
+  const C=S.cards;
+  if(!C.list.length){v.innerHTML=`<div class="panel empty"><span class="hz" aria-hidden="true">好</span>Không còn thẻ đến hạn ở phần này. Chọn bài khác hoặc ôn lại toàn bộ.</div><button class="btn" id="cBack">Chọn bài khác</button>`;$("#cBack").onclick=()=>{S.cards=null;render()};return}
+  if(C.i>=C.list.length){
+    v.innerHTML=`<div class="panel" style="display:flex;flex-direction:column;gap:12px;align-items:flex-start"><span class="label">Xong lượt ôn</span><div class="score">${C.ok}/${C.list.length}</div><p class="lead">Nhớ ${C.ok} thẻ, cần ôn lại ${C.miss} thẻ. Thẻ chưa nhớ sẽ quay lại sớm hơn ở lần ôn sau.</p>
+      <div class="row">${C.thenQuiz?`<button class="btn pri" id="toQuiz">Làm 10 câu trắc nghiệm</button>`:""}<button class="btn ${C.thenQuiz?"":"pri"}" id="again">Ôn tiếp</button><button class="btn" id="cBack">Chọn bài khác</button></div></div>`;
+    $("#again").onclick=()=>{startCards(C.ids,C.thenQuiz);render()};
+    $("#cBack").onclick=()=>{S.cards=null;render()};
+    if(C.thenQuiz)$("#toQuiz").onclick=()=>{S.tab="quiz";startQuiz(null,10);render()};
+    return}
+  const x=C.list[C.i],w=x.v,len=[...w.zh].length,sz=len>4?"s":len>2?"m":"";
+  const front=S.dir==="zh"
+    ?`<div class="grid ${len>1?"wide":""}"><div class="big ${sz}">${esc(w.zh)}</div></div>`
+    :`<div class="vi" style="font-size:20px;font-weight:600">${esc(w.vi)}</div><div class="hv">${esc(w.hv)}</div>`;
+  const back=S.dir==="zh"
+    ?`<div class="grid ${len>1?"wide":""}"><div class="big ${sz}">${esc(w.zh)}</div></div><div class="py">${esc(w.py)}</div><div class="hv">${esc(w.hv)}</div><div class="vi">${esc(w.vi)}</div>`
+    :`<div class="grid ${len>1?"wide":""}"><div class="big ${sz}">${esc(w.zh)}</div></div><div class="py">${esc(w.py)}</div><div class="vi">${esc(w.vi)}</div>`;
+  v.innerHTML=`
+  <div class="row" style="justify-content:space-between"><span class="prog">Thẻ ${C.i+1}/${C.list.length} · nhớ ${C.ok}</span>
+    <div class="row"><button class="chip" id="dir">${S.dir==="zh"?"Trung → Việt":"Việt → Trung"}</button><button class="chip" id="cStop">Dừng</button></div></div>
+  <div class="card" id="card" role="button" tabindex="0" aria-label="Lật thẻ"><span class="from">${esc(x.u.title)}</span>${C.flip?back:front}<span class="hint">${C.flip?"":"Chạm để lật · phím cách"}</span></div>
+  <div class="grade"><button class="btn no" id="no" style="min-height:48px" ${C.flip?"":"disabled"}>Chưa nhớ</button><button class="btn yes" id="yes" style="min-height:48px" ${C.flip?"":"disabled"}>Đã nhớ</button></div>
+  <p class="note">Đã nhớ thì thẻ giãn dần 1 → 2 → 4 → 7 → 15 ngày; chưa nhớ thì về lại đầu.</p>`;
+  const flip=()=>{C.flip=true;render()};
+  $("#card").onclick=()=>{if(!C.flip)flip()};
+  $("#dir").onclick=()=>{S.dir=S.dir==="zh"?"vi":"zh";C.flip=false;render()};
+  $("#cStop").onclick=()=>{S.cards=null;render()};
+  $("#no").onclick=()=>grade(false);$("#yes").onclick=()=>grade(true);
+}
+function grade(ok){const C=S.cards,x=C.list[C.i],c=cardState(x.k)||{b:0,d:0};
+  const b=ok?Math.min(c.b+1,BOX.length-1):0;
+  S.prog.cards[x.k]={b,d:Date.now()+(ok?BOX[b]*DAY:0)};
+  ok?C.ok++:C.miss++;C.i++;C.flip=false;saveProg();render()}
+document.addEventListener("keydown",e=>{if(S.tab!=="cards"||!S.cards||e.target.matches("input,textarea"))return;const C=S.cards;if(C.i>=C.list.length)return;
+  if(e.key===" "){e.preventDefault();if(!C.flip){C.flip=true;render()}}
+  else if(C.flip&&(e.key==="1"||e.key==="ArrowLeft"))grade(false);
+  else if(C.flip&&(e.key==="2"||e.key==="ArrowRight"))grade(true)});
+let pick=null;
+function cardPicker(){pick=pick||new Set();const all=allVocab();
+  return `<div class="panel" style="display:flex;flex-direction:column;gap:12px">
+  <h2>Thẻ nhớ</h2><p class="lead">Chọn bài để học. Bỏ trống là ôn thẻ đến hạn của mọi bài.</p>
+  <div class="row">${unitsSorted().map(u=>{const d=(u.vocab||[]).filter(v=>isDue(key(u,v))).length;return `<button class="chip" data-p="${esc(u.id)}" aria-pressed="${pick.has(u.id)}">${esc(u.title)} · ${d}</button>`}).join("")}</div>
+  <div class="row"><button class="btn pri" id="go">${pick.size?"Học các bài đã chọn":"Ôn thẻ đến hạn ("+all.filter(x=>isDue(x.k)).length+")"}</button>
+  <button class="chip" id="dir">${S.dir==="zh"?"Trung → Việt":"Việt → Trung"}</button></div></div>`}
+function bindPicker(v){v.querySelectorAll("[data-p]").forEach(b=>b.onclick=()=>{const id=b.dataset.p;pick.has(id)?pick.delete(id):pick.add(id);render()});
+  $("#go").onclick=()=>{startCards(pick.size?[...pick]:null,!pick.size);render()};
+  $("#dir").onclick=()=>{S.dir=S.dir==="zh"?"vi":"zh";render()}}
+
+/* ---------- kiểm tra bài (từ bài học) ---------- */
+function makeQs(ids,n){
+  const us=unitsSorted().filter(u=>!ids||ids.includes(u.id));let qs=[];
+  us.forEach(u=>(u.mcq||[]).forEach(m=>{if(Array.isArray(m.o)&&m.o.length>1)qs.push({u:u.title,q:m.q,o:m.o,a:m.a,e:m.e,t:m.t,s:m.s,f:m.f})}));
+  const voc=[];us.forEach(u=>(u.vocab||[]).forEach(v=>voc.push({u,v})));
+  const pool=allVocab().map(x=>x.v);
+  shuffle(voc).slice(0,Math.max(n,20)).forEach(({u,v},i)=>{
+    const dis=shuffle(pool.filter(p=>p.zh!==v.zh&&p.vi!==v.vi)).slice(0,3);if(dis.length<3)return;
+    if(i%3===2){const o=shuffle([v,...dis]);qs.push({u:u.title,q:`“${v.vi}” viết là:`,o:o.map(x=>x.zh),a:o.indexOf(v),auto:1})}
+    else if(i%3===1){const o=shuffle([v,...dis]);qs.push({u:u.title,q:`${v.zh} đọc là:`,o:o.map(x=>x.py),a:o.indexOf(v),auto:1})}
+    else{const o=shuffle([v,...dis]);qs.push({u:u.title,q:`${v.zh} nghĩa là:`,o:o.map(x=>x.hv+" – "+x.vi),a:o.indexOf(v),auto:1})}});
+  const teacher=qs.filter(q=>!q.auto),auto=qs.filter(q=>q.auto);
+  const take=shuffle(teacher).slice(0,Math.ceil(n*0.6));
+  return shuffle(take.concat(shuffle(auto).slice(0,n-take.length))).slice(0,n).map(q=>{const idx=shuffle(q.o.map((_,i)=>i));return {...q,o:idx.map(i=>q.o[i]),a:idx.indexOf(q.a)}});
+}
+function startQuiz(ids,n){S.quiz={ids,n,qs:makeQs(ids,n),i:0,pick:null,right:0,wrong:[],t0:Date.now()}}
+let qsel=null,qn=20;
+function vQuiz(v){
+  if(!S.units.length)return emptyUnits(v);
+  const Q=S.quiz;
+  if(!Q){qsel=qsel||new Set();v.innerHTML=`<div class="panel" style="display:flex;flex-direction:column;gap:12px">
+    <h2>Kiểm tra</h2><p class="lead">Đề trộn câu trắc nghiệm theo bài khóa với câu hỏi từ vựng tự sinh.</p>
+    <span class="label">Bài</span><div class="row">${unitsSorted().map(u=>`<button class="chip" data-q="${esc(u.id)}" aria-pressed="${qsel.has(u.id)}">${esc(u.title)}</button>`).join("")}</div>
+    <span class="label">Số câu</span><div class="row">${[10,20,40].map(k=>`<button class="chip" data-n="${k}" aria-pressed="${qn===k}">${k} câu</button>`).join("")}</div>
+    <button class="btn pri" id="qGo" style="align-self:flex-start">${qsel.size?"Bắt đầu":"Thi thử tất cả bài"}</button></div>
+    ${Object.keys(S.prog.scores).length?`<div class="panel"><span class="label">Điểm gần đây</span><div class="tbl" style="margin-top:8px;border:0"><table><tbody>${Object.entries(S.prog.scores).map(([k,s])=>`<tr><td>${k==="all"?"Thi thử tất cả":k==="focus"?"Trọng tâm":esc((S.units.find(u=>u.id===k)||{}).title||k)}</td><td style="text-align:right;font-variant-numeric:tabular-nums">Lần cuối ${s.last}% · cao nhất ${s.best}%</td></tr>`).join("")}</tbody></table></div></div>`:""}`;
+    v.querySelectorAll("[data-q]").forEach(b=>b.onclick=()=>{const id=b.dataset.q;qsel.has(id)?qsel.delete(id):qsel.add(id);render()});
+    v.querySelectorAll("[data-n]").forEach(b=>b.onclick=()=>{qn=+b.dataset.n;render()});
+    $("#qGo").onclick=()=>{startQuiz(qsel.size?[...qsel]:null,qn);render()};return}
+  if(!Q.qs.length){v.innerHTML=`<div class="panel empty">Phần này chưa đủ câu hỏi.</div><button class="btn" id="qx">Quay lại</button>`;$("#qx").onclick=()=>{S.quiz=null;render()};return}
+  if(Q.i>=Q.qs.length){
+    const pct=Math.round(Q.right/Q.qs.length*100),k=Q.ids&&Q.ids.length===1?Q.ids[0]:(!Q.ids?"all":null);
+    if(k&&!Q.saved){const o=S.prog.scores[k]||{best:0};S.prog.scores[k]={best:Math.max(o.best,pct),last:pct};Q.saved=1;saveProg()}
+    const min=Math.max(1,Math.round((Date.now()-Q.t0)/60000));
+    v.innerHTML=`<div class="panel" style="display:flex;flex-direction:column;gap:10px;align-items:flex-start">
+      <span class="label">Kết quả</span><div class="score">${pct}%</div><p class="lead">Đúng ${Q.right}/${Q.qs.length} câu trong khoảng ${min} phút. ${pct>=80?"Đạt mức sẵn sàng thi.":"Ôn lại các câu sai bên dưới rồi làm lại."}</p>
+      <div class="row"><button class="btn pri" id="qAgain">Làm đề mới</button><button class="btn" id="qx">Chọn bài khác</button></div></div>
+      ${Q.wrong.length?`<div class="panel review"><span class="label">Câu sai (${Q.wrong.length})</span>${Q.wrong.map(w=>`<div class="r"><div class="hz">${esc(w.q)}</div><div>Đáp án: <b class="hz" style="color:var(--ok)">${esc(w.o[w.a])}</b></div><small>Bạn chọn: <span class="hz">${esc(w.o[w.p])}</span> · ${esc(w.u)}</small></div>`).join("")}</div>`:""}`;
+    $("#qAgain").onclick=()=>{startQuiz(Q.ids,Q.n);render()};$("#qx").onclick=()=>{S.quiz=null;render()};return}
+  const q=Q.qs[Q.i],p=Q.pick;
+  v.innerHTML=`<div class="row" style="justify-content:space-between"><span class="prog">Câu ${Q.i+1}/${Q.qs.length} · đúng ${Q.right}</span><button class="chip" id="qStop">Dừng</button></div>
+    <div class="bar"><i style="width:${Q.i/Q.qs.length*100}%"></i></div>
+    <div class="panel" style="display:flex;flex-direction:column;gap:14px"><span class="note">${esc(q.u)}</span><div class="qq">${esc(q.q)}</div>
+    <div class="opts">${q.o.map((o,i)=>`<button class="opt ${p==null?"":i===q.a?"right":i===p?"wrong":""}" data-o="${i}" ${p==null?"":"disabled"}><span class="k">${"ABCD"[i]||i+1}</span><span>${esc(o)}</span></button>`).join("")}</div>
+    ${p==null?"":`<button class="btn pri" id="qNext" style="align-self:flex-end;min-height:44px">${Q.i+1<Q.qs.length?"Câu tiếp":"Xem kết quả"}</button>`}</div>`;
+  $("#qStop").onclick=()=>{S.quiz=null;render()};
+  v.querySelectorAll("[data-o]").forEach(b=>b.onclick=()=>{if(Q.pick!=null)return;Q.pick=+b.dataset.o;if(Q.pick===q.a)Q.right++;else Q.wrong.push({...q,p:Q.pick});render()});
+  if(p!=null){const nx=$("#qNext");nx.onclick=()=>{Q.i++;Q.pick=null;render();scrollTo(0,0)};nx.focus()}
+}
+
+/* ---------- tra từ ---------- */
+function vFind(v){
+  v.innerHTML=`<label class="field"><span class="label">Tra từ</span><input type="search" id="fq" placeholder="Chữ Hán, pinyin, Hán Việt hoặc nghĩa (vd: tang, 脾, tỳ)" value="${esc(S.find)}" autocomplete="off"></label><div class="res" id="fr" style="margin-top:12px"></div>`;
+  const inp=$("#fq");inp.oninput=()=>{S.find=inp.value;drawFind()};drawFind();
+  if(!matchMedia("(pointer:coarse)").matches)inp.focus();
+}
+function drawFind(){const q=norm(S.find.trim()),box=$("#fr");
+  if(!q){const n=allVocab().length;box.innerHTML=`<div class="empty"><span class="hz" aria-hidden="true">查</span>${n} từ trong ${S.units.length} bài. Gõ không dấu cũng được.</div>`;return}
+  const hits=allVocab().filter(({v})=>[v.zh,v.py,v.hv,v.vi].some(f=>norm(f).includes(q)||norm(String(f).replace(/\s/g,"")).includes(q.replace(/\s/g,"")))).slice(0,60);
+  box.innerHTML=hits.length?hits.map(({u,v})=>`<div class="hit"><span class="z">${esc(v.zh)}</span><div class="m"><span class="p">${esc(v.py)}</span> · <b>${esc(v.hv)}</b> · ${esc(v.vi)}</div><small>${esc(u.title)}</small></div>`).join(""):`<div class="empty">Không tìm thấy “${esc(S.find)}”.</div>`}
+
+/* ---------- soạn (chỉ người soạn) ---------- */
+const lines=t=>t.split(/\n/).map(s=>s.trim()).filter(Boolean).map(s=>s.split("|").map(x=>x.trim()));
+function vEdit(v){
+  if(!S.db){v.innerHTML=`<div class="panel empty"><span class="hz" aria-hidden="true">编</span>Trang đang mở ở chế độ chỉ đọc nên không lưu được nội dung. Mở lại app từ claude.ai khi đã đăng nhập.</div>`;return}
+  if(!S.canEdit){v.innerHTML=`<div class="panel empty"><span class="hz" aria-hidden="true">编</span>Chỉ người soạn (chủ app hoặc người được cấp quyền Editor) mới sửa được nội dung. Bạn vẫn học và lưu tiến độ bình thường.</div>`;return}
+  const us=unitsSorted(),u=S.editId&&S.units.find(x=>x.id===S.editId);
+  v.innerHTML=`<div class="panel" style="display:flex;flex-direction:column;gap:12px">
+    <h2>Soạn nội dung</h2><p class="lead">Thêm từ, câu hỏi, bài khóa vào bài có sẵn hoặc tạo bài mới. Thay đổi hiện ngay cho mọi người mở app.</p>
+    <div class="field"><label for="eu">Bài</label><select id="eu"><option value="">— Chọn bài —</option>${us.map(x=>`<option value="${esc(x.id)}" ${x.id===S.editId?"selected":""}>${esc(x.order)} · ${esc(x.title)}</option>`).join("")}<option value="__new" ${S.editId==="__new"?"selected":""}>+ Tạo bài mới</option></select></div></div>
+  <div id="eb"></div>`;
+  $("#eu").onchange=e=>{S.editId=e.target.value||null;render()};
+  const eb=$("#eb");
+  if(S.editId==="__new"){eb.innerHTML=`<div class="panel" style="display:flex;flex-direction:column;gap:10px">
+    <div class="field"><label for="nt">Tên bài (tiếng Việt)</label><input type="text" id="nt" placeholder="Kinh lạc (slide thầy)"></div>
+    <div class="field"><label for="nz">Tên chữ Hán</label><input type="text" id="nz" placeholder="经络"></div>
+    <div class="field"><label for="ng">Giảng viên</label><input type="text" id="ng" placeholder="ThS. Hàn Quốc Việt"></div>
+    <div class="field"><label for="no2">Thứ tự</label><input type="text" id="no2" inputmode="numeric" value="${us.length+1}"></div>
+    <button class="btn pri" id="nSave" style="align-self:flex-start">Tạo bài</button></div>`;
+    $("#nSave").onclick=async()=>{const t=$("#nt").value.trim();if(!t)return toast("Nhập tên bài trước");
+      const id="u"+Date.now().toString(36);const body={order:+$("#no2").value||us.length+1,title:t,zh:$("#nz").value.trim(),teacher:$("#ng").value.trim(),source:"",vocab:[],passage:[],grammar:[],pairs:[],fills:[],qa:[],mcq:[]};
+      if(await put(id,body)){S.editId=id;toast("Đã tạo bài");render()}};return}
+  if(!u){eb.innerHTML="";return}
+  eb.innerHTML=`
+  <div class="panel" style="display:flex;flex-direction:column;gap:10px">
+    <h3>Thêm nhanh</h3><p class="note" style="margin:0">Mỗi dòng một mục, các phần cách nhau bằng dấu <b>|</b>. Mục mới được thêm vào cuối, không xóa mục cũ.</p>
+    <div class="field"><label for="aT">Loại</label><select id="aT">
+      <option value="vocab">Từ vựng: 中文 | pinyin | Hán Việt | nghĩa</option>
+      <option value="passage">Bài khóa: câu chữ Hán | bản dịch</option>
+      <option value="fills">Điền khuyết: câu có ____ | đáp án</option>
+      <option value="qa">Hỏi đáp: câu hỏi | câu trả lời</option>
+      <option value="pairs">Trái nghĩa: từ | từ trái nghĩa</option>
+      <option value="grammar">Ngữ pháp: cấu trúc | nghĩa | ví dụ</option>
+      <option value="mcq">Trắc nghiệm: câu hỏi | A | B | C | D | đáp án đúng (A–D)</option></select></div>
+    <textarea id="aX" placeholder="经络 | jīngluò | kinh lạc | kinh lạc"></textarea>
+    <button class="btn pri" id="aGo" style="align-self:flex-start">Thêm vào bài</button></div>
+  <div class="panel" style="display:flex;flex-direction:column;gap:10px">
+    <h3>Sửa toàn bộ bài (JSON)</h3><p class="note" style="margin:0">Dùng khi cần sửa hoặc xóa một mục. Giữ đúng dấu ngoặc và dấu phẩy.</p>
+    <textarea class="code" id="jx" spellcheck="false">${esc(JSON.stringify(strip(u),null,1))}</textarea>
+    <div class="row"><button class="btn pri" id="jGo">Lưu JSON</button><button class="btn warn" id="del">Xóa bài này</button></div><div id="cf"></div></div>`;
+  $("#aGo").onclick=async()=>{const t=$("#aT").value,L=lines($("#aX").value);if(!L.length)return toast("Chưa có dòng nào");
+    const mk={vocab:a=>({zh:a[0],py:a[1]||"",hv:a[2]||"",vi:a[3]||""}),passage:a=>({zh:a[0],vi:a[1]||""}),fills:a=>({q:a[0],a:a[1]||""}),qa:a=>({q:a[0],a:a[1]||""}),pairs:a=>[a[0],a[1]||""],grammar:a=>({pat:a[0],vi:a[1]||"",ex:a[2]||""}),
+      mcq:a=>{const o=a.slice(1,-1).filter(Boolean),k=(a[a.length-1]||"").toUpperCase();return {q:a[0],o,a:Math.max(0,"ABCD".indexOf(k))}}};
+    const bad=t==="mcq"&&L.some(a=>a.length<4);if(bad)return toast("Trắc nghiệm cần câu hỏi, ít nhất 2 lựa chọn và đáp án");
+    const body=strip(u);body[t]=(body[t]||[]).concat(L.map(mk[t]));
+    if(await put(u.id,body)){$("#aX").value="";toast(`Đã thêm ${L.length} mục`)}};
+  $("#jGo").onclick=async()=>{let b;try{b=JSON.parse($("#jx").value)}catch(e){return toast("JSON lỗi: "+e.message.slice(0,60))}
+    if(!b||typeof b!=="object"||!b.title)return toast("Bài cần có trường title");if(await put(u.id,b))toast("Đã lưu bài")};
+  $("#del").onclick=()=>{$("#cf").innerHTML=`<div class="confirm"><span>Xóa hẳn bài “${esc(u.title)}”?</span><button class="btn warn" id="dy">Xóa</button><button class="btn" id="dn">Giữ lại</button></div>`;
+    $("#dn").onclick=()=>$("#cf").innerHTML="";$("#dy").onclick=async()=>{try{await S.db.doc("units/"+u.id).delete();S.editId=null;toast("Đã xóa bài");render()}catch(e){toast("Không xóa được: "+(e.code||e.message))}}};
+}
+function strip(u){const b={...u};delete b.id;return JSON.parse(JSON.stringify(b))}
+async function put(id,body){try{await S.db.doc("units/"+id).set(body);return true}catch(e){toast(e.code==="invalid_argument"?"Bạn không có quyền sửa nội dung":"Không lưu được: "+(e.code||e.message));return false}}
+
+/* ---------- khởi động ---------- */
+window.TVAPI={S,render,saveProg,esc,shuffle,toast,allVocab,isDue,cardState};
+S.units=mergeUnits([]);
+loadLocal();render();
+const C=window.claude;
+const fallback=setTimeout(()=>{if(!S.loaded){S.units=mergeUnits(S.units.filter(x=>!x.builtin));S.loaded=true;render()}},12000);
+(async()=>{
+  if(!C||!C.use){S.units=mergeUnits([]);S.loaded=true;clearTimeout(fallback);render();return}
+  const [db,user]=await Promise.all([C.use("db").catch(()=>null),C.use("user").catch(()=>null)]);
+  S.db=db;S.user=user;
+  if(user){try{S.uid=await user.id()}catch(e){}try{S.canEdit=!!(await user.canEdit())||!!(await user.isOwner())}catch(e){}}
+  if(!db){S.units=mergeUnits([]);S.loaded=true;clearTimeout(fallback);render();return}
+  if(S.uid){try{const s=await db.doc("data/users/"+S.uid+"/progress").get();if(s.exists){const d=s.data()||{};
+    S.prog={cards:{...(d.cards||{}),...S.prog.cards},scores:{...(d.scores||{}),...S.prog.scores},qs:{...(d.qs||{}),...(S.prog.qs||{})},stats:(S.prog.stats&&S.prog.stats.xp>=((d.stats||{}).xp||0))?S.prog.stats:(d.stats||S.prog.stats)}}}catch(e){}}
+  db.collection("units").onSnapshot(snap=>{S.units=mergeUnits(snap.docs.map(d=>({id:d.id,...d.data()})));S.loaded=true;clearTimeout(fallback);
+      if(S.tab==="cards"&&S.cards&&S.cards.i<S.cards.list.length)return;if(S.tab==="quiz"&&S.quiz)return;
+      const y=scrollY;render();scrollTo(0,y)},
+    ()=>{S.units=mergeUnits([]);S.loaded=true;render()});
+})();
+})();
+</script>
