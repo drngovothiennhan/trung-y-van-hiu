@@ -1,0 +1,240 @@
+/* Trung Y Văn HIU · lớp thiết kế chung (nạp sau extra.css).
+   Một bộ token cho khung ứng dụng và cho mục con Ôn Trọng Tâm.
+   Nguyên tắc: tương phản chữ ≥ 4.5:1, vùng chạm ≥ 44px, thanh dưới tối đa 5 mục + Thêm, focus nhìn thấy, tôn trọng reduced-motion. */
+
+:root {
+  --tyv-green-950: #0b302a;
+  --tyv-green-900: #0d352e;
+  --tyv-green-800: #123d35;
+  --tyv-green-600: #1d5d4e;
+  --tyv-green-50: #e7efe9;
+  --tyv-gold-300: #d4b36a;
+  --tyv-gold-500: #b68c3a;
+  --tyv-gold-700: #8a6a22; /* chữ vàng trên nền kem: 4.9:1 */
+  --tyv-cream: #f7f5ee;
+  --tyv-card: #ffffff;
+  --tyv-line: #e3ddcd;
+  --tyv-ink: #17352f;
+  --tyv-muted: #586761; /* chữ phụ trên nền kem: 5.6:1 */
+  --tyv-danger: #b23e29;
+  --tyv-radius-lg: 18px;
+  --tyv-radius-md: 12px;
+  --tyv-shadow: 0 6px 18px rgba(24, 63, 54, 0.07);
+  --tyv-han: 'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', 'Noto Serif CJK SC', 'Songti SC', serif;
+  --tyv-tap: 44px;
+
+  --muted: var(--tyv-muted);
+  --gold: var(--tyv-gold-500);
+}
+
+/* Chữ phụ và nhãn vàng đạt độ tương phản đọc được */
+.page-head > span,
+.eyebrow {
+  color: var(--tyv-gold-700);
+}
+.hero .eyebrow,
+aside .brand b {
+  color: var(--tyv-gold-300);
+}
+
+/* Focus nhìn thấy cho bàn phím và công nghệ hỗ trợ */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--tyv-gold-500);
+  outline-offset: 2px;
+}
+
+/* Thanh trên cùng: các nút nhỏ đủ vùng chạm */
+.top .ui-mode-switch button,
+.top .auth-user button {
+  min-height: 40px;
+  min-width: 44px;
+}
+
+/* Mục con trong thanh bên (PC): Ôn Trọng Tâm thuộc Trung Y Văn HIU */
+nav button.sub {
+  margin-left: 14px;
+  width: calc(100% - 14px);
+  position: relative;
+}
+nav button.sub::before {
+  content: '';
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--tyv-gold-300);
+  opacity: 0.7;
+  transform: translateY(-50%);
+}
+
+/* Thanh dưới (điện thoại): 5 mục + Thêm, mỗi nhãn một dòng */
+html[data-ui-mode='mobile'] .shell .bottom {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  height: calc(66px + env(safe-area-inset-bottom, 0px));
+  padding: 0 4px env(safe-area-inset-bottom, 0px);
+  background: rgba(255, 255, 255, 0.96);
+  border-top: 1px solid var(--tyv-line);
+}
+html[data-ui-mode='mobile'] .shell .bottom button {
+  position: relative;
+  min-width: 0;
+  min-height: var(--tyv-tap);
+  padding: 7px 2px 6px;
+  gap: 3px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--tyv-muted);
+  background: none;
+  border: 0;
+  border-radius: 12px;
+}
+html[data-ui-mode='mobile'] .shell .bottom button i {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 26px;
+  font-style: normal;
+  font-size: 21px;
+  line-height: 1;
+  font-family: var(--tyv-han) !important;
+}
+html[data-ui-mode='mobile'] .shell .bottom button small {
+  display: block;
+  max-width: 100%;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+html[data-ui-mode='mobile'] .shell .bottom button.active {
+  color: var(--tyv-green-800);
+}
+html[data-ui-mode='mobile'] .shell .bottom button.active i {
+  color: var(--tyv-gold-700);
+}
+html[data-ui-mode='mobile'] .shell .bottom button.active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 22%;
+  right: 22%;
+  height: 3px;
+  border-radius: 0 0 3px 3px;
+  background: var(--tyv-gold-500);
+}
+@media (max-width: 359px) {
+  html[data-ui-mode='mobile'] .shell .bottom button small {
+    font-size: 10px;
+  }
+}
+
+/* Bảng "Thêm": các mục còn lại, mở từ thanh dưới */
+.more-sheet {
+  position: fixed;
+  z-index: 40;
+  left: max(0px, calc(50% - 260px));
+  width: min(520px, 100%);
+  bottom: calc(66px + env(safe-area-inset-bottom, 0px));
+  max-height: 70vh;
+  overflow: auto;
+  padding: 16px 14px 14px;
+  background: var(--tyv-card);
+  border-radius: var(--tyv-radius-lg) var(--tyv-radius-lg) 0 0;
+  border: 1px solid var(--tyv-line);
+  border-bottom: 0;
+  box-shadow: 0 -12px 34px rgba(13, 53, 46, 0.18);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.more-sheet[hidden] {
+  display: none;
+}
+.more-sheet::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: rgba(13, 53, 46, 0.38);
+}
+.more-sheet > span {
+  grid-column: 1 / -1;
+  color: var(--tyv-gold-700);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.more-sheet button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 8px 12px;
+  text-align: left;
+  color: var(--tyv-ink);
+  background: var(--tyv-cream);
+  border: 1px solid var(--tyv-line);
+  border-radius: var(--tyv-radius-md);
+  font-weight: 650;
+}
+.more-sheet button i {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  font-style: normal;
+  font-size: 19px;
+  font-family: var(--tyv-han);
+  color: var(--tyv-gold-700);
+  background: var(--tyv-card);
+  border-radius: 10px;
+}
+.more-sheet button.active {
+  color: #fff;
+  background: var(--tyv-green-800);
+  border-color: var(--tyv-green-800);
+}
+.more-sheet button.active i {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--tyv-gold-300);
+}
+html[data-ui-mode='desktop'] .more-sheet {
+  display: none !important;
+}
+
+/* Mục Ôn Trọng Tâm: khung nhúng liền với trang, không viền thừa */
+.trongtam-frame {
+  display: block;
+}
+.trongtam-frame iframe {
+  display: block;
+  width: 100%;
+  min-height: 560px;
+  border: 0;
+  background: transparent;
+  scroll-margin-top: 72px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

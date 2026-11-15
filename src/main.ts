@@ -1,6 +1,7 @@
 // @ts-nocheck
 import './styles.css';
 import './extra.css';
+import './design-system.css';
 import { authApi, authMessage, saveOfflineGrant, readOfflineGrant, clearOfflineGrant } from './auth-client';
 import { sources as baseSources, radicals214, learningTerms as baseLearningTerms, readings, quizBank as baseQuizBank } from './content';
 import { lesson2TextbookPages, lesson2Terms, lesson2Quiz } from './lesson2';
@@ -810,6 +811,8 @@ function speak(text) {
 }
 
 function nav(view) {
+  document.querySelector('.more-sheet')?.setAttribute('hidden', '');
+  document.querySelector('[data-more]')?.setAttribute('aria-expanded', 'false');
   state.view = view;
   state.readingAnswer = null;
   render();
@@ -976,12 +979,12 @@ function groupOptionsFor(index) {
 
 function shell(content) {
   const navs = [
-    ['home', '⌂', 'Hôm nay'],
+    ['home', '今', 'Hôm nay'],
     ['lessons', '书', 'Bài học'],
     ['vocab', '字', 'Từ vựng'],
     ['exam', '考', 'Ôn thi'],
-    ['trongtam', '要', 'Ôn Trọng Tâm'], // mục con của Trung Y Văn HIU
-    ['writing', '✍', 'Luyện viết'],
+    ['trongtam', '要', 'Ôn Trọng Tâm', 'Trọng tâm'], // mục con của Trung Y Văn HIU
+    ['writing', '写', 'Luyện viết'],
     ['reading', '阅', 'Đọc hiểu'],
     ['radicals', '部', '214 bộ thủ'],
     ...(uiMode === 'desktop' ? [['chiet-tu', '拆', 'Chiết Tự']] : []),
@@ -995,7 +998,10 @@ function shell(content) {
     navs.map(n => '<button data-nav="' + n[0] + '" class="' + (n[0] === 'trongtam' ? 'sub ' : '') + (state.view === n[0] ? 'active' : '') + '"><i>' + n[1] + '</i><span>' + n[2] + '</span></button>').join('') +
     '</nav>' + leaderboardMarkup() + '<div class="side-note"><span>HIU · YHCT</span><p>Mục tiêu từ vựng: nhìn → nhận biết → hiểu → nhớ.</p></div></aside><main><div class="top"><button class="mini" data-nav="home">中</button><div><b>HIU CLB YHCT</b><small>Chinese for Traditional Medicine</small></div><span class="streak">🔥 ' +
     state.progress.xp + ' XP</span>' + uiModeMarkup() + '<div class="auth-user"><span>' + safe(access.member?.display_name || access.member?.mssv || '') + '</span><small>' + safe(access.member?.mssv || '') + '</small><button id="authLogout">Đăng xuất</button></div></div><div class="content">' + (access.offline ? '<div class="offline-note" role="status">Đang học ngoại tuyến. Tiến độ được lưu trên máy và sẽ đồng bộ khi có mạng.</div>' : '') + content + '</div></main><div class="bottom">' +
-    navs.filter(n => n[0] !== 'radicals').slice(0, 6).map(n => '<button data-nav="' + n[0] + '" class="' + (state.view === n[0] ? 'active' : '') + '"><i>' + n[1] + '</i><small>' + n[2] + '</small></button>').join('') +
+    navs.slice(0, 5).map(n => '<button data-nav="' + n[0] + '" class="' + (state.view === n[0] ? 'active' : '') + '"><i>' + n[1] + '</i><small>' + (n[3] || n[2]) + '</small></button>').join('') +
+    '<button type="button" data-more class="more-btn ' + (navs.slice(5).some(n => n[0] === state.view) ? 'active' : '') + '" aria-haspopup="true" aria-expanded="false"><i>多</i><small>Thêm</small></button>' +
+    '</div><div class="more-sheet" hidden role="menu" aria-label="Các mục khác"><span>Trung Y Văn HIU · Các mục khác</span>' +
+    navs.slice(5).map(n => '<button data-nav="' + n[0] + '" role="menuitem" class="' + (state.view === n[0] ? 'active' : '') + '"><i>' + n[1] + '</i>' + n[2] + '</button>').join('') +
     '</div></div>' + pwaInstallMarkup();
 }
 
@@ -1627,10 +1633,41 @@ function progressView() {
 
 /* Ôn Trọng Tâm: toàn bộ app Trung Văn YHCT (public/trong-tam/) nhúng trong iframe cùng origin. Chạy độc lập, tiến độ lưu trong trình duyệt. */
 function trongTamView() {
-  const src = import.meta.env.BASE_URL + 'trong-tam/index.html';
-  return '<section class="trongtam-frame"><div class="trongtam-head"><small>Trung Y Văn HIU › Ôn Trọng Tâm</small><b>Ôn Trọng Tâm</b><small>Thẻ nhớ, trọng tâm, bài khóa, tra từ và lịch ôn theo điểm yếu</small></div>' +
-    '<iframe src="' + safe(src) + '" title="Trung Y Văn HIU — Ôn Trọng Tâm" loading="lazy" style="width:100%;min-height:78vh;border:0;border-radius:14px;background:transparent"></iframe></section>';
+  const src = import.meta.env.BASE_URL + 'trong-tam/index.html?embed=1';
+  return h('TRUNG Y VĂN HIU › ÔN TRỌNG TÂM', 'Ôn Trọng Tâm', 'Thẻ nhớ, trọng tâm, bài khóa, tra từ và lịch ôn tự xếp theo điểm yếu của bạn.') +
+    '<section class="trongtam-frame"><iframe id="trongtamFrame" src="' + safe(src) + '" title="Trung Y Văn HIU — Ôn Trọng Tâm" loading="lazy"></iframe></section>';
 }
+
+// Khung Ôn Trọng Tâm báo chiều cao nội dung để trang chỉ có một thanh cuộn; chỉ nhận tin từ chính khung đó, cùng origin.
+window.addEventListener('message', e => {
+  const frame = document.getElementById('trongtamFrame');
+  if (!frame || e.origin !== location.origin || e.source !== frame.contentWindow) return;
+  const d = e.data || {};
+  if (d.type === 'tyv-embed-height' && Number.isFinite(d.height)) {
+    frame.style.height = Math.min(Math.max(Math.round(d.height), 480), 30000) + 'px';
+  } else if (d.type === 'tyv-embed-top' && frame.getBoundingClientRect().top < 0) {
+    frame.scrollIntoView({ block: 'start', behavior: 'auto' });
+  }
+});
+
+// Bảng "Thêm" trên thanh dưới: mở/đóng, đóng khi chạm ra ngoài hoặc nhấn Esc.
+document.addEventListener('click', e => {
+  const sheet = document.querySelector('.more-sheet');
+  if (!sheet) return;
+  const btn = e.target.closest('[data-more]');
+  if (btn) {
+    const open = sheet.hasAttribute('hidden');
+    if (open) sheet.removeAttribute('hidden'); else sheet.setAttribute('hidden', '');
+    btn.setAttribute('aria-expanded', String(open));
+    return;
+  }
+  if (!e.target.closest('.more-sheet')) { sheet.setAttribute('hidden', ''); document.querySelector('[data-more]')?.setAttribute('aria-expanded', 'false'); }
+});
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  document.querySelector('.more-sheet')?.setAttribute('hidden', '');
+  document.querySelector('[data-more]')?.setAttribute('aria-expanded', 'false');
+});
 
 function currentViewBody() {
   switch (state.view) {
@@ -1652,9 +1689,12 @@ function currentViewBody() {
 }
 
 function syncShellChrome() {
-  document.querySelectorAll('.shell aside nav [data-nav], .shell .bottom [data-nav], .shell .top [data-nav]').forEach(button => {
+  document.querySelectorAll('.shell aside nav [data-nav], .shell .bottom [data-nav], .shell .more-sheet [data-nav], .shell .top [data-nav]').forEach(button => {
     button.classList.toggle('active', button.dataset.nav === state.view);
   });
+
+  const moreBtn = document.querySelector('.shell .more-btn');
+  if (moreBtn) moreBtn.classList.toggle('active', !['home', 'lessons', 'vocab', 'exam', 'trongtam'].includes(state.view));
 
   const streak = document.querySelector('.top .streak');
   if (streak) streak.textContent = '🔥 ' + state.progress.xp + ' XP';
@@ -1735,7 +1775,7 @@ function bind(fullShell = true) {
     const pwaDismiss = document.querySelector('#pwaDismiss');
     if (pwaDismiss) pwaDismiss.addEventListener('click', dismissPwaReminder);
 
-    document.querySelectorAll('.shell aside [data-nav], .shell .top [data-nav], .shell .bottom [data-nav]').forEach(e => {
+    document.querySelectorAll('.shell aside [data-nav], .shell .top [data-nav], .shell .bottom [data-nav], .shell .more-sheet [data-nav]').forEach(e => {
       e.addEventListener('click', () => nav(e.dataset.nav));
     });
   }

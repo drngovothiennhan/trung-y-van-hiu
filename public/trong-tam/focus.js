@@ -49,19 +49,20 @@ function head(esc){
 
 function bind(v){
   const api=A();
-  v.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{F.mode=b.dataset.m;F.quiz=null;api.render()});
-  v.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>{F.g=b.dataset.g||null;F.quiz=null;F.seen={};api.render()});
+  v.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{F.mode=b.dataset.m;F.quiz=null;F.limit=20;api.render()});
+  v.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>{F.g=b.dataset.g||null;F.quiz=null;F.seen={};F.limit=20;api.render()});
 }
 
 function learn(v){
-  const {esc}=A(),L=pool();
+  const {esc}=A(),L=pool(),PG=L.slice(0,F.limit||20);
   v.innerHTML=head(esc)+`<div class="panel">
     <div class="row" style="justify-content:space-between;margin-bottom:8px"><span class="label">${L.length} câu · đáp án và mẹo hiện sẵn</span>
       <button class="chip" id="hideBtn" aria-pressed="${F.hide}">Che đáp án để tự kiểm tra</button></div>
-    ${L.map((f,i)=>{const show=!F.hide||F.seen[f.q];return `<div class="fq"><span class="note">${i+1}. ${esc(f.g)}</span><div class="qq">${esc(f.q)}</div>
+    ${PG.map((f,i)=>{const show=!F.hide||F.seen[f.q];return `<div class="fq"><span class="note">${i+1}. ${esc(f.g)}</span><div class="qq">${esc(f.q)}</div>
       ${show?`<div class="ok">Đáp án: ${"ABCD"[f.a]}. ${esc(f.o[f.a])}</div><div class="note">${f.o.map((o,j)=>j===f.a?"":`${"ABCD"[j]}. ${esc(o)}`).filter(Boolean).join(" · ")}</div>${why(f)}`
-      :`<button class="btn cover" data-s="${i}">Xem đáp án</button>`}</div>`}).join("")}</div>`;
+      :`<button class="btn cover" data-s="${i}">Xem đáp án</button>`}</div>`}).join("")}${L.length>PG.length?`<button class="btn" id="moreQ" style="align-self:flex-start;margin-top:8px">Hiện thêm ${Math.min(20,L.length-PG.length)} câu · còn ${L.length-PG.length}</button>`:""}</div>`;
   bind(v);
+  const mq=$("#moreQ");if(mq)mq.onclick=()=>{F.limit=(F.limit||20)+20;const y=scrollY;A().render();scrollTo(0,y)};
   $("#hideBtn").onclick=()=>{F.hide=!F.hide;F.seen={};A().render()};
   v.querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>{F.seen[L[+b.dataset.s].q]=true;const y=scrollY;A().render();scrollTo(0,y)});
 }
