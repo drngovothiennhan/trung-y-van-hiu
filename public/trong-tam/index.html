@@ -1,4 +1,4 @@
-<title>Trung Văn YHCT</title>
+<title>Trung Y Văn HIU — Ôn Trọng Tâm</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="description" content="Ôn Trung văn chuyên ngành YHCT: thẻ nhớ, trọng tâm, bài khóa, tra từ, kiểm tra và lịch học theo điểm yếu.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -149,7 +149,7 @@ textarea.code{font-family:ui-monospace,"SFMono-Regular",Menlo,monospace;font-siz
 </style>
 
 <header class="top"><div class="wrap">
-  <div class="brand"><span class="seal" aria-hidden="true">中</span><div style="min-width:0"><h1 id="hTitle">Trung Văn YHCT</h1><small id="hSub">Học phần Trung văn chuyên ngành</small></div></div>
+  <div class="brand"><span class="seal" aria-hidden="true">中</span><div style="min-width:0"><h1 id="hTitle">Trung Y Văn HIU</h1><small id="hSub">Ôn Trọng Tâm · Trung văn chuyên ngành</small></div></div>
   <div class="hact">
     <button class="ibtn" id="installBtn" hidden>Cài app</button>
     <button class="ibtn" id="editBtn" hidden aria-pressed="false">Soạn</button>
@@ -167,7 +167,7 @@ textarea.code{font-family:ui-monospace,"SFMono-Regular",Menlo,monospace;font-siz
     const h=document.head,add=(t,a)=>{const e=document.createElement(t);Object.assign(e,a);h.appendChild(e)};
     add("meta",{name:"theme-color",content:"#1D6B58"});
     add("meta",{name:"apple-mobile-web-app-capable",content:"yes"});
-    add("meta",{name:"apple-mobile-web-app-title",content:"Trung Văn YHCT"});
+    add("meta",{name:"apple-mobile-web-app-title",content:"Trung Y Văn HIU"});
     add("link",{rel:"apple-touch-icon",href:"icon-192.png"});
     add("link",{rel:"icon",href:"icon.svg",type:"image/svg+xml"});
   }catch(e){}
@@ -221,7 +221,7 @@ function render(){drawTabs();const u=S.unit&&S.units.find(x=>x.id===S.unit);
   $("#backBtn").hidden=!(S.tab==="learn"&&u);
   $("#editBtn").hidden=!S.canEdit;
   $("#editBtn").setAttribute("aria-pressed",String(S.tab==="edit"));
-  $("#hTitle").textContent=u?u.title:"Trung Văn YHCT";
+  $("#hTitle").textContent=u?u.title:"Trung Y Văn HIU";
   $("#hSub").innerHTML=u?`<span class="hz">${esc(u.zh)}</span>${u.teacher?" · "+esc(u.teacher):""}`:"Học phần Trung văn chuyên ngành";
   const v=$("#view");
   if(!S.loaded){v.innerHTML=`<div class="empty"><span class="hz" aria-hidden="true">学</span>Đang mở bài học…</div>`;return}

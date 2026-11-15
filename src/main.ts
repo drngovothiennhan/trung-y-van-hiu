@@ -980,7 +980,7 @@ function shell(content) {
     ['lessons', '书', 'Bài học'],
     ['vocab', '字', 'Từ vựng'],
     ['exam', '考', 'Ôn thi'],
-    ['trongtam', '要', 'Ôn Trọng Tâm'],
+    ['trongtam', '要', 'Ôn Trọng Tâm'], // mục con của Trung Y Văn HIU
     ['writing', '✍', 'Luyện viết'],
     ['reading', '阅', 'Đọc hiểu'],
     ['radicals', '部', '214 bộ thủ'],
@@ -992,7 +992,7 @@ function shell(content) {
   ];
   if (access.member?.role === 'admin') navs.push(['admin', '盾', 'Quản trị']);
   return '<div class="shell" data-member="' + safe(access.member?.mssv || '') + '" data-role="' + safe(access.member?.role || '') + '"><aside><div class="brand"><b>中医中文</b><strong>TRUNG Y VĂN</strong><small>HIU CLB YHCT</small></div><nav>' +
-    navs.map(n => '<button data-nav="' + n[0] + '" class="' + (state.view === n[0] ? 'active' : '') + '"><i>' + n[1] + '</i><span>' + n[2] + '</span></button>').join('') +
+    navs.map(n => '<button data-nav="' + n[0] + '" class="' + (n[0] === 'trongtam' ? 'sub ' : '') + (state.view === n[0] ? 'active' : '') + '"><i>' + n[1] + '</i><span>' + n[2] + '</span></button>').join('') +
     '</nav>' + leaderboardMarkup() + '<div class="side-note"><span>HIU · YHCT</span><p>Mục tiêu từ vựng: nhìn → nhận biết → hiểu → nhớ.</p></div></aside><main><div class="top"><button class="mini" data-nav="home">中</button><div><b>HIU CLB YHCT</b><small>Chinese for Traditional Medicine</small></div><span class="streak">🔥 ' +
     state.progress.xp + ' XP</span>' + uiModeMarkup() + '<div class="auth-user"><span>' + safe(access.member?.display_name || access.member?.mssv || '') + '</span><small>' + safe(access.member?.mssv || '') + '</small><button id="authLogout">Đăng xuất</button></div></div><div class="content">' + (access.offline ? '<div class="offline-note" role="status">Đang học ngoại tuyến. Tiến độ được lưu trên máy và sẽ đồng bộ khi có mạng.</div>' : '') + content + '</div></main><div class="bottom">' +
     navs.filter(n => n[0] !== 'radicals').slice(0, 6).map(n => '<button data-nav="' + n[0] + '" class="' + (state.view === n[0] ? 'active' : '') + '"><i>' + n[1] + '</i><small>' + n[2] + '</small></button>').join('') +
@@ -1628,8 +1628,8 @@ function progressView() {
 /* Ôn Trọng Tâm: toàn bộ app Trung Văn YHCT (public/trong-tam/) nhúng trong iframe cùng origin. Chạy độc lập, tiến độ lưu trong trình duyệt. */
 function trongTamView() {
   const src = import.meta.env.BASE_URL + 'trong-tam/index.html';
-  return '<section class="trongtam-frame"><div class="trongtam-head"><b>Ôn Trọng Tâm</b><small>Thẻ nhớ, trọng tâm, bài khóa, tra từ và lịch ôn theo điểm yếu</small></div>' +
-    '<iframe src="' + safe(src) + '" title="Ôn Trọng Tâm — Trung Văn YHCT" loading="lazy" style="width:100%;min-height:78vh;border:0;border-radius:14px;background:transparent"></iframe></section>';
+  return '<section class="trongtam-frame"><div class="trongtam-head"><small>Trung Y Văn HIU › Ôn Trọng Tâm</small><b>Ôn Trọng Tâm</b><small>Thẻ nhớ, trọng tâm, bài khóa, tra từ và lịch ôn theo điểm yếu</small></div>' +
+    '<iframe src="' + safe(src) + '" title="Trung Y Văn HIU — Ôn Trọng Tâm" loading="lazy" style="width:100%;min-height:78vh;border:0;border-radius:14px;background:transparent"></iframe></section>';
 }
 
 function currentViewBody() {

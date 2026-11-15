@@ -1040,3 +1040,9 @@ details p {
     text-align: left;
   }
 }
+
+/* Mục con của Trung Y Văn HIU (Ôn Trọng Tâm) */
+nav button.sub span { padding-left: 14px; font-size: .92em; opacity: .9; }
+nav button.sub i { font-size: .9em; }
+.trongtam-head { display: flex; flex-direction: column; gap: 2px; margin-bottom: 10px; }
+.trongtam-head small { color: var(--muted, #5b6b66); font-size: 12px; }
