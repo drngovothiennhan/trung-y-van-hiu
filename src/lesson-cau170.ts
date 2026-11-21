@@ -1,6 +1,5 @@
-// Đề 170 câu Trung văn YHCT (file 170_cau_Trung_van_YHCT_dap_an.docx, trích video 21/11/2026).
-// Lấy 143 câu chưa có trong app (27 câu trùng nội dung đã giữ nguyên). Đáp án là phương án tô đỏ trong file.
-// Sinh tự động, không sửa tay.
+// Đề 170 câu Trung văn YHCT (file 170_cau_Trung_van_YHCT_dap_an.docx, trích video 21/11/2026). Đủ 170 câu, không bỏ câu nào.
+// Sinh tự động từ file, không sửa tay.
 import type { Q } from "./lesson-on-thi-thay-viet";
 export const cau170Quiz: Q[] = [
   {
@@ -381,6 +380,58 @@ export const cau170Quiz: Q[] = [
     "category": "Đề 170 · Dịch câu về dược liệu"
   },
   {
+    "q": "Câu 30: 当归常用于补血调经，尤其适合女性患者。Dịch sang tiếng Việt.",
+    "o": [
+      "Đương quy có tác dụng hoạt huyết, hành khí, thường được sử dụng trong điều trị đau đầu ở phụ nữ.",
+      "Đương quy thường được sử dụng để bổ huyết điều kinh, đặc biệt thích hợp cho phụ nữ.",
+      "Đương quy có tác dụng lợi tiểu, hoạt huyết, thường được dùng cho người nữ bị đau khớp.",
+      "Đương quy giúp hoạt huyết, thư cân, thường được dùng cho người thiếu máu, nữ thể trạng yếu."
+    ],
+    "a": 1,
+    "explain": "Đáp án đúng: Đương quy thường được sử dụng để bổ huyết điều kinh, đặc biệt thích hợp cho phụ nữ.",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
+    "category": "Đề 170 · Dịch câu về dược liệu"
+  },
+  {
+    "q": "Câu 31: 川芎有活血行气的作用，常用于治疗头痛。Dịch sang tiếng Việt.",
+    "o": [
+      "Xuyên khung thường được sử dụng để điều hòa can tỳ, giảm đau đầu.",
+      "Xuyên khung giúp hoạt huyết, thư cân, thường được dùng cho người thiếu máu, đau đầu.",
+      "Xuyên khung có tác dụng hoạt huyết, hành khí, thường được sử dụng trong điều trị đau đầu.",
+      "Xuyên khung có tác dụng lợi tiểu, hoạt huyết, thường được dùng cho đau khớp."
+    ],
+    "a": 2,
+    "explain": "Đáp án đúng: Xuyên khung có tác dụng hoạt huyết, hành khí, thường được sử dụng trong điều trị đau đầu.",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
+    "category": "Đề 170 · Dịch câu về dược liệu"
+  },
+  {
+    "q": "Câu 32: 黄芪可以增强免疫力，适合用于体质虚弱的人群。Dịch sang tiếng Việt.",
+    "o": [
+      "Hoàng kỳ có tác dụng bổ khí, tăng cường sức khỏe, phù hợp với người bị suy nhược, mệt mỏi.",
+      "Hoàng kỳ có tác dụng hoạt huyết, hành khí, thường được sử dụng trong điều trị đau đầu.",
+      "Hoàng kỳ thường dùng để bổ huyết điều kinh, đặc biệt thích hợp cho bị suy nhược.",
+      "Hoàng kỳ có thể tăng cường hệ miễn dịch, thích hợp cho những người có thể trạng yếu."
+    ],
+    "a": 3,
+    "explain": "Đáp án đúng: Hoàng kỳ có thể tăng cường hệ miễn dịch, thích hợp cho những người có thể trạng yếu.",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
+    "category": "Đề 170 · Dịch câu về dược liệu"
+  },
+  {
+    "q": "Câu 33: 白芍常用于调和肝脾，缓解疼痛。Dịch sang tiếng Việt.",
+    "o": [
+      "Bạch thược thường được sử dụng để điều hòa can tỳ, giảm đau.",
+      "Bạch thược có tác dụng giải biểu, thường dùng trong cảm mạo đau đầu.",
+      "Bạch thược có tác dụng lợi tiểu, hoạt huyết, thường được dùng cho đau khớp.",
+      "Bạch thược giúp hoạt huyết, thư cân, thường được dùng cho người đau đầu."
+    ],
+    "a": 0,
+    "explain": "Đáp án đúng: Bạch thược thường được sử dụng để điều hòa can tỳ, giảm đau.",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
+    "category": "Đề 170 · Dịch câu về dược liệu"
+  },
+  {
     "q": "Câu 34: 白芷有解表作用，常用于感冒头痛。Dịch sang tiếng Việt.",
     "o": [
       "Bạch thược thường được sử dụng để điều hòa can tỳ, giảm đau đầu.",
@@ -498,6 +549,19 @@ export const cau170Quiz: Q[] = [
     "category": "Đề 170 · Dịch câu về dược liệu"
   },
   {
+    "q": "Câu 43: 补气药材包括黄芪、人参等。Dịch sang tiếng Việt.",
+    "o": [
+      "Dược liệu hành khí bao gồm Hoàng kỳ, Nhân sâm.",
+      "Dược liệu bổ khí bao gồm Hoàng kỳ, Nhân sâm.",
+      "Dược liệu bổ khí dưỡng huyết như Hoàng kỳ, Nhân sâm.",
+      "Dược liệu được dùng để bổ khí dưỡng huyết, như Nhân sâm."
+    ],
+    "a": 1,
+    "explain": "Đáp án đúng: Dược liệu bổ khí bao gồm Hoàng kỳ, Nhân sâm.",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
+    "category": "Đề 170 · Dịch câu về dược liệu"
+  },
+  {
     "q": "Câu 44: 寒性药材用于清热解毒，如黄连。Dịch sang tiếng Việt.",
     "o": [
       "Dược liệu tính hàn dùng để thanh nhiệt giải độc, như Hoàng đằng.",
@@ -533,6 +597,19 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: Hoàng kỳ có thể sao trước khi dùng để tăng cường hiệu quả bổ khí.",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
+    "category": "Đề 170 · Dịch câu về dược liệu"
+  },
+  {
+    "q": "Câu 47: 何首乌在使用前需要先用酒浸泡。Dịch sang tiếng Việt.",
+    "o": [
+      "Hà thủ ô cần sao với rượu trước khi sử dụng.",
+      "Hà thủ ô cần ngâm với đậu đen trước khi sử dụng.",
+      "Hà thủ ô cần ngâm trong rượu trước khi sử dụng.",
+      "Hà thủ ô cần chế với đậu đen trước khi sử dụng."
+    ],
+    "a": 2,
+    "explain": "Đáp án đúng: Hà thủ ô cần ngâm trong rượu trước khi sử dụng.",
     "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Dịch câu về dược liệu"
   },
@@ -576,6 +653,19 @@ export const cau170Quiz: Q[] = [
     "category": "Đề 170 · Bài thuốc"
   },
   {
+    "q": "Câu 51: 阴阳学说是中国古代的一种____。",
+    "o": [
+      "哲学思想",
+      "政治制度",
+      "医学技术",
+      "语言文字"
+    ],
+    "a": 0,
+    "explain": "Đáp án đúng: 哲学思想",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
+    "category": "Đề 170 · Học thuyết Âm Dương"
+  },
+  {
     "q": "Câu 52: 自然界的一切事物都包含着相互对立的____和阳两个方面。",
     "o": [
       "气",
@@ -602,6 +692,19 @@ export const cau170Quiz: Q[] = [
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
+    "q": "Câu 54: 事物的阴阳两个方面既是相互对立的，又是相互____和相互消长的。",
+    "o": [
+      "治疗",
+      "分辨",
+      "依存",
+      "诊断"
+    ],
+    "a": 2,
+    "explain": "Đáp án đúng: 依存",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
+    "category": "Đề 170 · Học thuyết Âm Dương"
+  },
+  {
     "q": "Câu 55: 事物的阴阳两个方面在一定的条件下，还可以相互____。",
     "o": [
       "诊断",
@@ -611,6 +714,19 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 3,
     "explain": "Đáp án đúng: 转化",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
+    "category": "Đề 170 · Học thuyết Âm Dương"
+  },
+  {
+    "q": "Câu 56: 阴阳学说认为人体是一个____整体。",
+    "o": [
+      "机械",
+      "局部",
+      "有机",
+      "单一"
+    ],
+    "a": 2,
+    "explain": "Đáp án đúng: 有机",
     "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
@@ -650,6 +766,19 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 2,
     "explain": "Đáp án đúng: 体内",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
+    "category": "Đề 170 · Học thuyết Âm Dương"
+  },
+  {
+    "q": "Câu 60: 体表的背部属阳，____属阴。",
+    "o": [
+      "头部",
+      "腹部",
+      "胸部",
+      "上部"
+    ],
+    "a": 1,
+    "explain": "Đáp án đúng: 腹部",
     "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
@@ -771,6 +900,19 @@ export const cau170Quiz: Q[] = [
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
+    "q": "Câu 70: 人体的上部属阳，下部属____。",
+    "o": [
+      "阳",
+      "阴",
+      "气",
+      "血"
+    ],
+    "a": 1,
+    "explain": "Đáp án đúng: 阴",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
+    "category": "Đề 170 · Học thuyết Âm Dương"
+  },
+  {
     "q": "Câu 71: 人体的体表属阳，体内属____。",
     "o": [
       "阳",
@@ -849,6 +991,19 @@ export const cau170Quiz: Q[] = [
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
+    "q": "Câu 77: 阴阳两方面失去相对平衡，疾病也就____。",
+    "o": [
+      "停止了",
+      "发生了",
+      "转化了",
+      "消失了"
+    ],
+    "a": 1,
+    "explain": "Đáp án đúng: 发生了",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
+    "category": "Đề 170 · Học thuyết Âm Dương"
+  },
+  {
     "q": "Câu 78: 事物的阴阳既相互对立，又相互依存和相互____。",
     "o": [
       "诊断",
@@ -871,6 +1026,19 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 2,
     "explain": "Đáp án đúng: 结果",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
+    "category": "Đề 170 · Học thuyết Âm Dương"
+  },
+  {
+    "q": "Câu 80: 阴阳学说是中国古代的一种哲学思想。",
+    "o": [
+      "Học thuyết Ngũ hành là một tư tưởng triết học của Trung Quốc cổ đại.",
+      "Học thuyết Âm Dương là một tư tưởng triết học của Trung Quốc hiện đại.",
+      "Học thuyết Ngũ hành là một tư tưởng triết học của Trung Quốc hiện đại.",
+      "Học thuyết Âm Dương là một tư tưởng triết học của Trung Quốc cổ đại."
+    ],
+    "a": 3,
+    "explain": "Đáp án đúng: Học thuyết Âm Dương là một tư tưởng triết học của Trung Quốc cổ đại.",
     "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
@@ -914,6 +1082,19 @@ export const cau170Quiz: Q[] = [
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
+    "q": "Câu 84: 阴阳学说认为人体是一个有机整体。",
+    "o": [
+      "Học thuyết Âm Dương cho rằng cơ thể người là một chỉnh thể hữu cơ.",
+      "Học thuyết Âm Dương cho rằng cơ thể người là một nhà máy hữu cơ.",
+      "Học thuyết Âm Dương cho rằng cơ thể người là một chỉnh thể phức hợp.",
+      "Học thuyết Âm Dương cho rằng cơ thể người là một nhà máy phức hợp."
+    ],
+    "a": 0,
+    "explain": "Đáp án đúng: Học thuyết Âm Dương cho rằng cơ thể người là một chỉnh thể hữu cơ.",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
+    "category": "Đề 170 · Học thuyết Âm Dương"
+  },
+  {
     "q": "Câu 85: 人体的一切组织结构可以分为相互对应的阴、阳两部分。",
     "o": [
       "Toàn bộ cấu trúc tổ chức của cơ thể người có thể chia thành hai bộ phận Âm và Dương tiêu trưởng với nhau.",
@@ -936,6 +1117,19 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 2,
     "explain": "Đáp án đúng: Về các bộ vị cơ thể, phần trên thuộc Dương, phần dưới thuộc Âm.",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
+    "category": "Đề 170 · Học thuyết Âm Dương"
+  },
+  {
+    "q": "Câu 87: 体表属阳，体内属阴。",
+    "o": [
+      "Bên trên cơ thể thuộc Dương, bên dưới cơ thể thuộc Âm.",
+      "Bên ngoài cơ thể thuộc Dương, bên trong cơ thể thuộc Âm.",
+      "Bên trong biểu phận thuộc Dương, bên ngoài lý phận thuộc Âm.",
+      "Bên ngoài vệ phận thuộc Dương, bên trong huyết thuộc Âm."
+    ],
+    "a": 1,
+    "explain": "Đáp án đúng: Bên ngoài cơ thể thuộc Dương, bên trong cơ thể thuộc Âm.",
     "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
@@ -1070,6 +1264,19 @@ export const cau170Quiz: Q[] = [
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
+    "q": "Câu 98: 脏腑是____的总称。",
+    "o": [
+      "内脏",
+      "形体",
+      "经络",
+      "神经"
+    ],
+    "a": 0,
+    "explain": "Đáp án đúng: 内脏",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
+    "category": "Đề 170 · Tạng phủ, Tam tiêu"
+  },
+  {
     "q": "Câu 99: 脏腑包括五脏、六腑和____三类。",
     "o": [
       "奇恒之腑",
@@ -1079,6 +1286,19 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: 奇恒之腑",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
+    "category": "Đề 170 · Tạng phủ, Tam tiêu"
+  },
+  {
+    "q": "Câu 100: 五脏就是心、肝、脾、肺、____。",
+    "o": [
+      "胃",
+      "胆",
+      "经",
+      "肾"
+    ],
+    "a": 3,
+    "explain": "Đáp án đúng: 肾",
     "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Tạng phủ, Tam tiêu"
   },
@@ -1096,7 +1316,7 @@ export const cau170Quiz: Q[] = [
     "category": "Đề 170 · Tạng phủ, Tam tiêu"
   },
   {
-    "q": "Câu 102: 五脏有生化和储藏精、气、血、____功能。",
+    "q": "Câu 102: 五脏有生化和储藏精、气、血、____功能。 (*)",
     "o": [
       "神志",
       "津液",
@@ -1105,6 +1325,19 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: 津液",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
+    "category": "Đề 170 · Tạng phủ, Tam tiêu"
+  },
+  {
+    "q": "Câu 103: 六腑指胆、胃、小肠、大肠、三焦、____。",
+    "o": [
+      "津液",
+      "膀胱",
+      "经脉",
+      "器官"
+    ],
+    "a": 1,
+    "explain": "Đáp án đúng: 膀胱",
     "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Tạng phủ, Tam tiêu"
   },
@@ -1148,7 +1381,7 @@ export const cau170Quiz: Q[] = [
     "category": "Đề 170 · Tạng phủ, Tam tiêu"
   },
   {
-    "q": "Câu 107: 奇恒之腑的形体类似____，作用类似脏。",
+    "q": "Câu 107: 奇恒之腑的形体类似____，作用类似脏。 (*)",
     "o": [
       "腑",
       "脏",
@@ -1265,6 +1498,19 @@ export const cau170Quiz: Q[] = [
     "category": "Đề 170 · Tạng phủ, Tam tiêu"
   },
   {
+    "q": "Câu 116: 横膈以下到脐为____。",
+    "o": [
+      "中焦",
+      "上焦",
+      "下焦",
+      "三焦"
+    ],
+    "a": 0,
+    "explain": "Đáp án đúng: 中焦",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
+    "category": "Đề 170 · Tạng phủ, Tam tiêu"
+  },
+  {
     "q": "Câu 117: 脐以下为____。",
     "o": [
       "上焦",
@@ -1343,6 +1589,19 @@ export const cau170Quiz: Q[] = [
     "category": "Đề 170 · Tạng phủ, Tam tiêu"
   },
   {
+    "q": "Câu 123: 五脏，就是心、肝、脾、肺、肾。",
+    "o": [
+      "Ngũ tạng gồm Tâm, Can, Tỳ, Phế và Đởm",
+      "Ngũ thể gồm Mạch, Cân, Cơ nhục, Bì mao và cốt tủy",
+      "Ngũ quan gồm Thiệt, Nhãn, Khẩu, Tỵ và Nhĩ",
+      "Ngũ tạng gồm Tâm, Can, Tỳ, Phế và Thận."
+    ],
+    "a": 3,
+    "explain": "Đáp án đúng: Ngũ tạng gồm Tâm, Can, Tỳ, Phế và Thận.",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
+    "category": "Đề 170 · Tạng phủ, Tam tiêu"
+  },
+  {
     "q": "Câu 124: 心主血脉。",
     "o": [
       "Tâm chủ thần minh.",
@@ -1382,6 +1641,45 @@ export const cau170Quiz: Q[] = [
     "category": "Đề 170 · Tạng phủ, Tam tiêu"
   },
   {
+    "q": "Câu 127: 中国古代哲学认为，____是构成世界的最基本的物质。",
+    "o": [
+      "血",
+      "气",
+      "精",
+      "津"
+    ],
+    "a": 1,
+    "explain": "Đáp án đúng: 气",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
+    "category": "Đề 170 · Khí, huyết, tân dịch"
+  },
+  {
+    "q": "Câu 128: 宇宙中的一切事物，都是由气的____变化产生的。",
+    "o": [
+      "储藏",
+      "输布",
+      "运动",
+      "治疗"
+    ],
+    "a": 2,
+    "explain": "Đáp án đúng: 运动",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
+    "category": "Đề 170 · Khí, huyết, tân dịch"
+  },
+  {
+    "q": "Câu 129: 元气通过____分布全身。",
+    "o": [
+      "胃",
+      "肺",
+      "三焦",
+      "脾"
+    ],
+    "a": 2,
+    "explain": "Đáp án đúng: 三焦",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
+    "category": "Đề 170 · Khí, huyết, tân dịch"
+  },
+  {
     "q": "Câu 130: 元气可以推动____等一切组织器官的活动。",
     "o": [
       "血液",
@@ -1404,6 +1702,19 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: 原动力",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
+    "category": "Đề 170 · Khí, huyết, tân dịch"
+  },
+  {
+    "q": "Câu 132: 宗气的功能是推动肺的____和心血的运行。",
+    "o": [
+      "呼吸",
+      "消化",
+      "储藏",
+      "排泄"
+    ],
+    "a": 0,
+    "explain": "Đáp án đúng: 呼吸",
     "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Khí, huyết, tân dịch"
   },
@@ -1460,7 +1771,7 @@ export const cau170Quiz: Q[] = [
     "category": "Đề 170 · Khí, huyết, tân dịch"
   },
   {
-    "q": "Câu 137: 卫气还可以温煦____，润泽皮肤，调节体温。",
+    "q": "Câu 137: 卫气还可以温煦____，润泽皮肤，调节体温。 (*)",
     "o": [
       "骨髓",
       "血脉",
@@ -1547,6 +1858,19 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 3,
     "explain": "Đáp án đúng: Nguyên khí thông qua Tam tiêu phân bố khắp toàn thân, thúc đẩy hoạt động của tạng phủ và mọi tổ chức cơ quan.",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
+    "category": "Đề 170 · Khí, huyết, tân dịch"
+  },
+  {
+    "q": "Câu 144: 宗气的功能是推动肺的呼吸和心血的运行。",
+    "o": [
+      "Nguyên khí có chức năng thúc đẩy hô hấp của Phế và sự vận hành của Tâm huyết.",
+      "Vệ khí có chức năng thúc đẩy hô hấp của Phế và sự vận hành của Tâm huyết.",
+      "Tạng khí có chức năng thúc đẩy hô hấp của Phế và sự vận hành của Tâm huyết.",
+      "Tông khí có chức năng thúc đẩy hô hấp của Phế và sự vận hành của Tâm huyết."
+    ],
+    "a": 3,
+    "explain": "Đáp án đúng: Tông khí có chức năng thúc đẩy hô hấp của Phế và sự vận hành của Tâm huyết.",
     "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Khí, huyết, tân dịch"
   },
@@ -1772,6 +2096,19 @@ export const cau170Quiz: Q[] = [
     "category": "Đề 170 · Ngũ hành, Lục dâm"
   },
   {
+    "q": "Câu 162: ____是风、寒、暑、湿、燥、火六种病邪的合称。",
+    "o": [
+      "六经",
+      "六腑",
+      "六气",
+      "六淫"
+    ],
+    "a": 3,
+    "explain": "Đáp án đúng: 六淫",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
+    "category": "Đề 170 · Ngũ hành, Lục dâm"
+  },
+  {
     "q": "Câu 163: 风、寒、暑、湿、燥、火在正常的情况下称为____，是自然界六种不同的气候变化。",
     "o": [
       "六经",
@@ -1785,7 +2122,7 @@ export const cau170Quiz: Q[] = [
     "category": "Đề 170 · Ngũ hành, Lục dâm"
   },
   {
-    "q": "Câu 164: 只有气候变化异常或人体的____下降时，六气才能成为致病因素，侵犯人体，发生疾病。",
+    "q": "Câu 164: 只有气候变化异常或人体的____下降时，六气才能成为致病因素，侵犯人体，发生疾病。 (*)",
     "o": [
       "正气",
       "气血",
@@ -1833,6 +2170,19 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: 暑病",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
+    "category": "Đề 170 · Ngũ hành, Lục dâm"
+  },
+  {
+    "q": "Câu 168: 夏末和秋初（长夏）或长住湿地多____",
+    "o": [
+      "风病",
+      "暑病",
+      "湿病",
+      "燥病"
+    ],
+    "a": 2,
+    "explain": "Đáp án đúng: 湿病",
     "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Ngũ hành, Lục dâm"
   },
