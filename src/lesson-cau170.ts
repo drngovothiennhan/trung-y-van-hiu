@@ -1,6 +1,6 @@
 // Đề 170 câu Trung văn YHCT (file 170_cau_Trung_van_YHCT_dap_an.docx, trích video 21/11/2026).
-// Lấy 143 câu chưa có trong app (27 câu trùng nội dung đã giữ nguyên). Đáp án là phương án tô đỏ trong file; file ghi "đáp án do Claude giải",
-// nên mọi câu ghi nguồn chờ thầy đối chiếu. Sinh tự động, không sửa tay.
+// Lấy 143 câu chưa có trong app (27 câu trùng nội dung đã giữ nguyên). Đáp án là phương án tô đỏ trong file.
+// Sinh tự động, không sửa tay.
 import type { Q } from "./lesson-on-thi-thay-viet";
 export const cau170Quiz: Q[] = [
   {
@@ -13,7 +13,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 3,
     "explain": "Đáp án đúng: 人参的主要功效是补气强身。",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Vị thuốc: công dụng và trường hợp dùng"
   },
   {
@@ -26,7 +26,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 2,
     "explain": "Đáp án đúng: 体虚、疲劳",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Vị thuốc: công dụng và trường hợp dùng"
   },
   {
@@ -39,7 +39,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: 当归的主要功效是补血调经。",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Vị thuốc: công dụng và trường hợp dùng"
   },
   {
@@ -52,7 +52,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: 女性患者",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Vị thuốc: công dụng và trường hợp dùng"
   },
   {
@@ -65,7 +65,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: 川芎的主要功效是活血行气。",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Vị thuốc: công dụng và trường hợp dùng"
   },
   {
@@ -78,7 +78,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 2,
     "explain": "Đáp án đúng: 头痛",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Vị thuốc: công dụng và trường hợp dùng"
   },
   {
@@ -91,7 +91,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 3,
     "explain": "Đáp án đúng: 黄芪可以增强免疫力。",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Vị thuốc: công dụng và trường hợp dùng"
   },
   {
@@ -104,7 +104,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: 体质虚弱",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Vị thuốc: công dụng và trường hợp dùng"
   },
   {
@@ -117,7 +117,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: 白芍的主要功效是养血、补肝、止痛。",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Vị thuốc: công dụng và trường hợp dùng"
   },
   {
@@ -130,7 +130,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: 调和肝脾",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Vị thuốc: công dụng và trường hợp dùng"
   },
   {
@@ -143,7 +143,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 3,
     "explain": "Đáp án đúng: 白芷的主要功效是解表、祛风、止痛。",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Vị thuốc: công dụng và trường hợp dùng"
   },
   {
@@ -156,7 +156,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 2,
     "explain": "Đáp án đúng: 感冒头痛",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Vị thuốc: công dụng và trường hợp dùng"
   },
   {
@@ -169,7 +169,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: 黄连的主要功效是清热、解毒、止泻。",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Vị thuốc: công dụng và trường hợp dùng"
   },
   {
@@ -182,7 +182,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 3,
     "explain": "Đáp án đúng: 清热解毒",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Vị thuốc: công dụng và trường hợp dùng"
   },
   {
@@ -195,7 +195,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: 黄芩的主要功效是清热、燥湿、止咳。",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Vị thuốc: công dụng và trường hợp dùng"
   },
   {
@@ -208,7 +208,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 3,
     "explain": "Đáp án đúng: 肺热咳嗽、湿热泻痢",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Vị thuốc: công dụng và trường hợp dùng"
   },
   {
@@ -221,7 +221,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 3,
     "explain": "Đáp án đúng: 何首乌的主要功效是补肝肾、补血、乌发。",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Vị thuốc: công dụng và trường hợp dùng"
   },
   {
@@ -234,7 +234,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: 补肾养血、延缓衰老",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Vị thuốc: công dụng và trường hợp dùng"
   },
   {
@@ -247,7 +247,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: 杜仲的主要功效是补肝肾、强筋骨、安胎。",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Vị thuốc: công dụng và trường hợp dùng"
   },
   {
@@ -260,7 +260,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 3,
     "explain": "Đáp án đúng: 腰膝酸软",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Vị thuốc: công dụng và trường hợp dùng"
   },
   {
@@ -273,7 +273,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 3,
     "explain": "Đáp án đúng: 射干的主要功效是清热、解毒、消痰。",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Vị thuốc: công dụng và trường hợp dùng"
   },
   {
@@ -286,7 +286,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: 咽喉肿痛",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Vị thuốc: công dụng và trường hợp dùng"
   },
   {
@@ -299,7 +299,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: 枸杞子的主要功效是补肝肾、养血、明目。",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Vị thuốc: công dụng và trường hợp dùng"
   },
   {
@@ -312,7 +312,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 2,
     "explain": "Đáp án đúng: 补肝肾、明目益精。",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Vị thuốc: công dụng và trường hợp dùng"
   },
   {
@@ -325,7 +325,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: 鸡血藤的主要功效是补血、活血、舒筋。",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Vị thuốc: công dụng và trường hợp dùng"
   },
   {
@@ -338,7 +338,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: 血虚体弱",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Vị thuốc: công dụng và trường hợp dùng"
   },
   {
@@ -351,7 +351,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 3,
     "explain": "Đáp án đúng: 牛膝的主要功效是活血、利尿、舒筋。",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Vị thuốc: công dụng và trường hợp dùng"
   },
   {
@@ -364,7 +364,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: 关节疼痛",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Vị thuốc: công dụng và trường hợp dùng"
   },
   {
@@ -377,7 +377,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: Nhân sâm có tác dụng bổ khí, tăng cường sức khỏe, phù hợp với người suy nhược, mệt mỏi.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Dịch câu về dược liệu"
   },
   {
@@ -390,7 +390,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: Bạch chỉ có tác dụng giải biểu, thường dùng trong cảm mạo đau đầu.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Dịch câu về dược liệu"
   },
   {
@@ -403,7 +403,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 3,
     "explain": "Đáp án đúng: Hoàng liên có thể thanh nhiệt giải độc, thích hợp cho các bệnh do nhiệt độc gây ra.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Dịch câu về dược liệu"
   },
   {
@@ -416,7 +416,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 2,
     "explain": "Đáp án đúng: Hoàng cầm thường được sử dụng để điều trị ho do phế nhiệt và tiêu chảy do thấp nhiệt.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Dịch câu về dược liệu"
   },
   {
@@ -429,7 +429,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: Hà thủ ô giúp bổ thận dưỡng huyết, làm chậm quá trình lão hóa.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Dịch câu về dược liệu"
   },
   {
@@ -442,7 +442,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: Đỗ trọng có tác dụng mạnh gân cốt, thường được sử dụng cho các trường hợp đau lưng, đầu gối yếu.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Dịch câu về dược liệu"
   },
   {
@@ -455,7 +455,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 3,
     "explain": "Đáp án đúng: Xạ can có tác dụng thanh nhiệt giải độc, phù hợp với các trường hợp viêm họng sưng đau.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Dịch câu về dược liệu"
   },
   {
@@ -468,7 +468,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 2,
     "explain": "Đáp án đúng: Câu kỷ tử thường được sử dụng để bổ can thận, sáng mắt, ích tinh.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Dịch câu về dược liệu"
   },
   {
@@ -481,7 +481,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: Kê huyết đằng giúp hoạt huyết thư cân, thường dùng cho huyết hư, thể trạng yếu.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Dịch câu về dược liệu"
   },
   {
@@ -494,7 +494,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: Ngưu tất có tác dụng lợi tiểu hoạt huyết, thường dùng cho đau khớp.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Dịch câu về dược liệu"
   },
   {
@@ -507,7 +507,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 2,
     "explain": "Đáp án đúng: Dược liệu tính hàn dùng để thanh nhiệt giải độc, như Hoàng liên.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Dịch câu về dược liệu"
   },
   {
@@ -520,7 +520,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 3,
     "explain": "Đáp án đúng: Dược liệu tính ôn được dùng để bổ khí dưỡng huyết, như Nhân sâm.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Dịch câu về dược liệu"
   },
   {
@@ -533,7 +533,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: Hoàng kỳ có thể sao trước khi dùng để tăng cường hiệu quả bổ khí.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Dịch câu về dược liệu"
   },
   {
@@ -546,7 +546,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 2,
     "explain": "Đáp án đúng: Nhiều loại thuốc Đông y cần được sắc lên trước khi dùng để đạt hiệu quả tối đa.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Dịch câu về dược liệu"
   },
   {
@@ -559,7 +559,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: 人参，白术，茯苓，甘草",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Bài thuốc"
   },
   {
@@ -572,7 +572,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: 川芎，熟地，当归，白芍",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Bài thuốc"
   },
   {
@@ -585,7 +585,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: 阴",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -598,7 +598,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 2,
     "explain": "Đáp án đúng: 黑夜",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -611,7 +611,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 3,
     "explain": "Đáp án đúng: 转化",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -624,7 +624,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: 结构",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -637,7 +637,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: 上",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -650,7 +650,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 2,
     "explain": "Đáp án đúng: 体内",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -663,7 +663,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: 阳",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -676,7 +676,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: 阳",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -689,7 +689,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: 阴",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -702,7 +702,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: 协调",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -715,7 +715,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 3,
     "explain": "Đáp án đúng: 平衡",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -728,7 +728,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 2,
     "explain": "Đáp án đúng: 衰",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -741,7 +741,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: 阴阳",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -754,7 +754,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: 分辨",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -767,7 +767,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 2,
     "explain": "Đáp án đúng: 平衡",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -780,7 +780,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: 阴",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -793,7 +793,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: 阳",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -806,7 +806,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: 阴",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -819,7 +819,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: 五脏",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -832,7 +832,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 3,
     "explain": "Đáp án đúng: 阴",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -845,7 +845,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 2,
     "explain": "Đáp án đúng: 协调",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -858,7 +858,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 2,
     "explain": "Đáp án đúng: 消长",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -871,7 +871,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 2,
     "explain": "Đáp án đúng: 结果",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -884,7 +884,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: Tất cả sự vật trong giới tự nhiên đều bao hàm hai phương diện Âm và Dương đối lập lẫn nhau.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -897,7 +897,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 2,
     "explain": "Đáp án đúng: Hai phương diện Âm và Dương của sự vật vừa đối lập, vừa nương tựa và tiêu trưởng lẫn nhau.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -910,7 +910,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: Trong những điều kiện nhất định, Âm Dương còn có thể chuyển hóa lẫn nhau.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -923,7 +923,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 3,
     "explain": "Đáp án đúng: Toàn bộ cấu trúc tổ chức của cơ thể người có thể chia thành hai bộ phận Âm và Dương tương ứng với nhau.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -936,7 +936,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 2,
     "explain": "Đáp án đúng: Về các bộ vị cơ thể, phần trên thuộc Dương, phần dưới thuộc Âm.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -949,7 +949,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 3,
     "explain": "Đáp án đúng: Ở phần ngoài cơ thể vùng lưng thuộc Dương, vùng bụng thuộc Âm.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -962,7 +962,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: Về tạng phủ bên trong cơ thể, Lục phủ thuộc Dương, Ngũ tạng thuộc Âm.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -975,7 +975,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: Trong Ngũ tạng, Tâm và Phế thuộc Dương, Can, Tỳ và Thận thuộc Âm.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -988,7 +988,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: Hoạt động sinh lý bình thường của cơ thể là kết quả của mối quan hệ điều hòa, đối lập thống nhất giữa hai phương diện Âm Dương.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -1001,7 +1001,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 2,
     "explain": "Đáp án đúng: Về chẩn đoán và điều trị bệnh, trước hết đều phải phân biệt Âm Dương.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -1014,7 +1014,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 3,
     "explain": "Đáp án đúng: Đối lập lẫn nhau.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -1027,7 +1027,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: Nương tựa vào nhau để tồn tại.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -1040,7 +1040,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: Tiêu trưởng lẫn nhau.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -1053,7 +1053,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: Âm dương thất điều",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -1066,7 +1066,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: Thiên thịnh thiên suy.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Học thuyết Âm Dương"
   },
   {
@@ -1079,7 +1079,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: 奇恒之腑",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Tạng phủ, Tam tiêu"
   },
   {
@@ -1092,11 +1092,11 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 3,
     "explain": "Đáp án đúng: 充实",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Tạng phủ, Tam tiêu"
   },
   {
-    "q": "Câu 102: 五脏有生化和储藏精、气、血、____功能。 (*)",
+    "q": "Câu 102: 五脏有生化和储藏精、气、血、____功能。",
     "o": [
       "神志",
       "津液",
@@ -1104,8 +1104,8 @@ export const cau170Quiz: Q[] = [
       "水谷"
     ],
     "a": 1,
-    "explain": "Đáp án đúng: 津液 (Câu này trong file có dấu (*): đối chiếu với đáp án của thầy.)",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "explain": "Đáp án đúng: 津液",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Tạng phủ, Tam tiêu"
   },
   {
@@ -1118,7 +1118,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 2,
     "explain": "Đáp án đúng: 中空",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Tạng phủ, Tam tiêu"
   },
   {
@@ -1131,7 +1131,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 2,
     "explain": "Đáp án đúng: 传化",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Tạng phủ, Tam tiêu"
   },
   {
@@ -1144,11 +1144,11 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: 女子胞",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Tạng phủ, Tam tiêu"
   },
   {
-    "q": "Câu 107: 奇恒之腑的形体类似____，作用类似脏。 (*)",
+    "q": "Câu 107: 奇恒之腑的形体类似____，作用类似脏。",
     "o": [
       "腑",
       "脏",
@@ -1156,8 +1156,8 @@ export const cau170Quiz: Q[] = [
       "脉"
     ],
     "a": 0,
-    "explain": "Đáp án đúng: 腑 (Câu này trong file có dấu (*): đối chiếu với đáp án của thầy.)",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "explain": "Đáp án đúng: 腑",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Tạng phủ, Tam tiêu"
   },
   {
@@ -1170,7 +1170,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 3,
     "explain": "Đáp án đúng: 管道",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Tạng phủ, Tam tiêu"
   },
   {
@@ -1183,7 +1183,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 3,
     "explain": "Đáp án đúng: 运行",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Tạng phủ, Tam tiêu"
   },
   {
@@ -1196,7 +1196,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: 神志",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Tạng phủ, Tam tiêu"
   },
   {
@@ -1209,7 +1209,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 2,
     "explain": "Đáp án đúng: 思维",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Tạng phủ, Tam tiêu"
   },
   {
@@ -1222,7 +1222,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 2,
     "explain": "Đáp án đúng: 神经",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Tạng phủ, Tam tiêu"
   },
   {
@@ -1235,7 +1235,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: 专有",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Tạng phủ, Tam tiêu"
   },
   {
@@ -1248,7 +1248,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: 下焦",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Tạng phủ, Tam tiêu"
   },
   {
@@ -1261,7 +1261,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: 上焦",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Tạng phủ, Tam tiêu"
   },
   {
@@ -1274,7 +1274,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: 下焦",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Tạng phủ, Tam tiêu"
   },
   {
@@ -1287,7 +1287,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: 心、肺",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Tạng phủ, Tam tiêu"
   },
   {
@@ -1300,7 +1300,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: 脾、胃",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Tạng phủ, Tam tiêu"
   },
   {
@@ -1313,7 +1313,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 2,
     "explain": "Đáp án đúng: 膀胱",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Tạng phủ, Tam tiêu"
   },
   {
@@ -1326,7 +1326,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 2,
     "explain": "Đáp án đúng: 胆",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Tạng phủ, Tam tiêu"
   },
   {
@@ -1339,7 +1339,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 3,
     "explain": "Đáp án đúng: Tạng phủ là tên gọi chung của các nội tạng, bao gồm ba loại: Ngũ tạng, Lục phủ và Kỳ hằng chi phủ.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Tạng phủ, Tam tiêu"
   },
   {
@@ -1352,7 +1352,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: Tâm chủ huyết mạch.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Tạng phủ, Tam tiêu"
   },
   {
@@ -1365,7 +1365,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: Tâm tàng thần",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Tạng phủ, Tam tiêu"
   },
   {
@@ -1378,7 +1378,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: Dưới rốn là Hạ tiêu, bao gồm Can, Thận, Đại trường, Tiểu trường và Bàng quang.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Tạng phủ, Tam tiêu"
   },
   {
@@ -1391,7 +1391,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: 脏腑",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Khí, huyết, tân dịch"
   },
   {
@@ -1404,7 +1404,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: 原动力",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Khí, huyết, tân dịch"
   },
   {
@@ -1417,7 +1417,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: 呼吸",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Khí, huyết, tân dịch"
   },
   {
@@ -1430,7 +1430,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: 血液",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Khí, huyết, tân dịch"
   },
   {
@@ -1443,7 +1443,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: 营养",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Khí, huyết, tân dịch"
   },
   {
@@ -1456,11 +1456,11 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: 肌表",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Khí, huyết, tân dịch"
   },
   {
-    "q": "Câu 137: 卫气还可以温煦____，润泽皮肤，调节体温。 (*)",
+    "q": "Câu 137: 卫气还可以温煦____，润泽皮肤，调节体温。",
     "o": [
       "骨髓",
       "血脉",
@@ -1468,8 +1468,8 @@ export const cau170Quiz: Q[] = [
       "脏腑"
     ],
     "a": 3,
-    "explain": "Đáp án đúng: 脏腑 (Câu này trong file có dấu (*): đối chiếu với đáp án của thầy.)",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "explain": "Đáp án đúng: 脏腑",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Khí, huyết, tân dịch"
   },
   {
@@ -1482,7 +1482,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 3,
     "explain": "Đáp án đúng: 水谷精微",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Khí, huyết, tân dịch"
   },
   {
@@ -1495,7 +1495,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 2,
     "explain": "Đáp án đúng: 血液",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Khí, huyết, tân dịch"
   },
   {
@@ -1508,7 +1508,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 2,
     "explain": "Đáp án đúng: 水液",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Khí, huyết, tân dịch"
   },
   {
@@ -1521,7 +1521,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: Triết học cổ đại Trung Quốc cho rằng, khí là vật chất cơ bản nhất cấu tạo nên thế giới.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Khí, huyết, tân dịch"
   },
   {
@@ -1534,7 +1534,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: Mọi sự vật trong vũ trụ đều do sự vận động biến hóa của khí sinh ra.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Khí, huyết, tân dịch"
   },
   {
@@ -1547,7 +1547,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 3,
     "explain": "Đáp án đúng: Nguyên khí thông qua Tam tiêu phân bố khắp toàn thân, thúc đẩy hoạt động của tạng phủ và mọi tổ chức cơ quan.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Khí, huyết, tân dịch"
   },
   {
@@ -1560,7 +1560,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: Dinh khí trở thành một bộ phận của huyết dịch, vận hành khắp toàn thân và phát huy tác dụng dinh dưỡng.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Khí, huyết, tân dịch"
   },
   {
@@ -1573,7 +1573,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: Vệ khí có tác dụng bảo vệ cơ biểu, chống lại tà khí bên ngoài xâm nhập.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Khí, huyết, tân dịch"
   },
   {
@@ -1586,7 +1586,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 2,
     "explain": "Đáp án đúng: Dinh khí, tinh và tủy cũng là cơ sở vật chất để sinh ra huyết.",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Khí, huyết, tân dịch"
   },
   {
@@ -1599,7 +1599,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 3,
     "explain": "Đáp án đúng: 金",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Ngũ hành, Lục dâm"
   },
   {
@@ -1612,7 +1612,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 3,
     "explain": "Đáp án đúng: 土",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Ngũ hành, Lục dâm"
   },
   {
@@ -1625,7 +1625,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: 金",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Ngũ hành, Lục dâm"
   },
   {
@@ -1638,7 +1638,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: 水",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Ngũ hành, Lục dâm"
   },
   {
@@ -1651,7 +1651,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: 木",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Ngũ hành, Lục dâm"
   },
   {
@@ -1664,7 +1664,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 2,
     "explain": "Đáp án đúng: 火",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Ngũ hành, Lục dâm"
   },
   {
@@ -1677,7 +1677,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 3,
     "explain": "Đáp án đúng: 肝",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Ngũ hành, Lục dâm"
   },
   {
@@ -1690,7 +1690,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: 脉",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Ngũ hành, Lục dâm"
   },
   {
@@ -1703,7 +1703,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 2,
     "explain": "Đáp án đúng: 脾",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Ngũ hành, Lục dâm"
   },
   {
@@ -1716,7 +1716,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 2,
     "explain": "Đáp án đúng: 肺",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Ngũ hành, Lục dâm"
   },
   {
@@ -1729,7 +1729,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 3,
     "explain": "Đáp án đúng: 肾",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Ngũ hành, Lục dâm"
   },
   {
@@ -1742,7 +1742,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: 相生",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Ngũ hành, Lục dâm"
   },
   {
@@ -1755,7 +1755,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: 相生",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Ngũ hành, Lục dâm"
   },
   {
@@ -1768,7 +1768,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: 相克",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Ngũ hành, Lục dâm"
   },
   {
@@ -1781,11 +1781,11 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 2,
     "explain": "Đáp án đúng: 六气",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Ngũ hành, Lục dâm"
   },
   {
-    "q": "Câu 164: 只有气候变化异常或人体的____下降时，六气才能成为致病因素，侵犯人体，发生疾病。 (*)",
+    "q": "Câu 164: 只有气候变化异常或人体的____下降时，六气才能成为致病因素，侵犯人体，发生疾病。",
     "o": [
       "正气",
       "气血",
@@ -1793,8 +1793,8 @@ export const cau170Quiz: Q[] = [
       "脏腑功能"
     ],
     "a": 2,
-    "explain": "Đáp án đúng: 抵抗力 (Câu này trong file có dấu (*): đối chiếu với đáp án của thầy.)",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "explain": "Đáp án đúng: 抵抗力",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Ngũ hành, Lục dâm"
   },
   {
@@ -1807,7 +1807,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: 六邪",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Ngũ hành, Lục dâm"
   },
   {
@@ -1820,7 +1820,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 0,
     "explain": "Đáp án đúng: 风病",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Ngũ hành, Lục dâm"
   },
   {
@@ -1833,7 +1833,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 1,
     "explain": "Đáp án đúng: 暑病",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Ngũ hành, Lục dâm"
   },
   {
@@ -1846,7 +1846,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 3,
     "explain": "Đáp án đúng: 燥病",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Ngũ hành, Lục dâm"
   },
   {
@@ -1859,7 +1859,7 @@ export const cau170Quiz: Q[] = [
     ],
     "a": 3,
     "explain": "Đáp án đúng: 寒病",
-    "source": "Đề 170 câu Trung văn YHCT (21/11/2026) · đáp án do Claude giải, chờ thầy đối chiếu",
+    "source": "Đề 170 câu Trung văn YHCT (21/11/2026)",
     "category": "Đề 170 · Ngũ hành, Lục dâm"
   }
 ];
