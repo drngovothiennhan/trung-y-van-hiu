@@ -20,6 +20,7 @@ import { tangPhuSlidePages, tangPhuSlideTerms, tangPhuSlideQuiz, tangPhuSlideRea
 import { onThiSource, onThiQuiz } from './lesson-on-thi-thay-viet';
 import { trongTamSource, trongTamTerms } from './lesson-trong-tam';
 import { lessonLucDamSource, lessonLucDamQuiz } from './lesson-luc-dam-that-tinh';
+import { cau170Quiz } from './lesson-cau170';
 import { analyzeTerms, rankTerms, priorityBoost } from './priority';
 import { buildRoadmapSource } from './roadmap';
 import { emptyLearner, normalizeLearner, recordAnswer, pickMode, insights, learnerSummary, MIN_EVENTS } from './learner-profile';
@@ -588,7 +589,7 @@ const sources = [
 ];
 const coreQuizBank = [...baseQuizBank, ...lesson2Quiz, ...lesson3Quiz, ...remainingQuiz, ...herbsFormulasQuiz, ...lessonAmDuongQuiz, ...nguHanhSlideQuiz, ...tangPhuSlideQuiz, ...lessonLucDamQuiz];
 const quizBank = [...coreQuizBank, ...pathologyQuiz, ...bookOriginalQuiz];
-const onThiBank = onThiQuiz;
+const onThiBank = [...onThiQuiz, ...cau170Quiz];
 const readingBank = [...readings.map(r => ({...r, topic:'Lâm sàng', source:'Cách diễn đạt YHCT', words:[]})), ...readingDrills, ...herbsFormulasReadings, ...lessonAmDuongReadings, ...nguHanhSlideReadings, ...tangPhuSlideReadings];
 
 function shuffleArray(items) {
