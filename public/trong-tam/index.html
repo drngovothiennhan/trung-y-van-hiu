@@ -237,7 +237,13 @@ let deferredInstall=null;
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredInstall=e;$("#installBtn").hidden=false});
 $("#installBtn").addEventListener("click",async()=>{if(!deferredInstall)return;deferredInstall.prompt();try{await deferredInstall.userChoice}catch(e){}deferredInstall=null;$("#installBtn").hidden=true});
 
-function render(){drawTabs();const u=S.unit&&S.units.find(x=>x.id===S.unit);
+/* Nhớ màn đang mở trên máy này (tab, bài, tab con) để tải lại trang không quay về đầu. Chỉ là tiện ích cục bộ, không đồng bộ. */
+const NAV_KEY="tvyhct-nav";
+function loadNav(){try{const n=JSON.parse(localStorage.getItem(NAV_KEY)||"null");if(!n)return;if(["today","focus","cards","learn","find"].includes(n.tab))S.tab=n.tab;if(["vocab","text","gram","ex","outline"].includes(n.sub))S.sub=n.sub;if(typeof n.unit==="string")S.pendingUnit=n.unit}catch(e){}}
+function saveNav(){try{localStorage.setItem(NAV_KEY,JSON.stringify({tab:S.tab,unit:S.unit,sub:S.sub}))}catch(e){}}
+function render(){drawTabs();
+  if(S.pendingUnit&&S.loaded){const f=S.units.find(x=>x.id===S.pendingUnit);if(f&&S.tab==="learn")S.unit=f.id;S.pendingUnit=null}
+  saveNav();const u=S.unit&&S.units.find(x=>x.id===S.unit);
   $("#backBtn").hidden=!(S.tab==="learn"&&u);
   $("#editBtn").hidden=!S.canEdit;
   $("#editBtn").setAttribute("aria-pressed",String(S.tab==="edit"));
@@ -513,7 +519,7 @@ async function put(id,body){try{await S.db.doc("units/"+id).set(body);return tru
 /* ---------- khởi động ---------- */
 window.TVAPI={S,render,saveProg,esc,shuffle,toast,allVocab,isDue,cardState};
 S.units=mergeUnits([]);
-loadLocal();render();
+loadLocal();loadNav();render();
 const C=window.claude;
 const fallback=setTimeout(()=>{if(!S.loaded){S.units=mergeUnits(S.units.filter(x=>!x.builtin));S.loaded=true;render()}},12000);
 (async()=>{
