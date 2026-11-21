@@ -19,6 +19,8 @@ import { nguHanhSlidePages, nguHanhSlideTerms, nguHanhSlideQuiz, nguHanhSlideRea
 import { tangPhuSlidePages, tangPhuSlideTerms, tangPhuSlideQuiz, tangPhuSlideReadings } from './lesson-tang-phu-slide';
 import { onThiSource, onThiQuiz } from './lesson-on-thi-thay-viet';
 import { trongTamSource, trongTamTerms } from './lesson-trong-tam';
+import { lessonLucDamSource, lessonLucDamQuiz } from './lesson-luc-dam-that-tinh';
+import { cau170Quiz } from './lesson-cau170';
 import { analyzeTerms, rankTerms, priorityBoost } from './priority';
 import { buildRoadmapSource } from './roadmap';
 import { emptyLearner, normalizeLearner, recordAnswer, pickMode, insights, learnerSummary, MIN_EVENTS } from './learner-profile';
@@ -580,13 +582,14 @@ const sources = [
   nguHanhSlideSource,
   tangPhuSlideSource,
   trongTamSource,
+  lessonLucDamSource,
   onThiSource,
   appendixSource,
   herbsFormulasSource
 ];
-const coreQuizBank = [...baseQuizBank, ...lesson2Quiz, ...lesson3Quiz, ...remainingQuiz, ...herbsFormulasQuiz, ...lessonAmDuongQuiz, ...nguHanhSlideQuiz, ...tangPhuSlideQuiz];
+const coreQuizBank = [...baseQuizBank, ...lesson2Quiz, ...lesson3Quiz, ...remainingQuiz, ...herbsFormulasQuiz, ...lessonAmDuongQuiz, ...nguHanhSlideQuiz, ...tangPhuSlideQuiz, ...lessonLucDamQuiz];
 const quizBank = [...coreQuizBank, ...pathologyQuiz, ...bookOriginalQuiz];
-const onThiBank = onThiQuiz;
+const onThiBank = [...onThiQuiz, ...cau170Quiz];
 const readingBank = [...readings.map(r => ({...r, topic:'Lâm sàng', source:'Cách diễn đạt YHCT', words:[]})), ...readingDrills, ...herbsFormulasReadings, ...lessonAmDuongReadings, ...nguHanhSlideReadings, ...tangPhuSlideReadings];
 
 function shuffleArray(items) {
@@ -1031,7 +1034,8 @@ function lessonsView() {
     ['04', '药材方剂', 'Dược liệu & Phương tễ', '14 dược liệu · phân loại · 4 cách bào chế · 8 phương tễ · cách dùng và lưu ý.', 'herbs-formulas'],
     ['05', '专业教材', 'Giáo trình chuyên ngành', 'Đủ 8 bài học từ Âm Dương đến Sơ lược giải phẫu cơ thể.', 'textbook'],
     ['06', '答案', 'Đáp án & phụ lục', 'Đáp án Bài 1–7, tài liệu tham khảo và thông tin xuất bản.', 'appendix'],
-    ['07', '要点', 'Lý thuyết Ôn Trọng Tâm', '7 chuyên đề: bài khóa kèm pinyin và dịch nghĩa, bảng quy loại, bẫy cô dặn, từ trái nghĩa, đáp án điền khuyết.', 'trong-tam-ly-thuyet']
+    ['07', '要点', 'Lý thuyết Ôn Trọng Tâm', '7 chuyên đề: bài khóa kèm pinyin và dịch nghĩa, bảng quy loại, bẫy cô dặn, từ trái nghĩa, đáp án điền khuyết.', 'trong-tam-ly-thuyet'],
+    ['08', '六淫', 'Lục dâm và Thất tình (slide)', '43 từ vựng · 7 đoạn bài khóa · cấu trúc 不仅……而且/还 · Bài tập 1–2 kèm bản dịch tham khảo.', 'slide-luc-dam-that-tinh']
   ];
   return h('LỘ TRÌNH', 'Bài học theo tài liệu', 'Mỗi cụm mở trực tiếp đúng nguồn đã cung cấp.') +
     '<div class="lesson-list">' + modules.map(x => '<article class="lesson"><b>' + x[0] + '</b><span>' + x[1] + '</span><div><small>NGUỒN HỌC</small><h3>' + x[2] + '</h3><p>' + x[3] + '</p></div><button class="speak source-go" data-source-open="' + x[4] + '">→</button></article>').join('') + '</div>' +

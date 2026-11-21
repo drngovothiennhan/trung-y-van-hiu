@@ -22,7 +22,9 @@ const A=()=>window.TVAPI;
 let _x=null;
 const X=()=>{if(_x)return _x;const e=window.TV_EXTRA||{tips:[],focus:[],units:[]};
   const de=((e.units||[]).find(u=>u.id==="u09")||{mcq:[]}).mcq.filter(m=>m.s).map(m=>({...m,g:"Đề Câu 1–50"}));
-  return (_x={tips:e.tips||[],focus:de.concat(e.focus||[])})};
+  // Ôn Trọng Tâm chỉ gồm: Đề Câu 1–50, Câu 51–150 của đề cương, và 143 câu của đề 170 câu (21/11). Các nhóm khác chỉ còn ở Bài học.
+  const keep=q=>{if(q.g==="Đề 170 câu (21/11)")return true;const m=/^Câu (\d+):/.exec(q.q||"");return !!m&&+m[1]>=51&&+m[1]<=150};
+  return (_x={tips:e.tips||[],focus:de.concat((e.focus||[]).filter(keep))})};
 const bank=()=>{const u=(A().S.units||[]).find(x=>x.id==="bank");return u?(u.mcq||[]).filter(m=>Array.isArray(m.o)&&m.o.length>1).map(m=>({...m,g:m.g||"Bổ sung",s:m.s||"b"})):[]};
 const ALL=()=>X().focus.concat(bank());
 const G=()=>[...new Set(ALL().map(f=>f.g))];
@@ -31,7 +33,7 @@ const F={mode:"learn",g:null,hide:false,seen:{},n:20,quiz:null};
 function why(q){
   if(!q||(!q.e&&!q.t))return "";
   const esc=A().esc;
-  const tg=q.s==="v"?`<span class="tag j">Đã khớp video</span>`:q.s==="d"?`<span class="tag">Theo đề cương HIU, chưa đối chiếu video</span>`:"";
+  const tg=q.s==="v"?`<span class="tag j">Đã khớp video</span>`:q.s==="d"?`<span class="tag">Theo đề cương HIU, chưa đối chiếu video</span>`:q.s==="p"?`<span class="tag j">Theo slide thầy Nhan Hồng Tâm, chưa đối chiếu đề thi</span>`:"";
   return `<div class="why">${tg?`<div>${tg}</div>`:""}${q.f?`<div><b>Lưu ý:</b> ${esc(q.f)}</div>`:""}${q.e?`<div><b>Giải thích:</b> ${esc(q.e)}</div>`:""}${q.t?`<div class="tip"><span class="tag">Mẹo nhớ</span>${esc(q.t)}</div>`:""}</div>`}
 
 function pool(){return ALL().filter(f=>!F.g||f.g===F.g)}
