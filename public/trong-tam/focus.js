@@ -21,10 +21,15 @@ const st=document.createElement("style");st.textContent=css;document.head.append
 const A=()=>window.TVAPI;
 let _x=null;
 const X=()=>{if(_x)return _x;const e=window.TV_EXTRA||{tips:[],focus:[],units:[]};
-  const de=((e.units||[]).find(u=>u.id==="u09")||{mcq:[]}).mcq.filter(m=>m.s).map(m=>({...m,g:"Đề Câu 1–50"}));
-  // Ôn Trọng Tâm chỉ gồm: Đề Câu 1–50, Câu 51–150 của đề cương, và 143 câu của đề 170 câu (21/11). Các nhóm khác chỉ còn ở Bài học.
-  const keep=q=>{if(q.g==="Đề 170 câu (21/11)")return true;const m=/^Câu (\d+):/.exec(q.q||"");return !!m&&+m[1]>=51&&+m[1]<=150};
-  return (_x={tips:e.tips||[],focus:de.concat((e.focus||[]).filter(keep))})};
+  // 150 câu cũ: Đề Câu 1–50 (gán nhóm Dược liệu) và Câu 51–150 của đề cương
+  const de=((e.units||[]).find(u=>u.id==="u09")||{mcq:[]}).mcq.filter(m=>m.s).map(m=>({...m,g:"Dược liệu"}));
+  const isOld=q=>{const m=/^Câu (\d+):/.exec(q.q||"");return !!m&&+m[1]>=51&&+m[1]<=150&&q.m!==1};
+  const old=de.concat((e.focus||[]).filter(isOld));
+  // Ôn Trọng Tâm: 100 câu đã chọn theo nhóm nội dung + 170 câu đề 21/11 bắt buộc
+  const pick=window.TV_PICK||null;
+  const keptOld=pick?pick.map(i=>old[i]).filter(Boolean):old;
+  const fresh=(e.focus||[]).filter(q=>q.m===1);
+  return (_x={tips:e.tips||[],focus:keptOld.concat(fresh)})};
 const bank=()=>{const u=(A().S.units||[]).find(x=>x.id==="bank");return u?(u.mcq||[]).filter(m=>Array.isArray(m.o)&&m.o.length>1).map(m=>({...m,g:m.g||"Bổ sung",s:m.s||"b"})):[]};
 const ALL=()=>X().focus.concat(bank());
 const G=()=>[...new Set(ALL().map(f=>f.g))];
