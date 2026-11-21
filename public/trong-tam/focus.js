@@ -31,7 +31,7 @@ const F={mode:"learn",g:null,hide:false,seen:{},n:20,quiz:null};
 function why(q){
   if(!q||(!q.e&&!q.t))return "";
   const esc=A().esc;
-  const tg=q.s==="v"?`<span class="tag j">Đã khớp video</span>`:q.s==="d"?`<span class="tag">Theo đề cương HIU, chưa đối chiếu video</span>`:"";
+  const tg=q.s==="v"?`<span class="tag j">Đã khớp video</span>`:q.s==="d"?`<span class="tag">Theo đề cương HIU, chưa đối chiếu video</span>`:q.s==="p"?`<span class="tag j">Theo slide thầy Nhan Hồng Tâm, chưa đối chiếu đề thi</span>`:"";
   return `<div class="why">${tg?`<div>${tg}</div>`:""}${q.f?`<div><b>Lưu ý:</b> ${esc(q.f)}</div>`:""}${q.e?`<div><b>Giải thích:</b> ${esc(q.e)}</div>`:""}${q.t?`<div class="tip"><span class="tag">Mẹo nhớ</span>${esc(q.t)}</div>`:""}</div>`}
 
 function pool(){return ALL().filter(f=>!F.g||f.g===F.g)}
