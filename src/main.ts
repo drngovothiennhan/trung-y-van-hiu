@@ -743,7 +743,7 @@ function flushUserStateSync() {
 
 function restoreContext(context, memberCode) {
   if (!validObject(context)) return false;
-  const viewNames = ['home','lessons','vocab','exam','writing','reading','quiz','radicals','chiet-tu','library','progress','admin'];
+  const viewNames = ['home','lessons','vocab','exam','trongtam','writing','reading','quiz','radicals','chiet-tu','library','progress','admin'];
   if (viewNames.includes(context.view)) state.view = context.view;
   if (Number.isInteger(context.card)) state.card = Math.max(0, Math.min(learningTerms.length - 1, context.card));
   if (Number.isInteger(context.vocabPhase)) state.vocabPhase = Math.max(0, Math.min(3, context.vocabPhase));
