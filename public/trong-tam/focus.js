@@ -1,6 +1,7 @@
 /* Tab "Trọng tâm 80/20": mẹo nhớ + trắc nghiệm có giải thích. Dữ liệu: window.TV_EXTRA (focus-data.js). */
 (function(){
 const css=`
+.kw{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px;text-decoration-color:var(--seal);font-weight:600}
 .why{border-left:3px solid var(--jade);background:var(--jade-soft);border-radius:8px;padding:9px 12px;display:flex;flex-direction:column;gap:6px;font-size:14px;line-height:1.5}
 .why .tip{color:var(--seal);font-weight:600}
 .why .tip .tag{margin-right:6px}
@@ -41,6 +42,48 @@ function why(q){
   const tg=q.s==="v"?`<span class="tag j">Đã khớp video</span>`:q.s==="p"?`<span class="tag j">Theo slide thầy Nhan Hồng Tâm, chưa đối chiếu đề thi</span>`:"";
   return `<div class="why">${tg?`<div>${tg}</div>`:""}${q.e?`<div><b>Giải thích:</b> ${esc(q.e)}</div>`:""}${q.t?`<div class="tip"><span class="tag">Mẹo nhớ</span>${esc(q.t)}</div>`:""}</div>`}
 
+
+/* Làm sạch đáp án: bỏ dấu * và phần chú thích tiếng Việt trong ngoặc (giữ nguyên đáp án là câu tiếng Việt). */
+const VIRE=/[ĂăÂâĐđÊêÔôƠơƯưẠ-ỹ]/;
+function cleanOpt(o){return String(o||"").replace(/\*/g,"").replace(/\s*[（(][^（()）]*[）)]/g,m=>VIRE.test(m)?"":m).replace(/\s{2,}/g," ").trim()}
+const STOP=["作用","功效","什么","哪一","哪个","哪味","常用于","适用于","患者","人群","情况","方面","以下","不包括","正确","内容","意思","是什么","哪些","具有","能够","有助于","可以"];
+/* Chọn đúng 1 từ khóa ở câu hỏi và 1 ở đáp án tương ứng. Ưu tiên: chỗ trống (____) ↔ đáp án; từ Hán chung; tên vị thuốc. */
+const HERB=[["人参","Nhân sâm"],["当归","Đương quy"],["川芎","Xuyên khung"],["黄芪","Hoàng kỳ"],["白芍","Bạch thược"],["白芷","Bạch chỉ"],["黄连","Hoàng liên"],["黄芩","Hoàng cầm"],["何首乌","Hà thủ ô"],["杜仲","Đỗ trọng"],["射干","Xạ can"],["枸杞子","Câu kỷ tử"],["鸡血藤","Kê huyết đằng"],["牛膝","Ngưu tất"],["白术","Bạch truật"],["茯苓","Phục linh"],["甘草","Cam thảo"],["熟地","Thục địa"],["附子","Phụ tử"],["肉桂","Nhục quế"]];
+function pickKw(q,a){
+  q=String(q||"");a=String(a||"");
+  const blank=(q.match(/（_+）|\(_+\)|_{2,}/)||[])[0];
+  const cjkRuns=s=>{const out=[];for(const r of (s.match(/[一-鿿]{2,}/g)||[])){let parts=[r];for(const w of STOP){parts=parts.flatMap(x=>x.split(w));}for(const x of parts)if(x.length>=2)out.push(x);}return out};
+  let qk=null,ak=null;
+  if(blank) qk=blank;
+  let shared="";
+  for(const r of cjkRuns(q)) for(let L=r.length;L>=2;L--) for(let i=0;i+L<=r.length;i++){const sub=r.slice(i,i+L); if(sub.length>shared.length&&a.includes(sub)) shared=sub;}
+  if(!blank&&shared){qk=shared;ak=shared;}
+  // đáp án tiếng Việt: tên vị thuốc chung, hoặc cụm đầu của đáp án
+  if(!ak){
+    const h=HERB.find(([zh,vi])=>a.includes(vi)&&q.includes(zh));
+    if(h){qk=qk||h[0];ak=h[1];}
+    else{const first=a.split(/[，,。；;\/]/)[0].trim(); if(first.length&&first.length<=40) ak=first;}
+  }
+  if(!qk){
+    const quoted=(q.match(/[“"]([一-鿿]{1,6})[”"]/)||[])[1];
+    if(quoted&&q.includes(quoted)) qk=quoted;
+  }
+  if(!qk){const r=cjkRuns(q)[0]; if(r) qk=r; else {const m=/(?:của|về)\s*([A-ZÀ-Ỹ][\wÀ-ỹ]*(?:\s[\wÀ-ỹ]+){0,2})/.exec(q)||/^Câu \d+:\s*([A-ZÀ-Ỹ][\wÀ-ỹ]*(?:\s[\wÀ-ỹ]+){0,2}?)\s+(?:thường|chủ yếu|là|có|được|nằm)/.exec(q); if(m) qk=m[1];}}
+  if(!ak){const r=cjkRuns(a)[0]; if(r) ak=r;}
+  if(!ak){const f=a.split(/[，,。；;\/]/)[0].trim(); if(f) ak=f.split(/\s+/).slice(0,4).join(" ");}
+  if(qk&&!blank&&qk.length>8){const m=qk.match(/[\u4e00-\u9fff]{2,4}/);qk=m?m[0]:qk.slice(0,4);}
+  if(!qk){const m=/^Câu \d+:\s*(.+?)\s+(?:bao gồm|gồm|là)/.exec(q); if(m&&q.includes(m[1])) qk=m[1];}
+  if(qk&&!q.includes(qk))qk=null; if(ak&&!a.includes(ak))ak=null;
+  return {q:qk,a:ak};
+}
+/* Gạch dưới đúng một đoạn trong chuỗi (lần xuất hiện đầu). */
+function markKw(text,kw){
+  const t=String(text||""); const A=(x)=>String(x??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  if(!kw) return A(t);
+  const i=t.indexOf(kw); if(i<0) return A(t);
+  return A(t.slice(0,i))+`<u class="kw">${A(kw)}</u>`+A(t.slice(i+kw.length));
+}
+
 function pool(){return ALL().filter(f=>!F.g||f.g===F.g)}
 
 function head(esc){
@@ -65,8 +108,8 @@ function learn(v){
   v.innerHTML=head(esc)+`<div class="panel">
     <div class="row" style="justify-content:space-between;margin-bottom:8px"><span class="label">${L.length} câu · đáp án và mẹo hiện sẵn</span>
       <button class="chip" id="hideBtn" aria-pressed="${F.hide}">Che đáp án để tự kiểm tra</button></div>
-    ${PG.map((f,i)=>{const show=!F.hide||F.seen[f.q];return `<div class="fq"><span class="note">${i+1}. ${esc(f.g)}</span><div class="qq">${esc(f.q)}</div>
-      ${show?`<div class="ok">Đáp án: ${"ABCD"[f.a]}. ${esc(f.o[f.a])}</div><div class="note">${f.o.map((o,j)=>j===f.a?"":`${"ABCD"[j]}. ${esc(o)}`).filter(Boolean).join(" · ")}</div>${why(f)}`
+    ${PG.map((f,i)=>{const show=!F.hide||F.seen[f.q];return `<div class="fq"><span class="note">${i+1}. ${esc(f.g)}</span><div class="qq">${(()=>{const qz=f.q.replace(/\s*\(\*\)/g,"");const k=pickKw(qz,f.o[f.a]);return markKw(qz,k.q)})()}</div>
+      ${show?`<div class="ok">Đáp án: ${"ABCD"[f.a]}. ${(()=>{const k=pickKw(f.q,f.o[f.a]);return markKw(cleanOpt(f.o[f.a]),k.a)})()}</div><div class="note">${f.o.map((o,j)=>j===f.a?"":`${"ABCD"[j]}. ${esc(cleanOpt(o))}`).filter(Boolean).join(" · ")}</div>${why(f)}`
       :`<button class="btn cover" data-s="${i}">Xem đáp án</button>`}</div>`}).join("")}${L.length>PG.length?`<button class="btn" id="moreQ" style="align-self:flex-start;margin-top:8px">Hiện thêm ${Math.min(20,L.length-PG.length)} câu · còn ${L.length-PG.length}</button>`:""}</div>`;
   bind(v);
   const mq=$("#moreQ");if(mq)mq.onclick=()=>{F.limit=(F.limit||20)+20;const y=scrollY;A().render();scrollTo(0,y)};
